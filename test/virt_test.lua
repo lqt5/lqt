@@ -1,10 +1,11 @@
 #!/usr/bin/lua
+package.cpath = package.cpath .. ';../build/lib/?.so'
 
-require'qtcore'
+local QtCore = require'qtcore'
 
-qa = QCoreApplication.new(1, {'virt_test'})
+qa = QtCore.QCoreApplication.new(1, {'virt_test'})
 
-qo = QObject.new()
+qo = QtCore.QObject.new()
 qo.event = function(o, e)
 	print('event overload called', e:type())
 	return false

@@ -1,10 +1,11 @@
-require "qtcore"
-require "qtgui"
+package.cpath = package.cpath .. ';../build/lib/?.so'
+local QtCore = require "qtcore"
+local QtGui = require "qtgui"
 
-A = QApplication(1, {'Protected test'})
+A = QtGui.QApplication(1, {'Protected test'})
 
 -- We will implement our custom model
-M = QAbstractListModel()
+M = QtCore.QAbstractListModel()
 
 -- stored in the environment table of the userdata
 M.luaData = {'Hello', 'World'}
@@ -14,11 +15,11 @@ function M:rowCount()
 	return #self.luaData
 end
 
-local empty = QVariant()
+local empty = QtCore.QVariant()
 function M:data(index, role)
-	if role == Qt.ItemDataRole.DisplayRole then
+	if role == QtCore.ItemDataRole.DisplayRole then
 		local row = index:row()
-		return QVariant(self.luaData[row + 1])
+		return QtCore.QVariant(self.luaData[row + 1])
 	end
 	return empty
 end
@@ -32,19 +33,19 @@ function M:addAnotherString(str)
 end
 
 -- some simple layout - list and a button
-MW = QWidget()
+MW = QtGui.QWidget()
 
-W = QListView()
+W = QtGui.QListView()
 W:setModel(M)
 
-B = QPushButton('Add Lua data')
+B = QtGui.QPushButton('Add Lua data')
 local counter = 1
 B:connect('2clicked()', function()
 	M:addAnotherString('Added text ' .. counter)
 	counter = counter + 1
 end)
 
-L = QVBoxLayout()
+L = QtGui.QVBoxLayout()
 L:addWidget(W)
 L:addWidget(B)
 MW:setLayout(L)

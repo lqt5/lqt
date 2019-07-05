@@ -1,18 +1,19 @@
 #!/usr/bin/lua
+package.cpath = package.cpath .. ';../build/lib/?.so'
 
-require'qtcore'
-require'qtgui'
+local QtCore = require 'qtcore'
+local QtGui = require 'qtgui'
 
-app = QApplication(1 + select('#', ...), {arg[0], ...})
+local app = QtGui.QApplication(1 + select('#', ...), {arg[0], ...})
 
-window = QWidget()
+local window = QtGui.QWidget()
 window:resize(200, 120)
 
-quit = QPushButton("Quit", window)
-quit:setFont(QFont('Times', 18, 75))
+local quit = QtGui.QPushButton("Quit", window)
+quit:setFont(QtGui.QFont('Times', 18, 75))
 quit:setGeometry(10, 40, 180, 40)
 
-QObject.connect(quit, '2clicked()', app, '1quit()')
+QtCore.QObject.connect(quit, '2clicked()', app, '1quit()')
 
 window:show()
 

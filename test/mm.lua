@@ -1,14 +1,15 @@
 #!/usr/bin/lua
+package.cpath = package.cpath .. ';../build/lib/?.so'
 
-require'qtcore'
+local QtCore = require 'qtcore'
 
-qapp = QCoreApplication(1+select("#", ...), {arg[0], ...})
+local qapp = QtCore.QCoreApplication(1+select("#", ...), {arg[0], ...})
 
 local N = 1
 local qo = nil
-local del = QObject.delete
+local del = QtCore.QObject.delete
 for i = 1, 10*N do
-  qo = QObject(qo)
+  qo = QtCore.QObject(qo)
   print('created QObject', qo);
   qo.delete = function(...) del(...) print('deleting', ...) end
   qo.__gc = function(...) del(...) print('deleting', ...) end

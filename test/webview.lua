@@ -1,10 +1,11 @@
 #!/usr/bin/lua
+package.cpath = package.cpath .. ';../build/lib/?.so'
 
-require'qtcore'
-require'qtgui'
-require'qtwebkit'
+local QtCore = require 'qtcore'
+local QtGui = require 'qtgui'
+local QtWebKit = require 'qtwebkit'
 
-local app = QApplication(1 + select('#', ...), {arg[0], ...})
+local app = QtGui.QApplication(1 + select('#', ...), {arg[0], ...})
 
 local address = tostring(arg[1])
 
@@ -14,11 +15,11 @@ end
 
 print('Loading site  '..address..' ...')
 
-local webView = QWebView()
+local webView = QtWebKit.QWebView()
 webView:connect('2loadFinished(bool)', function()
 	print('Loaded', webView:url():toEncoded())
 end)
-webView:setUrl(QUrl("http://" .. address))
+webView:setUrl(QtCore.QUrl("http://" .. address))
 webView:show()
 
 app.exec()

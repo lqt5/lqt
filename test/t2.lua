@@ -1,15 +1,16 @@
 #!/usr/bin/lua
+package.cpath = package.cpath .. ';../build/lib/?.so'
 
 local arg = {n = select('#', ...), [0] = arg[0], ...}
 
-require'qtcore'
-require'qtgui'
+local QtCore = require 'qtcore'
+local QtGui = require 'qtgui'
 
-app = QApplication(1 + arg.n, arg)
+local app = QtGui.QApplication(1 + arg.n, arg)
 
-quit = QPushButton("Quit")
+quit = QtGui.QPushButton("Quit")
 quit:resize(75, 30)
-quit:setFont(QFont("Times", 18, 75))
+quit:setFont(QtGui.QFont("Times", 18, 75))
 
 -- won't work, the signals and slots are checked if they exist
 -- print(quit:connect('madeup()', app, 'quit()'))

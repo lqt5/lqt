@@ -1,8 +1,10 @@
-require'qtcore'
+package.cpath = package.cpath .. ';../build/lib/?.so'
+
+local QtCore = require 'qtcore'
 
 local s = tostring{}
 
-local f = QFile('tmp_file')
+local f = QtCore.QFile('tmp_file')
 print('open file => ', f:open{'WriteOnly'})
 print('write to file => ', f:write(s))
 print('flush file =>', f:flush())
