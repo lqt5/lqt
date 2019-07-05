@@ -275,7 +275,7 @@ void lqtL_qobject_custom (lua_State *L) {
     lua_rawset(L, qobject);
 
     // also modify the static QObject::connect function
-    lua_getfield(L, LUA_GLOBALSINDEX, "QObject");
+    lua_getfield(L, -2, "QObject");
     lua_pushcfunction(L, lqtL_connect);
     lua_setfield(L, -2, "connect");
 }

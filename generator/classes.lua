@@ -809,7 +809,7 @@ function print_single_class(c)
 		print_meta('\tlua_pop(L, 1);')
 	end
 	
-	print_meta'\treturn 0;'
+	print_meta'\treturn 1;'
 	print_meta'}'
 	print_meta''
 
@@ -942,10 +942,13 @@ end
 	end
 	print_meta('void lqt_create_enums_'..module_name..' (lua_State *);')
 	print_meta('extern "C" LQT_EXPORT int luaopen_'..module_name..' (lua_State *L) {')
+	print_meta('\tlua_newtable(L);')
 	for _, p in ipairs(big_picture) do
 		print_meta('\tluaopen_'..p..'(L);')
+		print_meta('\tlua_setfield(L, -2, "'..p..'");')
 	end
 	print_meta('\tlqt_create_enums_'..module_name..'(L);')
+	print_meta('\tint top = lua_gettop(L);');
 	if qobject_present then
 		print_meta('\tlqtL_qobject_custom(L);')
 	end
@@ -956,7 +959,8 @@ end
 	end
 	print_meta('\tlqtL_register_super(L);')
 	print_meta('\tlqtSlotAcceptor_'..module_name..' = new LqtSlotAcceptor(L);')
-	print_meta('\treturn 0;\n}')
+	print_meta('\tlua_settop(L, top);')
+	print_meta('\treturn 1;\n}')
 	if fmeta then fmeta:close() end
 end
 

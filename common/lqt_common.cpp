@@ -151,7 +151,35 @@ int lqtL_createenum (lua_State *L, lqt_Enum e[], const char *n) {
     }
     lua_pop(L, 2); // (0)
     l = e;
-    luaL_register(L, n, empty); // (1)
+
+    int top = lua_gettop(L);
+
+    const char *name = n;
+    for (;;) {
+        const char *pos = strchr(name, '.');
+        if (pos == NULL)
+            break;
+        int len = pos - name;
+        char *key = (char *) malloc(len + 1);
+        memcpy(key, name, len);
+        key[len] = '\0';
+        name = pos + 1;
+
+        lua_getfield(L, -1, key);
+        if (!lua_istable(L, -1)) {
+            lua_pop(L, 1);
+
+            if (strcmp(key, "Qt")) {
+                lua_newtable(L);
+                lua_pushvalue(L, -1);
+                lua_setfield(L, -3, key);
+            }
+        }
+
+        free(key);
+    }
+
+    lua_newtable(L);
     while ( (l->name!=0) ) { // (1)
         lua_pushstring(L, l->name); // (2)
         lua_pushinteger(L, l->value); // (3)
@@ -159,9 +187,17 @@ int lqtL_createenum (lua_State *L, lqt_Enum e[], const char *n) {
         lua_pushinteger(L, l->value); // (2)
         lua_pushstring(L, l->name); // (3)
         lua_settable(L, -3); // (1)
+
+        lua_pushstring(L, l->name); // (2)
+        lua_pushinteger(L, l->value); // (3)
+        lua_settable(L, -4);
+
         l++; // (1)
     }
-    lua_pop(L, 1); // (0)
+    lua_setfield(L, -2, name);
+
+    lua_settop(L, top);
+
     return 0;
 }
 
@@ -403,18 +439,19 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     lua_pushvalue(L, -1); // (2)
     lua_setmetatable(L, -2); // (1)
     lua_pop(L, 1); // (0)
-    len = strlen(name);
-    new_name = (char*)malloc(len*sizeof(char));
-    strncpy(new_name, name, len);
-    new_name[len-1] = '\0';
-    luaL_register(L, new_name, mt); // (1)
-    free(new_name);
-    new_name = NULL;
+    // len = strlen(name);
+    // new_name = (char*)malloc(len*sizeof(char));
+    // strncpy(new_name, name, len);
+    // new_name[len-1] = '\0';
+    lua_newtable(L); // (1)
+    luaL_register(L, NULL, mt); // (1)
+    // free(new_name);
+    // new_name = NULL;
     lua_newtable(L); // (2)
-    lua_pushcfunction(L, lqtL_local_ctor);
+    lua_pushcfunction(L, lqtL_local_ctor); // (3)
     lua_setfield(L, -2, "__call"); // (2)
     lua_setmetatable(L, -2); // (1)
-    lua_pop(L, 1); // (0)
+    // lua_pop(L, 1); // (0)
     /*
     lua_pushlstring(L, name, strlen(name)-1); // (1)
     lua_newtable(L); // (2)
@@ -807,9 +844,8 @@ void lqtL_register_super(lua_State *L) {
     if (lua_isnil(L, -1)) {
         void *ud = lua_newuserdata(L, sizeof(int));
         lua_setfield(L, LUA_GLOBALSINDEX, LQT_SUPER);
-    } else {
-        lua_pop(L, -1);
     }
+    lua_pop(L, 1);
 }
 
 // returns true if the value at index `n` can be converted to `to_type`
