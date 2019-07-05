@@ -173,6 +173,25 @@ int lqtL_createenumlist (lua_State *L, lqt_Enumlist list[]) {
     return 0;
 }
 
+static int lqtL_tostring (lua_State *L) {
+    if (!lua_isuserdata(L, 1) || lua_islightuserdata(L, 1)) return 0;
+    lua_getmetatable(L, 1);
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 1); // (0)
+        return 0;
+    }
+    lua_getfield(L, -1, "__type"); // (2)
+    lua_remove(L, -2); // (1)
+    if (!lua_isstring(L, -1)) {
+        lua_pop(L, 1);
+        lua_pushfstring(L, "userdata: %p", lua_touserdata(L, 1));
+    } else {
+        lua_pushfstring(L, ": %p", lua_touserdata(L, 1));
+        lua_concat(L, 2);
+    }
+    return 1;
+}
+
 static int lqtL_gcfunc (lua_State *L) {
     if (!lua_isuserdata(L, 1) || lua_islightuserdata(L, 1)) return 0;
     lua_getfenv(L, 1); // (1)
@@ -375,6 +394,8 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     lua_setfield(L, -2, "__newindex"); // (1)
     lua_pushcfunction(L, lqtL_gcfunc); // (2)
     lua_setfield(L, -2, "__gc"); // (1)
+    lua_pushcfunction(L, lqtL_tostring); // (1)
+    lua_setfield(L, -2, "__tostring");
     lua_pushstring(L, name);
     lua_setfield(L, -2, "__type");
 
