@@ -23,6 +23,7 @@
 #include <QTextBlock>
 #include <QUrl>
 #include <QBitArray>
+#include <QDebug>
 
 int lqtL_qt_metacall (lua_State *, QObject *, QObject *, QMetaObject::Call, const char *, int, void **);
 void lqtL_qobject_custom (lua_State *L);
