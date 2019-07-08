@@ -102,6 +102,13 @@ private:
     inline T *data() { return (T *) *this; }
     inline const T *data() const { return (const T *) *this; }
     inline const T *constData() const { return (const T *) *this; }
+
+    inline T &operator*() { return *this->loadAcquire(); }
+    inline const T &operator*() const { return *this->loadAcquire(); }
+    inline T *operator->() { return this->loadAcquire(); }
+    inline const T *operator->() const { return this->loadAcquire(); }
+    inline operator T *() { return this->loadAcquire(); }
+    inline operator const T *() const { return this->loadAcquire(); }
 #endif
 };
 

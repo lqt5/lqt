@@ -60,6 +60,7 @@ Preprocessor::~Preprocessor()
 
 void Preprocessor::processFile(const QString &fileName)
 {
+    printf("Preprocess file : %s\n", fileName.toUtf8().constData());
     pp proc(d->env);
     d->initPP(proc);
 

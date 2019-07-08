@@ -20,15 +20,21 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1.0)
 
 project(cpptoxml)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin) 
 
-find_package(Qt4 REQUIRED)
-set(QT_USE_QTCORE 1) 
-include(${QT_USE_FILE})
+find_package(Qt5 REQUIRED Core)
+
+# set(QT_USE_QTCORE 1) 
+
+include_directories(${Qt5Core_INCLUDE_DIRS})
+add_definitions(${Qt5Core_DEFINITIONS})
+
+# Add compiler flags for building executables (-fPIE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/
                     ${CMAKE_CURRENT_SOURCE_DIR}/parser
@@ -57,11 +63,11 @@ set(parser_src main.cpp
                parser/visitor.cpp
                parser/rpp/preprocessor.cpp)
 
-
 add_executable(cpptoxml ${parser_src} )
 
-target_link_libraries(cpptoxml ${QT_LIBRARIES} ${QT_QTMAIN_LIBRARY})
+# Link the cpptoxml executable to the Qt 5 widgets library.
+target_link_libraries(cpptoxml Qt5::Core)
+
 set_target_properties(cpptoxml PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 install(TARGETS cpptoxml DESTINATION bin)
-

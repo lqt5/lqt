@@ -61,10 +61,10 @@ int lqtL_qt_metacall (lua_State *L, QObject *self, QObject *acceptor,
 const char add_method_func[] =
 "return function(qobj, signature, func)\n"
 "	local qname = 'LuaObject('..tostring(qobj)..')'\n"
-"	local stringdata = qobj['"LQT_OBJMETASTRING"']\n"
-"	local data = qobj['"LQT_OBJMETADATA"']\n"
-"	local slots = qobj['"LQT_OBJSLOTS"']\n"
-"	local sigs = qobj['"LQT_OBJSIGS"']\n"
+"	local stringdata = qobj['" LQT_OBJMETASTRING "']\n"
+"	local data = qobj['" LQT_OBJMETADATA "']\n"
+"	local slots = qobj['" LQT_OBJSLOTS "']\n"
+"	local sigs = qobj['" LQT_OBJSIGS "']\n"
 "	if stringdata==nil then\n"
 "		--print'adding a slot!'\n"
 "		--initialize\n"
@@ -111,10 +111,10 @@ const char add_method_func[] =
 "		sigs:insert(false)\n"
 "	end\n"
 "	data[5] = data[5] + 1\n"
-"	qobj['"LQT_OBJMETASTRING"'] = stringdata\n"
-"	qobj['"LQT_OBJMETADATA"'] = data\n"
-"	qobj['"LQT_OBJSLOTS"'] = slots\n"
-"	qobj['"LQT_OBJSIGS"'] = sigs\n"
+"	qobj['" LQT_OBJMETASTRING "'] = stringdata\n"
+"	qobj['" LQT_OBJMETADATA "'] = data\n"
+"	qobj['" LQT_OBJSLOTS "'] = slots\n"
+"	qobj['" LQT_OBJSIGS "'] = sigs\n"
 "end\n";
 
 #include <QMetaObject>
@@ -129,7 +129,7 @@ static int lqtL_methods(lua_State *L) {
 	lua_createtable(L, mo->methodCount(), 0);
 	for (int i=0; i < mo->methodCount(); i++) {
 		QMetaMethod m = mo->method(i);
-		lua_pushstring(L, m.signature());
+		lua_pushstring(L, m.methodSignature());
 		switch (m.access()) {
 		CASE(Private);
 		CASE(Protected);
@@ -223,7 +223,7 @@ static int lqtL_connect(lua_State *L) {
 
         // simulate sender:__addmethod('LQT_SLOT_X(signature)', function()...end)
         QMetaMethod m = senderMeta->method(idxS);
-        methodName = QString(m.signature()).replace(QRegExp("^[^\\(]+"), QString("LQT_SLOT_%1").arg(methodId++));
+        methodName = QString(m.methodSignature()).replace(QRegExp("^[^\\(]+"), QString("LQT_SLOT_%1").arg(methodId++));
 
         lua_getfield(L, 1, "__addmethod");
         lua_pushvalue(L, 1);

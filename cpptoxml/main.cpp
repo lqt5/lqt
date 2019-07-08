@@ -432,6 +432,7 @@ QString findIncludeFile(const QString& sourceName, const QString& qtdir)
 
 	TRY_DIRECTORY(qtdir+'/'+sourceName+'/'+sourceName);
 	TRY_DIRECTORY(qtdir+"/Headers/"+sourceName);
+	TRY_DIRECTORY(QString("%1/%2.framework/Headers/%2").arg(qtdir, sourceName));
 	TRY_DIRECTORY(QString("/Library/Frameworks/%1.framework/Headers/%1").arg(sourceName));
 
 	cerr << "Could not find include file, tried here: " << qPrintable(tries.join(" "));
@@ -528,14 +529,14 @@ int main (int argc, char **argv) {
 	QFileInfo sourceInfo(sourceName);
 
 	inclist << (sourceInfo.absolutePath());
-	inclist << (QDir::convertSeparators(qtdir));
+	inclist << (QDir::toNativeSeparators(qtdir));
 
 	QStringList qts;
 	qts << "QtXml" << "QtNetwork" << "QtCore" << "QtGui"
 		<<"QtOpenGL" << "QtWebKit"<< "QtScript" << "QtSvg";
 
 	Q_FOREACH(const QString& lib, qts) {
-		inclist << QDir::convertSeparators(qtdir + "/" + lib);
+		inclist << QDir::toNativeSeparators(qtdir + "/" + lib);
 	}
 
 	if(debug) qDebug() << "atdir: " << qtdir << "\nsourceName: " << sourceName << "\nincludes" << inclist;

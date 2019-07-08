@@ -202,7 +202,8 @@ inline pp::PP_DIRECTIVE_TYPE pp::find_directive (char const *__directive, std::s
       default:
         break;
     }
-  std::cerr << "** WARNING unknown directive '#" << __directive << "' at " << env.current_file << ":" << env.current_line << std::endl;
+  if (__size > 0)
+    std::cerr << "** WARNING unknown directive '#" << __directive << "' at " << env.current_file << ":" << env.current_line << std::endl;
   return PP_UNKNOWN_DIRECTIVE;
 }
 
@@ -605,7 +606,10 @@ _InputIterator pp::handle_define (_InputIterator __first, _InputIterator __last)
     {
     if (*__first == '/') {
         __first = skip_comment_or_divop(__first, __last);
-        env.current_line += skip_comment_or_divop.lines;
+        if (skip_comment_or_divop.lines == 0)
+            definition += '/';
+        else
+            env.current_line += skip_comment_or_divop.lines;
     }
 
       if (*__first == '\\')
