@@ -748,6 +748,9 @@ void Binder::visitEnumerator(EnumeratorAST *node)
   updateItemPosition (e->toItem(), node);
   e->setName(decode_symbol(node->id)->as_string());
 
+  if (node->owner->class_enum)
+    e->setClassName(_M_current_enum->name());
+
   if (ExpressionAST *expr = node->expression)
     {
       const Token &start_token = _M_token_stream->token((int) expr->start_token);

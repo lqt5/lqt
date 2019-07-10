@@ -23,4 +23,10 @@
 
 #define QT_JAMBI_RUN
 
-#define std::move(left, right)
+#define std::move(__VA_ARGS__)
+
+// Fix cpptoxml (don't know nullptr)
+#define nullptr NULL
+
+// for QObject::tr function
+#define QT_NO_TRANSLATION

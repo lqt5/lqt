@@ -1361,9 +1361,26 @@ bool Parser::parseEnumSpecifier(TypeSpecifierAST *&node)
 
   CHECK(Token_enum);
 
+  bool class_enum = false;
+  // skip enum {class} ident_name : type;
+  if (token_stream.lookAhead() == Token_class) {
+    token_stream.nextToken();
+    class_enum = true;
+  }
+
   NameAST *name = 0;
   parseName(name);
 
+  // skip enum class ident_name {: type};
+  if (token_stream.lookAhead() == ':') {
+    if (token_stream.lookAhead(1) != Token_identifier) {
+      token_stream.rewind((int) start);
+      return false;
+    }
+    token_stream.nextToken();
+    token_stream.nextToken();
+  }
+    
   if (token_stream.lookAhead() != '{')
     {
       token_stream.rewind((int) start);
@@ -1373,10 +1390,12 @@ bool Parser::parseEnumSpecifier(TypeSpecifierAST *&node)
 
   EnumSpecifierAST *ast = CreateNode<EnumSpecifierAST>(_M_pool);
   ast->name = name;
+  ast->class_enum = class_enum;
 
   EnumeratorAST *enumerator = 0;
   if (parseEnumerator(enumerator))
     {
+      enumerator->owner = ast;
       ast->enumerators = snoc(ast->enumerators, enumerator, _M_pool);
 
       while (token_stream.lookAhead() == ',')
@@ -1389,6 +1408,7 @@ bool Parser::parseEnumSpecifier(TypeSpecifierAST *&node)
               break;
             }
 
+          enumerator->owner = ast;
           ast->enumerators = snoc(ast->enumerators, enumerator, _M_pool);
         }
     }
@@ -2032,6 +2052,11 @@ bool Parser::parseElaboratedTypeSpecifier(TypeSpecifierAST *&node)
       std::size_t type = token_stream.cursor();
       token_stream.nextToken();
 
+      // skip enum {class} ident_name : type;
+      if (tk == Token_enum && token_stream.lookAhead() == Token_class) {
+        token_stream.nextToken();
+      }
+
       NameAST *name = 0;
       if (parseName(name, true))
         {
@@ -2043,7 +2068,16 @@ bool Parser::parseElaboratedTypeSpecifier(TypeSpecifierAST *&node)
 
           UPDATE_POS(ast, start, token_stream.cursor());
           node = ast;
-
+            
+          // skip enum class ident_name {: type};
+          if (tk == Token_enum && token_stream.lookAhead() == ':') {
+            if (token_stream.lookAhead(1) != Token_identifier) {
+              token_stream.rewind((int) start);
+              return false;
+            }
+            token_stream.nextToken();
+            token_stream.nextToken();
+          }
           return true;
         }
     }

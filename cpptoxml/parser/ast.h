@@ -397,6 +397,7 @@ struct EnumSpecifierAST: public TypeSpecifierAST
 {
   DECLARE_AST_NODE(EnumSpecifier)
 
+  bool class_enum;
   NameAST *name;
   const ListNode<EnumeratorAST*> *enumerators;
 };
@@ -406,6 +407,7 @@ struct EnumeratorAST: public AST
   DECLARE_AST_NODE(Enumerator)
 
   std::size_t id;
+  EnumSpecifierAST *owner;
   ExpressionAST *expression;
 };
 

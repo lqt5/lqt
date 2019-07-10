@@ -795,6 +795,16 @@ void _EnumeratorModelItem::setValue(const QString &value)
   _M_value = value;
 }
 
+QString _EnumeratorModelItem::className() const
+{
+  return _M_className;
+}
+
+void _EnumeratorModelItem::setClassName(const QString &className)
+{
+  _M_className = className;
+}
+
 // ---------------------------------------------------------------------------
 TypeInfo _TemplateParameterModelItem::type() const
 {

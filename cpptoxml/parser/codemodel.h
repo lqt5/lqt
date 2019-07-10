@@ -684,6 +684,8 @@ public:
 public:
   QString value() const;
   void setValue(const QString &value);
+  QString className() const;
+  void setClassName(const QString &className);
 
 protected:
   _EnumeratorModelItem(CodeModel *model, int kind = __node_kind)
@@ -691,6 +693,7 @@ protected:
 
 private:
   QString _M_value;
+  QString _M_className;
 
 private:
   _EnumeratorModelItem(const _EnumeratorModelItem &other);
