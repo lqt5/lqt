@@ -841,25 +841,13 @@ function print_single_class(c)
 QMetaObject lqt_shell_]]..n..[[::staticMetaObject;
 
 const QMetaObject *lqt_shell_]]..n..[[::metaObject() const {
-        //int oldtop = lua_gettop(L);
-        lqtL_pushudata(L, this, "]]..c.xarg.fullname..[[*");
-        lua_getfield(L, -1, LQT_OBJMETASTRING);
-        if (lua_isnil(L, -1)) {
-                lua_pop(L, 2);
-                return &]]..c.xarg.fullname..[[::staticMetaObject;
-        }
-        lua_getfield(L, -2, LQT_OBJMETADATA);
-        lqtL_touintarray(L);
-        //qDebug() << "copying qmeta object for slots in ]]..c.xarg.fullname..[[";
-        lqt_shell_]]..n..[[::staticMetaObject.d.superdata = &]]..c.xarg.fullname..[[::staticMetaObject;
-        lqt_shell_]]..n..[[::staticMetaObject.d.stringdata = lua_tostring(L, -2);
-        lqt_shell_]]..n..[[::staticMetaObject.d.data = (uint*)lua_touserdata(L, -1);
-        lqt_shell_]]..n..[[::staticMetaObject.d.extradata = 0; // slot_metaobj->d.extradata;
-        lua_setfield(L, LUA_REGISTRYINDEX, LQT_OBJMETADATA);
-        lua_setfield(L, LUA_REGISTRYINDEX, LQT_OBJMETASTRING);
-        lua_pop(L, 1);
-        //qDebug() << (lua_gettop(L) - oldtop);
-        return &lqt_shell_]]..n..[[::staticMetaObject;
+        const QMetaObject& meta = lqlL_getMetaObject(L
+            , "]]..c.xarg.fullname..[[*"
+            , this
+            , lqt_shell_]]..n..[[::staticMetaObject
+            , ]]..c.xarg.fullname..[[::staticMetaObject
+        );
+        return &meta;
 }
 
 int lqt_shell_]]..n..[[::qt_metacall(QMetaObject::Call call, int index, void **args) {

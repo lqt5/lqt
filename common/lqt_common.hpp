@@ -38,6 +38,7 @@ extern "C" {
 #include <lualib.h>
 #include <lauxlib.h>
 }
+#include <QtCore> // for QMetaObject
 
 //#include <iostream>
 
@@ -152,7 +153,12 @@ int lqtL_getflags (lua_State *, int, const char *);
 void lqtL_pushflags (lua_State *, int, const char *);
 #define lqtL_isflags(L, i) (lua_istable((L), (i)) || lqtL_isinteger((L), (i)))
 
-int lqtL_touintarray (lua_State *);
+const QMetaObject& lqlL_getMetaObject (lua_State *L
+    , const char *name
+    , const QObject *object
+    , QMetaObject& meta_data
+    , const QMetaObject& super_data
+);
 
 int lqtL_pcall_debug (lua_State *L, int narg, int nres, int err);
 
