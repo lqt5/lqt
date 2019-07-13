@@ -59,65 +59,6 @@ int lqtL_qt_metacall (lua_State *L, QObject *self, QObject *acceptor,
 }
 
 
-const char add_method_func[] =
-"return function(qobj, signature, func)\n"
-"	local qname = 'LuaObject('..tostring(qobj)..')'\n"
-"	local stringdata = qobj['" LQT_OBJMETASTRING "']\n"
-"	local data = qobj['" LQT_OBJMETADATA "']\n"
-"	local slots = qobj['" LQT_OBJSLOTS "']\n"
-"	local sigs = qobj['" LQT_OBJSIGS "']\n"
-"	if stringdata==nil then\n"
-"		--print'adding a slot!'\n"
-"		--initialize\n"
-"		stringdata = qname..'\\0'\n"
-"		data = setmetatable({}, {__index=table})\n"
-"		data:insert(1) -- revision\n"
-"		data:insert(0) -- class name\n"
-"		data:insert(0) -- class info (1)\n"
-"		data:insert(0) -- class info (2)\n"
-"		data:insert(0) -- number of methods\n"
-"		data:insert(10) -- beginning of methods\n"
-"		data:insert(0) -- number of properties\n"
-"		data:insert(0) -- beginning of properties\n"
-"		data:insert(0) -- number of enums/sets\n"
-"		data:insert(0) -- beginning of enums/sets\n"
-"		slots = setmetatable({}, {__index=table})\n"
-"		sigs = setmetatable({}, {__index=table})\n"
-"	end\n"
-"	local name, args = string.match(signature, '^(.*)(%b())$')\n"
-"	local arg_list = ''\n"
-"	if args=='()' then\n"
-"		arg_list=''\n"
-"	else\n"
-"		local argnum = select(2, string.gsub(args, '.+,', ','))+1\n"
-"		for i = 1, argnum do\n"
-"			if i>1 then arg_list=arg_list..', ' end\n"
-"			arg_list = arg_list .. 'arg' .. i\n"
-"		end\n"
-"	end\n"
-"	--print(arg_list, signature)\n"
-"	local sig, params = #stringdata + #arg_list + 1, #stringdata -- , ty, tag, flags\n"
-"	stringdata = stringdata .. arg_list .. '\\0' .. signature .. '\\0'\n"
-"	data:insert(sig) -- print(sig, string.byte(stringdata, sig, sig+4), string.char(string.byte(stringdata, sig+1, sig+6)))\n"
-"	data:insert(params) -- print(params, string.char(string.byte(stringdata, params+1, params+10)))\n"
-"	data:insert(#stringdata-1) -- print(#stringdata-1, (string.byte(stringdata, #stringdata)))\n"
-"	data:insert(#stringdata-1) -- print(#stringdata-1, (string.byte(stringdata, #stringdata)))\n"
-"	if func then\n"
-"		data:insert(0x0a)\n"
-"		slots:insert(func)\n"
-"		sigs:insert('__slot'..signature:match'%b()')\n"
-"	else\n"
-"		data:insert(0x05)\n"
-"		slots:insert(false)\n"
-"		sigs:insert(false)\n"
-"	end\n"
-"	data[5] = data[5] + 1\n"
-"	qobj['" LQT_OBJMETASTRING "'] = stringdata\n"
-"	qobj['" LQT_OBJMETADATA "'] = data\n"
-"	qobj['" LQT_OBJSLOTS "'] = slots\n"
-"	qobj['" LQT_OBJSIGS "'] = sigs\n"
-"end\n";
-
 #include <QMetaObject>
 #include <QMetaMethod>
 
@@ -274,10 +215,6 @@ void lqtL_qobject_custom (lua_State *L) {
             lua_pushcfunction(L, lqt_metaConvertType);
         lua_pcall(L, 6, 1, 0);
     lua_rawset(L, qobject);
-
-    // lua_pushstring(L, "__addmethod");
-    // luaL_dostring(L, add_method_func);
-    // lua_rawset(L, qobject);
 
     lua_pushstring(L, "__methods");
     lua_pushcfunction(L, lqtL_methods);
