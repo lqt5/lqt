@@ -829,6 +829,8 @@ function print_single_class(c)
 			print_meta('    return 0;')
 			print_meta('  }')
 		end
+		-- [avoid] warning: control may reach end of non-void function [-Wreturn-type]
+		print_meta('  return 0;')
 		print_meta('}\n\n')
 	end
 

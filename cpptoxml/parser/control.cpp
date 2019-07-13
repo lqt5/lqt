@@ -126,11 +126,11 @@ void Control::clearErrorMessages ()
 
 void Control::reportError (const ErrorMessage &errmsg)
 {
-//    std::cerr << QString("%1 %2 (line:%3 col:%4)\n").arg(errmsg.message()
-//                                                                  , errmsg.fileName()
-//                                                                  , QString::number(errmsg.line())
-//                                                                  , QString::number(errmsg.column())
-//                                                                  ).toUtf8().constData();
+   std::cerr << QString("%1 %2 (line:%3 col:%4)\n").arg(errmsg.message()
+                                                                 , errmsg.fileName()
+                                                                 , QString::number(errmsg.line())
+                                                                 , QString::number(errmsg.column())
+                                                                 ).toUtf8().constData();
     _M_error_messages.append(errmsg);
 }
 

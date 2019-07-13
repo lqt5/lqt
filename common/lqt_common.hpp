@@ -115,6 +115,7 @@ bool lqtL_missarg (lua_State *, int, int);
 
 typedef struct {
     const char *name;
+    bool class_enum;
     int value;
 } lqt_Enum;
 

@@ -197,7 +197,11 @@ QString XMLVisitor::visit(CodeModelItem i) {
 	if (ArgumentModelItem a = model_dynamic_cast<ArgumentModelItem>(i)) {
 		//ret += ATTR_STR("fullname", current_context.join("::")+"::"+i->qualifiedName().join("::"));
 	} else if (EnumeratorModelItem a = model_dynamic_cast<EnumeratorModelItem>(i)) {
-		ret += ATTR_STR("fullname", a->className()+current_context.join("::")+"::"+i->qualifiedName().join("::"));
+		ret += ATTR_STR("classname", a->className());
+		if (!a->className().isEmpty())
+			ret += ATTR_STR("fullname", current_context.join("::")+"::"+a->className()+"::"+i->qualifiedName().join("::"));
+		else
+			ret += ATTR_STR("fullname", current_context.join("::")+"::"+i->qualifiedName().join("::"));
 	} else {
 		ret += ATTR_STR("fullname", i->qualifiedName().join("::"));
 	}

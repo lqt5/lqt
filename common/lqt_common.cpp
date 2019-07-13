@@ -188,9 +188,11 @@ int lqtL_createenum (lua_State *L, lqt_Enum e[], const char *n) {
         lua_pushstring(L, l->name); // (3)
         lua_settable(L, -3); // (1)
 
-        lua_pushstring(L, l->name); // (2)
-        lua_pushinteger(L, l->value); // (3)
-        lua_settable(L, -4);
+        if (!l->class_enum) {
+            lua_pushstring(L, l->name); // (2)
+            lua_pushinteger(L, l->value); // (3)
+            lua_settable(L, -4);
+        }
 
         l++; // (1)
     }

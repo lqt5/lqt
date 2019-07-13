@@ -2,6 +2,7 @@ module("enums", package.seeall)
 
 local print_enum = fprint(assert(io.open(module_name.._src..module_name..'_enum.cpp', 'w')))
 
+
 local function filter(enum)
 	local n = enum.xarg.name
 	if n~=string.lower(n) and not string.match(n, '_') then
@@ -46,8 +47,13 @@ function fill_enum_tables()
 	for _,e in pairs(enum_list) do
 		local table = 'lqt_Enum lqt_enum'..e.xarg.id..'[] = {\n'
 		for _,v in pairs(e.values) do
-			table = table .. '  { "' .. v.xarg.name
-				.. '", static_cast<int>('..v.xarg.fullname..') },\n'
+			if #v.xarg.classname > 0 then
+				table = table .. '  { "' .. v.xarg.name
+					.. '", true, static_cast<int>('..v.xarg.fullname..') },\n'
+			else
+				table = table .. '  { "' .. v.xarg.name
+					.. '", false, static_cast<int>('..v.xarg.fullname..') },\n'
+			end
 		end
 		table = table .. '  { 0, 0 }\n'
 		table = table .. '};\n'

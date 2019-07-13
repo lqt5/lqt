@@ -63,6 +63,8 @@ function call_line(f)
 		else
 			return '*self '..op, false
 		end
+	elseif op == '+' and #f.arguments == 0 then
+		return '+ *self', false
 	else
 		return '*self '..op..'(', true
 	end
