@@ -1,0 +1,341 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2013 Olivier Goffart <ogoffart@woboq.com>
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef QOBJECT_H
+#define QOBJECT_H
+
+// #include <QtCore/qobjectdefs.h>
+// #include <QtCore/qstring.h>
+// #include <QtCore/qbytearray.h>
+// #include <QtCore/qlist.h>
+// #ifdef QT_INCLUDE_COMPAT
+// #include <QtCore/qcoreevent.h>
+// #endif
+// #include <QtCore/qscopedpointer.h>
+// #include <QtCore/qmetatype.h>
+
+// #include <QtCore/qobject_impl.h>
+
+class QEvent;
+class QTimerEvent;
+class QChildEvent;
+struct QMetaObject;
+class QVariant;
+class QObjectPrivate;
+class QObject;
+class QThread;
+class QWidget;
+#ifndef QT_NO_REGEXP
+class QRegExp;
+#endif
+#if QT_CONFIG(regularexpression)
+class QRegularExpression;
+#endif
+#ifndef QT_NO_USERDATA
+class QObjectUserData;
+#endif
+struct QDynamicMetaObjectData;
+
+typedef QList<QObject*> QObjectList;
+
+// Q_CORE_EXPORT void qt_qFindChildren_helper(const QObject *parent, const QString &name,
+//                                            const QMetaObject &mo, QList<void *> *list, Qt::FindChildOptions options);
+// Q_CORE_EXPORT void qt_qFindChildren_helper(const QObject *parent, const QRegExp &re,
+//                                            const QMetaObject &mo, QList<void *> *list, Qt::FindChildOptions options);
+// Q_CORE_EXPORT void qt_qFindChildren_helper(const QObject *parent, const QRegularExpression &re,
+//                                            const QMetaObject &mo, QList<void *> *list, Qt::FindChildOptions options);
+// Q_CORE_EXPORT QObject *qt_qFindChild_helper(const QObject *parent, const QString &name, const QMetaObject &mo, Qt::FindChildOptions options);
+
+class Q_CORE_EXPORT QObjectData {
+public:
+    virtual ~QObjectData() = 0;
+    virtual void __lqt_disable() = 0;
+
+    QObject *q_ptr;
+    QObject *parent;
+    QObjectList children;
+
+    uint isWidget : 1;
+    uint blockSig : 1;
+    uint wasDeleted : 1;
+    uint isDeletingChildren : 1;
+    uint sendChildEvents : 1;
+    uint receiveChildEvents : 1;
+    uint isWindow : 1; //for QWindow
+    uint deleteLaterCalled : 1;
+    uint unused : 24;
+    int postedEvents;
+    QDynamicMetaObjectData *metaObject;
+    QMetaObject *dynamicMetaObject() const;
+};
+
+class Q_CORE_EXPORT QObject
+{
+    LQT_OBJECT
+    Q_PROPERTY(QString objectName READ objectName WRITE setObjectName NOTIFY objectNameChanged)
+    // Q_DECLARE_PRIVATE(QObject)
+
+public:
+	explicit QObject(QObject *parent=nullptr);
+    virtual ~QObject();
+
+    virtual bool event(QEvent *event);
+    virtual bool eventFilter(QObject *watched, QEvent *event);
+
+// #if defined(QT_NO_TRANSLATION)
+//     static QString tr(const char *sourceText, const char * = nullptr, int = -1)
+//         { return QString::fromUtf8(sourceText); }
+// #if QT_DEPRECATED_SINCE(5, 0)
+//     QT_DEPRECATED static QString trUtf8(const char *sourceText, const char * = nullptr, int = -1)
+//         { return QString::fromUtf8(sourceText); }
+// #endif
+// #endif //QT_NO_TRANSLATION
+
+    QString objectName() const;
+    void setObjectName(const QString &name);
+
+    inline bool isWidgetType() const;
+    inline bool isWindowType() const;
+
+    inline bool signalsBlocked() const Q_DECL_NOTHROW;
+    bool blockSignals(bool b) Q_DECL_NOTHROW;
+
+    QThread *thread() const;
+    void moveToThread(QThread *thread);
+
+    int startTimer(int interval, Qt::TimerType timerType = Qt::CoarseTimer);
+    void killTimer(int id);
+
+//     template<typename T>
+//     inline T findChild(const QString &aName = QString(), Qt::FindChildOptions options = Qt::FindChildrenRecursively) const
+//     {
+//         typedef typename std::remove_cv<typename std::remove_pointer<T>::type>::type ObjType;
+//         return static_cast<T>(qt_qFindChild_helper(this, aName, ObjType::staticMetaObject, options));
+//     }
+
+//     template<typename T>
+//     inline QList<T> findChildren(const QString &aName = QString(), Qt::FindChildOptions options = Qt::FindChildrenRecursively) const
+//     {
+//         typedef typename std::remove_cv<typename std::remove_pointer<T>::type>::type ObjType;
+//         QList<T> list;
+//         qt_qFindChildren_helper(this, aName, ObjType::staticMetaObject,
+//                                 reinterpret_cast<QList<void *> *>(&list), options);
+//         return list;
+//     }
+
+// #ifndef QT_NO_REGEXP
+//     template<typename T>
+//     inline QList<T> findChildren(const QRegExp &re, Qt::FindChildOptions options = Qt::FindChildrenRecursively) const
+//     {
+//         typedef typename std::remove_cv<typename std::remove_pointer<T>::type>::type ObjType;
+//         QList<T> list;
+//         qt_qFindChildren_helper(this, re, ObjType::staticMetaObject,
+//                                 reinterpret_cast<QList<void *> *>(&list), options);
+//         return list;
+//     }
+// #endif
+
+// #if QT_CONFIG(regularexpression)
+//     template<typename T>
+//     inline QList<T> findChildren(const QRegularExpression &re, Qt::FindChildOptions options = Qt::FindChildrenRecursively) const
+//     {
+//         typedef typename std::remove_cv<typename std::remove_pointer<T>::type>::type ObjType;
+//         QList<T> list;
+//         qt_qFindChildren_helper(this, re, ObjType::staticMetaObject,
+//                                 reinterpret_cast<QList<void *> *>(&list), options);
+//         return list;
+//     }
+// #endif // QT_CONFIG(regularexpression)
+
+    inline const QObjectList &children() const { return d_ptr->children; }
+
+    void setParent(QObject *parent);
+    void installEventFilter(QObject *filterObj);
+    void removeEventFilter(QObject *obj);
+
+    static QMetaObject::Connection connect(const QObject *sender, const char *signal,
+                        const QObject *receiver, const char *member, Qt::ConnectionType = Qt::AutoConnection);
+
+    static QMetaObject::Connection connect(const QObject *sender, const QMetaMethod &signal,
+                        const QObject *receiver, const QMetaMethod &method,
+                        Qt::ConnectionType type = Qt::AutoConnection);
+
+    inline QMetaObject::Connection connect(const QObject *sender, const char *signal,
+                        const char *member, Qt::ConnectionType type = Qt::AutoConnection) const;
+
+    static bool disconnect(const QObject *sender, const char *signal,
+                           const QObject *receiver, const char *member);
+    static bool disconnect(const QObject *sender, const QMetaMethod &signal,
+                           const QObject *receiver, const QMetaMethod &member);
+    inline bool disconnect(const char *signal = nullptr,
+                           const QObject *receiver = nullptr, const char *member = nullptr) const;
+    inline bool disconnect(const QObject *receiver, const char *member = nullptr) const;
+    static bool disconnect(const QMetaObject::Connection &);
+
+    void dumpObjectTree() const;
+    void dumpObjectInfo() const;
+
+// #ifndef QT_NO_PROPERTIES
+    bool setProperty(const char *name, const QVariant &value);
+    QVariant property(const char *name) const;
+    QList<QByteArray> dynamicPropertyNames() const;
+// #endif // QT_NO_PROPERTIES
+
+// #ifndef QT_NO_USERDATA
+    static uint registerUserData();
+    void setUserData(uint id, QObjectUserData* data);
+    QObjectUserData* userData(uint id) const;
+// #endif // QT_NO_USERDATA
+
+Q_SIGNALS:
+    void destroyed(QObject * = nullptr);
+    void objectNameChanged(const QString &objectName, QPrivateSignal);
+
+public:
+    inline QObject *parent() const;
+
+    inline bool inherits(const char *classname) const;
+
+public Q_SLOTS:
+    void deleteLater();
+
+protected:
+    QObject *sender() const;
+    int senderSignalIndex() const;
+    int receivers(const char* signal) const;
+    bool isSignalConnected(const QMetaMethod &signal) const;
+
+    virtual void timerEvent(QTimerEvent *event);
+    virtual void childEvent(QChildEvent *event);
+    virtual void customEvent(QEvent *event);
+
+    virtual void connectNotify(const QMetaMethod &signal);
+    virtual void disconnectNotify(const QMetaMethod &signal);
+
+protected:
+    QObject(QObjectPrivate &dd, QObject *parent = nullptr);
+
+protected:
+    QScopedPointer<QObjectData> d_ptr;
+
+    static const QMetaObject staticQtMetaObject;
+    friend inline const QMetaObject *qt_getQtMetaObject() Q_DECL_NOEXCEPT;
+
+    friend struct QMetaObject;
+    friend struct QMetaObjectPrivate;
+    friend class QMetaCallEvent;
+    friend class QApplication;
+    friend class QApplicationPrivate;
+    friend class QCoreApplication;
+    friend class QCoreApplicationPrivate;
+    friend class QWidget;
+    friend class QThreadData;
+
+private:
+    Q_DISABLE_COPY(QObject)
+};
+
+// #ifndef QT_NO_USERDATA
+class Q_CORE_EXPORT QObjectUserData {
+public:
+    virtual ~QObjectUserData();
+};
+// #endif
+
+// #if QT_DEPRECATED_SINCE(5, 0)
+// template<typename T>
+// inline QT_DEPRECATED T qFindChild(const QObject *o, const QString &name = QString())
+// { return o->findChild<T>(name); }
+
+// template<typename T>
+// inline QT_DEPRECATED QList<T> qFindChildren(const QObject *o, const QString &name = QString())
+// {
+//     return o->findChildren<T>(name);
+// }
+
+// #if !defined(QT_NO_REGEXP) || defined(Q_CLANG_QDOC)
+// template<typename T>
+// inline QT_DEPRECATED QList<T> qFindChildren(const QObject *o, const QRegExp &re)
+// {
+//     return o->findChildren<T>(re);
+// }
+// #endif
+
+// #endif //QT_DEPRECATED
+
+// template <class T>
+// inline T qobject_cast(QObject *object)
+// {
+//     typedef typename std::remove_cv<typename std::remove_pointer<T>::type>::type ObjType;
+//     Q_STATIC_ASSERT_X(QtPrivate::HasQ_OBJECT_Macro<ObjType>::Value,
+//                     "qobject_cast requires the type to have a Q_OBJECT macro");
+//     return static_cast<T>(ObjType::staticMetaObject.cast(object));
+// }
+
+// template <class T>
+// inline T qobject_cast(const QObject *object)
+// {
+//     typedef typename std::remove_cv<typename std::remove_pointer<T>::type>::type ObjType;
+//     Q_STATIC_ASSERT_X(QtPrivate::HasQ_OBJECT_Macro<ObjType>::Value,
+//                       "qobject_cast requires the type to have a Q_OBJECT macro");
+//     return static_cast<T>(ObjType::staticMetaObject.cast(object));
+// }
+
+
+class QSignalBlocker
+{
+public:
+    inline explicit QSignalBlocker(QObject *o) Q_DECL_NOTHROW;
+    inline explicit QSignalBlocker(QObject &o) Q_DECL_NOTHROW;
+    inline ~QSignalBlocker();
+
+// #ifdef Q_COMPILER_RVALUE_REFS
+    inline QSignalBlocker(QSignalBlocker &&other) Q_DECL_NOTHROW;
+    inline QSignalBlocker &operator=(QSignalBlocker &&other) Q_DECL_NOTHROW;
+// #endif
+
+    inline void reblock() Q_DECL_NOTHROW;
+    inline void unblock() Q_DECL_NOTHROW;
+
+private:
+    Q_DISABLE_COPY(QSignalBlocker)
+};
+
+#endif // QOBJECT_H

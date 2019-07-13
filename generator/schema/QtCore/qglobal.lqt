@@ -1,0 +1,304 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2016 Intel Corporation.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*
+   QT_VERSION is (major << 16) + (minor << 8) + patch.
+*/
+#define QT_VERSION      QT_VERSION_CHECK(QT_VERSION_MAJOR, QT_VERSION_MINOR, QT_VERSION_PATCH)
+/*
+   can be used like #if (QT_VERSION >= QT_VERSION_CHECK(4, 4, 0))
+*/
+#define QT_VERSION_CHECK(major, minor, patch) ((major<<16)|(minor<<8)|(patch))
+
+// #ifdef QT_BOOTSTRAPPED
+// #include <QtCore/qconfig-bootstrapped.h>
+// #else
+// #include <QtCore/qconfig.h>
+// #include <QtCore/qtcore-config.h>
+// #endif
+
+/*
+   Size-dependent types (architechture-dependent byte order)
+
+   Make sure to update QMetaType when changing these typedefs
+*/
+
+typedef signed char qint8;         /* 8 bit signed */
+typedef unsigned char quint8;      /* 8 bit unsigned */
+typedef short qint16;              /* 16 bit signed */
+typedef unsigned short quint16;    /* 16 bit unsigned */
+typedef int qint32;                /* 32 bit signed */
+typedef unsigned int quint32;      /* 32 bit unsigned */
+#if defined(Q_OS_WIN) && !defined(Q_CC_GNU)
+#  define Q_INT64_C(c) c ## i64    /* signed 64 bit constant */
+#  define Q_UINT64_C(c) c ## ui64   /* unsigned 64 bit constant */
+typedef __int64 qint64;            /* 64 bit signed */
+typedef unsigned __int64 quint64;  /* 64 bit unsigned */
+#else
+#ifdef __cplusplus
+#  define Q_INT64_C(c) static_cast<long long>(c ## LL)     /* signed 64 bit constant */
+#  define Q_UINT64_C(c) static_cast<unsigned long long>(c ## ULL) /* unsigned 64 bit constant */
+#else
+#  define Q_INT64_C(c) ((long long)(c ## LL))               /* signed 64 bit constant */
+#  define Q_UINT64_C(c) ((unsigned long long)(c ## ULL))    /* unsigned 64 bit constant */
+#endif
+typedef long long qint64;           /* 64 bit signed */
+typedef unsigned long long quint64; /* 64 bit unsigned */
+#endif
+
+typedef qint64 qlonglong;
+typedef quint64 qulonglong;
+
+/*
+   Useful type definitions for Qt
+*/
+
+// QT_BEGIN_INCLUDE_NAMESPACE
+typedef unsigned char uchar;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef unsigned long ulong;
+// QT_END_INCLUDE_NAMESPACE
+
+typedef double qreal;
+
+/*
+   Some classes do not permit copies to be made of an object. These
+   classes contains a private copy constructor and assignment
+   operator to disable copying (the compiler gives an error message).
+*/
+#define Q_DISABLE_COPY(Class) \
+    Class(const Class &) Q_DECL_EQ_DELETE;\
+    Class &operator=(const Class &) Q_DECL_EQ_DELETE;
+
+/*
+ * If we're compiling C++ code:
+ *  - and this is a non-namespace build, declare qVersion as extern "C"
+ *  - and this is a namespace build, declare it as a regular function
+ *    (we're already inside QT_BEGIN_NAMESPACE / QT_END_NAMESPACE)
+ * If we're compiling C code, simply declare the function. If Qt was compiled
+ * in a namespace, qVersion isn't callable anyway.
+ */
+// #if !defined(QT_NAMESPACE) && defined(__cplusplus) && !defined(Q_QDOC)
+// extern "C"
+// #endif
+// Q_CORE_EXPORT Q_DECL_CONST_FUNCTION const char *qVersion(void) Q_DECL_NOTHROW;
+
+// /*
+//    Utility macros and inline functions
+// */
+
+// template <typename T>
+// Q_DECL_CONSTEXPR inline T qAbs(const T &t) { return t >= 0 ? t : -t; }
+
+// Q_DECL_CONSTEXPR inline int qRound(double d)
+// { return d >= 0.0 ? int(d + 0.5) : int(d - double(int(d-1)) + 0.5) + int(d-1); }
+// Q_DECL_CONSTEXPR inline int qRound(float d)
+// { return d >= 0.0f ? int(d + 0.5f) : int(d - float(int(d-1)) + 0.5f) + int(d-1); }
+
+// Q_DECL_CONSTEXPR inline qint64 qRound64(double d)
+// { return d >= 0.0 ? qint64(d + 0.5) : qint64(d - double(qint64(d-1)) + 0.5) + qint64(d-1); }
+// Q_DECL_CONSTEXPR inline qint64 qRound64(float d)
+// { return d >= 0.0f ? qint64(d + 0.5f) : qint64(d - float(qint64(d-1)) + 0.5f) + qint64(d-1); }
+
+// template <typename T>
+// Q_DECL_CONSTEXPR inline const T &qMin(const T &a, const T &b) { return (a < b) ? a : b; }
+// template <typename T>
+// Q_DECL_CONSTEXPR inline const T &qMax(const T &a, const T &b) { return (a < b) ? b : a; }
+// template <typename T>
+// Q_DECL_CONSTEXPR inline const T &qBound(const T &min, const T &val, const T &max)
+// { return qMax(min, qMin(max, val)); }
+
+// /*
+//    Data stream functions are provided by many classes (defined in qdatastream.h)
+// */
+
+// class QDataStream;
+
+// Q_CORE_EXPORT Q_DECL_CONST_FUNCTION bool qSharedBuild() Q_DECL_NOTHROW;
+
+// /*
+//    Debugging and error handling
+// */
+
+// // QtPrivate::asString defined in qstring.h
+// #ifndef qPrintable
+// #  define qPrintable(string) QtPrivate::asString(string).toLocal8Bit().constData()
+// #endif
+
+// #ifndef qUtf8Printable
+// #  define qUtf8Printable(string) QtPrivate::asString(string).toUtf8().constData()
+// #endif
+
+// /*
+//     Wrap QString::utf16() with enough casts to allow passing it
+//     to QString::asprintf("%ls") without warnings.
+// */
+// #ifndef qUtf16Printable
+// #  define qUtf16Printable(string) \
+//     static_cast<const wchar_t*>(static_cast<const void*>(QString(string).utf16()))
+// #endif
+
+// class QString;
+// Q_DECL_COLD_FUNCTION
+// Q_CORE_EXPORT QString qt_error_string(int errorCode = -1);
+
+// #ifndef Q_CC_MSVC
+// Q_NORETURN
+// #endif
+// Q_DECL_COLD_FUNCTION
+// Q_CORE_EXPORT void qt_assert(const char *assertion, const char *file, int line) Q_DECL_NOTHROW;
+
+// #if defined(QT_NO_DEBUG) && !defined(QT_PAINT_DEBUG)
+// #define QT_NO_PAINT_DEBUG
+// #endif
+
+// #ifndef Q_CC_MSVC
+// Q_NORETURN
+// #endif
+// Q_DECL_COLD_FUNCTION
+// Q_CORE_EXPORT void qt_assert_x(const char *where, const char *what, const char *file, int line) Q_DECL_NOTHROW;
+
+// #if !defined(Q_ASSERT_X)
+// #  if defined(QT_NO_DEBUG) && !defined(QT_FORCE_ASSERTS)
+// #    define Q_ASSERT_X(cond, where, what) static_cast<void>(false && (cond))
+// #  else
+// #    define Q_ASSERT_X(cond, where, what) ((cond) ? static_cast<void>(0) : qt_assert_x(where, what, __FILE__, __LINE__))
+// #  endif
+// #endif
+
+// Q_NORETURN Q_CORE_EXPORT void qt_check_pointer(const char *, int) Q_DECL_NOTHROW;
+// Q_DECL_COLD_FUNCTION
+// Q_CORE_EXPORT void qBadAlloc();
+
+// Q_REQUIRED_RESULT Q_DECL_CONSTEXPR static inline Q_DECL_UNUSED bool qFuzzyCompare(double p1, double p2)
+// {
+//     return (qAbs(p1 - p2) * 1000000000000. <= qMin(qAbs(p1), qAbs(p2)));
+// }
+
+// Q_REQUIRED_RESULT Q_DECL_CONSTEXPR static inline Q_DECL_UNUSED bool qFuzzyCompare(float p1, float p2)
+// {
+//     return (qAbs(p1 - p2) * 100000.f <= qMin(qAbs(p1), qAbs(p2)));
+// }
+
+// Q_REQUIRED_RESULT Q_DECL_CONSTEXPR static inline Q_DECL_UNUSED bool qFuzzyIsNull(double d)
+// {
+//     return qAbs(d) <= 0.000000000001;
+// }
+
+// Q_REQUIRED_RESULT Q_DECL_CONSTEXPR static inline Q_DECL_UNUSED  bool qFuzzyIsNull(float f)
+// {
+//     return qAbs(f) <= 0.00001f;
+// }
+
+// /*
+//    This function tests a double for a null value. It doesn't
+//    check whether the actual value is 0 or close to 0, but whether
+//    it is binary 0, disregarding sign.
+// */
+// Q_REQUIRED_RESULT static inline Q_DECL_UNUSED bool qIsNull(double d)
+// {
+//     union U {
+//         double d;
+//         quint64 u;
+//     };
+//     U val;
+//     val.d = d;
+//     return (val.u & Q_UINT64_C(0x7fffffffffffffff)) == 0;
+// }
+
+// /*
+//    This function tests a float for a null value. It doesn't
+//    check whether the actual value is 0 or close to 0, but whether
+//    it is binary 0, disregarding sign.
+// */
+// Q_REQUIRED_RESULT static inline Q_DECL_UNUSED bool qIsNull(float f)
+// {
+//     union U {
+//         float f;
+//         quint32 u;
+//     };
+//     U val;
+//     val.f = f;
+//     return (val.u & 0x7fffffff) == 0;
+// }
+
+// /*
+//    Compilers which follow outdated template instantiation rules
+//    require a class to have a comparison operator to exist when
+//    a QList of this type is instantiated. It's not actually
+//    used in the list, though. Hence the dummy implementation.
+//    Just in case other code relies on it we better trigger a warning
+//    mandating a real implementation.
+// */
+
+// class QByteArray;
+// Q_CORE_EXPORT QByteArray qgetenv(const char *varName);
+// // need it as two functions because QString is only forward-declared here
+// Q_CORE_EXPORT QString qEnvironmentVariable(const char *varName);
+// Q_CORE_EXPORT QString qEnvironmentVariable(const char *varName, const QString &defaultValue);
+// Q_CORE_EXPORT bool qputenv(const char *varName, const QByteArray& value);
+// Q_CORE_EXPORT bool qunsetenv(const char *varName);
+
+// Q_CORE_EXPORT bool qEnvironmentVariableIsEmpty(const char *varName) Q_DECL_NOEXCEPT;
+// Q_CORE_EXPORT bool qEnvironmentVariableIsSet(const char *varName) Q_DECL_NOEXCEPT;
+// Q_CORE_EXPORT int  qEnvironmentVariableIntValue(const char *varName, bool *ok=nullptr) Q_DECL_NOEXCEPT;
+
+// inline int qIntCast(double f) { return int(f); }
+// inline int qIntCast(float f) { return int(f); }
+
+// /*
+//   Reentrant versions of basic rand() functions for random number generation
+// */
+// Q_CORE_EXPORT void qsrand(uint seed);
+// Q_CORE_EXPORT int qrand();
+
+// // We need to keep QTypeInfo, QSysInfo, QFlags, qDebug & family in qglobal.h for compatibility with Qt 4.
+// // Be careful when changing the order of these files.
+// #include <QtCore/qtypeinfo.h>
+// #include <QtCore/qsysinfo.h>
+// #include <QtCore/qlogging.h>
+
+// #include <QtCore/qflags.h>
+
+// #include <QtCore/qatomic.h>
+// #include <QtCore/qglobalstatic.h>
+// #include <QtCore/qnumeric.h>
+// #include <QtCore/qversiontagging.h>

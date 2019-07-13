@@ -1,0 +1,207 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2018 Intel Corporation.
+** Copyright (C) 2014 Olivier Goffart <ogoffart@woboq.com>
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+// #include <QtCore/qglobal.h>
+// #include <QtCore/qatomic.h>
+// #include <QtCore/qbytearray.h>
+// #include <QtCore/qvarlengtharray.h>
+// #ifndef QT_NO_QOBJECT
+// #include <QtCore/qobjectdefs.h>
+// #endif
+
+class Q_CORE_EXPORT QMetaType {
+    enum ExtensionFlag { NoExtensionFlags,
+                         CreateEx = 0x1, DestroyEx = 0x2,
+                         ConstructEx = 0x4, DestructEx = 0x8,
+                         NameEx = 0x10, SizeEx = 0x20,
+                         CtorEx = 0x40, DtorEx = 0x80,
+                         FlagsEx = 0x100, MetaObjectEx = 0x200
+                       };
+public:
+    // If we are using QDoc it fakes the Type enum looks like this.
+    enum Type {
+        UnknownType = 0, Bool = 1, Int = 2, UInt = 3, LongLong = 4, ULongLong = 5,
+        Double = 6, Long = 32, Short = 33, Char = 34, ULong = 35, UShort = 36,
+        UChar = 37, Float = 38,
+        VoidStar = 31,
+        QChar = 7, QString = 10, QStringList = 11, QByteArray = 12,
+        QBitArray = 13, QDate = 14, QTime = 15, QDateTime = 16, QUrl = 17,
+        QLocale = 18, QRect = 19, QRectF = 20, QSize = 21, QSizeF = 22,
+        QLine = 23, QLineF = 24, QPoint = 25, QPointF = 26, QRegExp = 27,
+        QEasingCurve = 29, QUuid = 30, QVariant = 41, QModelIndex = 42,
+        QPersistentModelIndex = 50, QRegularExpression = 44,
+        QJsonValue = 45, QJsonObject = 46, QJsonArray = 47, QJsonDocument = 48,
+        QByteArrayList = 49, QObjectStar = 39, SChar = 40,
+        Void = 43,
+        Nullptr = 51,
+        QVariantMap = 8, QVariantList = 9, QVariantHash = 28,
+        QCborSimpleType = 52, QCborValue = 53, QCborArray = 54, QCborMap = 55,
+
+        // Gui types
+        QFont = 64, QPixmap = 65, QBrush = 66, QColor = 67, QPalette = 68,
+        QIcon = 69, QImage = 70, QPolygon = 71, QRegion = 72, QBitmap = 73,
+        QCursor = 74, QKeySequence = 75, QPen = 76, QTextLength = 77, QTextFormat = 78,
+        QMatrix = 79, QTransform = 80, QMatrix4x4 = 81, QVector2D = 82,
+        QVector3D = 83, QVector4D = 84, QQuaternion = 85, QPolygonF = 86,
+
+        // Widget types
+        QSizePolicy = 121,
+        LastCoreType = QCborMap,
+        LastGuiType = QPolygonF,
+        User = 1024
+    };
+
+    enum TypeFlag {
+        NeedsConstruction = 0x1,
+        NeedsDestruction = 0x2,
+        MovableType = 0x4,
+        PointerToQObject = 0x8,
+        IsEnumeration = 0x10,
+        SharedPointerToQObject = 0x20,
+        WeakPointerToQObject = 0x40,
+        TrackingPointerToQObject = 0x80,
+        WasDeclaredAsMetaType = 0x100,
+        IsGadget = 0x200,
+        PointerToGadget = 0x400
+    };
+    Q_DECLARE_FLAGS(TypeFlags, TypeFlag)
+
+    typedef void (*Deleter)(void *);
+    typedef void *(*Creator)(const void *);
+
+// #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    typedef void (*Destructor)(void *);
+    typedef void *(*Constructor)(void *, const void *); // TODO Qt6: remove me
+// #endif
+    typedef void (*TypedDestructor)(int, void *);
+    typedef void *(*TypedConstructor)(int, void *, const void *);
+
+    typedef void (*SaveOperator)(QDataStream &, const void *);
+    typedef void (*LoadOperator)(QDataStream &, void *);
+// #ifndef QT_NO_DATASTREAM
+    static void registerStreamOperators(const char *typeName, SaveOperator saveOp,
+                                        LoadOperator loadOp);
+    static void registerStreamOperators(int type, SaveOperator saveOp,
+                                        LoadOperator loadOp);
+// #endif
+    static int registerType(const char *typeName, Deleter deleter,
+                            Creator creator);
+    static int registerType(const char *typeName, Deleter deleter,
+                            Creator creator,
+                            Destructor destructor,
+                            Constructor constructor,
+                            int size,
+                            QMetaType::TypeFlags flags,
+                            const QMetaObject *metaObject);
+    static int registerType(const char *typeName,
+                            TypedDestructor destructor,
+                            TypedConstructor constructor,
+                            int size,
+                            QMetaType::TypeFlags flags,
+                            const QMetaObject *metaObject);
+    static bool unregisterType(int type);
+    static int registerNormalizedType(const QT_PREPEND_NAMESPACE(QByteArray) &normalizedTypeName, Deleter deleter,
+                            Creator creator,
+                            Destructor destructor,
+                            Constructor constructor,
+                            int size,
+                            QMetaType::TypeFlags flags,
+                            const QMetaObject *metaObject);
+    static int registerNormalizedType(const QT_PREPEND_NAMESPACE(QByteArray) &normalizedTypeName, Destructor destructor,
+                            Constructor constructor,
+                            int size,
+                            QMetaType::TypeFlags flags,
+                            const QMetaObject *metaObject);
+    static int registerNormalizedType(const QT_PREPEND_NAMESPACE(QByteArray) &normalizedTypeName, TypedDestructor destructor,
+                            TypedConstructor constructor,
+                            int size,
+                            QMetaType::TypeFlags flags,
+                            const QMetaObject *metaObject);
+    static int registerTypedef(const char *typeName, int aliasId);
+    static int registerNormalizedTypedef(const QT_PREPEND_NAMESPACE(QByteArray) &normalizedTypeName, int aliasId);
+    static int type(const char *typeName);
+
+    static int type(const QT_PREPEND_NAMESPACE(QByteArray) &typeName);
+    static const char *typeName(int type);
+    static int sizeOf(int type);
+    static TypeFlags typeFlags(int type);
+    static const QMetaObject *metaObjectForType(int type);
+    static bool isRegistered(int type);
+    static void *create(int type, const void *copy = nullptr);
+// #if QT_DEPRECATED_SINCE(5, 0)
+    QT_DEPRECATED static void *construct(int type, const void *copy = nullptr);
+// #endif
+    static void destroy(int type, void *data);
+    static void *construct(int type, void *where, const void *copy);
+    static void destruct(int type, void *where);
+
+// #ifndef QT_NO_DATASTREAM
+    static bool save(QDataStream &stream, int type, const void *data);
+    static bool load(QDataStream &stream, int type, void *data);
+// #endif
+
+    explicit QMetaType(const int type); // ### Qt6: drop const
+    inline ~QMetaType();
+
+    inline bool isValid() const;
+    inline bool isRegistered() const;
+    inline int sizeOf() const;
+    inline TypeFlags flags() const;
+    inline const QMetaObject *metaObject() const;
+
+    inline void *create(const void *copy = nullptr) const;
+    inline void destroy(void *data) const;
+    inline void *construct(void *where, const void *copy = nullptr) const;
+    inline void destruct(void *data) const;
+
+public:
+    static bool convert(const void *from, int fromTypeId, void *to, int toTypeId);
+    static bool compare(const void *lhs, const void *rhs, int typeId, int* result);
+    static bool equals(const void *lhs, const void *rhs, int typeId, int* result);
+    static bool debugStream(QDebug& dbg, const void *rhs, int typeId);
+
+    static bool hasRegisteredConverterFunction(int fromTypeId, int toTypeId);
+
+private:
+    Q_DISABLE_COPY(QMetaType)
+};
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QMetaType::TypeFlags)

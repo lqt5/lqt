@@ -1,0 +1,486 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2013 Olivier Goffart <ogoffart@woboq.com>
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+// #include <QtCore/qglobal.h>
+
+
+// class QString;
+
+struct QLatin1Char
+{
+public:
+    explicit QLatin1Char(char c);
+    char toLatin1() const;
+    ushort unicode() const;
+};
+
+class Q_CORE_EXPORT QChar {
+public:
+    enum SpecialCharacter {
+        Null = 0x0000,
+        Tabulation = 0x0009,
+        LineFeed = 0x000a,
+        CarriageReturn = 0x000d,
+        Space = 0x0020,
+        Nbsp = 0x00a0,
+        SoftHyphen = 0x00ad,
+        ReplacementCharacter = 0xfffd,
+        ObjectReplacementCharacter = 0xfffc,
+        ByteOrderMark = 0xfeff,
+        ByteOrderSwapped = 0xfffe,
+        ParagraphSeparator = 0x2029,
+        LineSeparator = 0x2028,
+        LastValidCodePoint = 0x10ffff
+    };
+
+    QChar();
+    QChar(ushort rc);
+    QChar(uchar c, uchar r);
+    QChar(short rc);
+    QChar(uint rc);
+    QChar(int rc);
+    QChar(SpecialCharacter s);
+    QChar(QLatin1Char ch);
+    QChar(wchar_t ch);
+
+    enum Category
+    {
+        Mark_NonSpacing,          //   Mn
+        Mark_SpacingCombining,    //   Mc
+        Mark_Enclosing,           //   Me
+
+        Number_DecimalDigit,      //   Nd
+        Number_Letter,            //   Nl
+        Number_Other,             //   No
+
+        Separator_Space,          //   Zs
+        Separator_Line,           //   Zl
+        Separator_Paragraph,      //   Zp
+
+        Other_Control,            //   Cc
+        Other_Format,             //   Cf
+        Other_Surrogate,          //   Cs
+        Other_PrivateUse,         //   Co
+        Other_NotAssigned,        //   Cn
+
+        Letter_Uppercase,         //   Lu
+        Letter_Lowercase,         //   Ll
+        Letter_Titlecase,         //   Lt
+        Letter_Modifier,          //   Lm
+        Letter_Other,             //   Lo
+
+        Punctuation_Connector,    //   Pc
+        Punctuation_Dash,         //   Pd
+        Punctuation_Open,         //   Ps
+        Punctuation_Close,        //   Pe
+        Punctuation_InitialQuote, //   Pi
+        Punctuation_FinalQuote,   //   Pf
+        Punctuation_Other,        //   Po
+
+        Symbol_Math,              //   Sm
+        Symbol_Currency,          //   Sc
+        Symbol_Modifier,          //   Sk
+        Symbol_Other              //   So
+    };
+
+    enum Script
+    {
+        Script_Unknown,
+        Script_Inherited,
+        Script_Common,
+
+        Script_Latin,
+        Script_Greek,
+        Script_Cyrillic,
+        Script_Armenian,
+        Script_Hebrew,
+        Script_Arabic,
+        Script_Syriac,
+        Script_Thaana,
+        Script_Devanagari,
+        Script_Bengali,
+        Script_Gurmukhi,
+        Script_Gujarati,
+        Script_Oriya,
+        Script_Tamil,
+        Script_Telugu,
+        Script_Kannada,
+        Script_Malayalam,
+        Script_Sinhala,
+        Script_Thai,
+        Script_Lao,
+        Script_Tibetan,
+        Script_Myanmar,
+        Script_Georgian,
+        Script_Hangul,
+        Script_Ethiopic,
+        Script_Cherokee,
+        Script_CanadianAboriginal,
+        Script_Ogham,
+        Script_Runic,
+        Script_Khmer,
+        Script_Mongolian,
+        Script_Hiragana,
+        Script_Katakana,
+        Script_Bopomofo,
+        Script_Han,
+        Script_Yi,
+        Script_OldItalic,
+        Script_Gothic,
+        Script_Deseret,
+        Script_Tagalog,
+        Script_Hanunoo,
+        Script_Buhid,
+        Script_Tagbanwa,
+        Script_Coptic,
+
+        // Unicode 4.0 additions
+        Script_Limbu,
+        Script_TaiLe,
+        Script_LinearB,
+        Script_Ugaritic,
+        Script_Shavian,
+        Script_Osmanya,
+        Script_Cypriot,
+        Script_Braille,
+
+        // Unicode 4.1 additions
+        Script_Buginese,
+        Script_NewTaiLue,
+        Script_Glagolitic,
+        Script_Tifinagh,
+        Script_SylotiNagri,
+        Script_OldPersian,
+        Script_Kharoshthi,
+
+        // Unicode 5.0 additions
+        Script_Balinese,
+        Script_Cuneiform,
+        Script_Phoenician,
+        Script_PhagsPa,
+        Script_Nko,
+
+        // Unicode 5.1 additions
+        Script_Sundanese,
+        Script_Lepcha,
+        Script_OlChiki,
+        Script_Vai,
+        Script_Saurashtra,
+        Script_KayahLi,
+        Script_Rejang,
+        Script_Lycian,
+        Script_Carian,
+        Script_Lydian,
+        Script_Cham,
+
+        // Unicode 5.2 additions
+        Script_TaiTham,
+        Script_TaiViet,
+        Script_Avestan,
+        Script_EgyptianHieroglyphs,
+        Script_Samaritan,
+        Script_Lisu,
+        Script_Bamum,
+        Script_Javanese,
+        Script_MeeteiMayek,
+        Script_ImperialAramaic,
+        Script_OldSouthArabian,
+        Script_InscriptionalParthian,
+        Script_InscriptionalPahlavi,
+        Script_OldTurkic,
+        Script_Kaithi,
+
+        // Unicode 6.0 additions
+        Script_Batak,
+        Script_Brahmi,
+        Script_Mandaic,
+
+        // Unicode 6.1 additions
+        Script_Chakma,
+        Script_MeroiticCursive,
+        Script_MeroiticHieroglyphs,
+        Script_Miao,
+        Script_Sharada,
+        Script_SoraSompeng,
+        Script_Takri,
+
+        // Unicode 7.0 additions
+        Script_CaucasianAlbanian,
+        Script_BassaVah,
+        Script_Duployan,
+        Script_Elbasan,
+        Script_Grantha,
+        Script_PahawhHmong,
+        Script_Khojki,
+        Script_LinearA,
+        Script_Mahajani,
+        Script_Manichaean,
+        Script_MendeKikakui,
+        Script_Modi,
+        Script_Mro,
+        Script_OldNorthArabian,
+        Script_Nabataean,
+        Script_Palmyrene,
+        Script_PauCinHau,
+        Script_OldPermic,
+        Script_PsalterPahlavi,
+        Script_Siddham,
+        Script_Khudawadi,
+        Script_Tirhuta,
+        Script_WarangCiti,
+
+        // Unicode 8.0 additions
+        Script_Ahom,
+        Script_AnatolianHieroglyphs,
+        Script_Hatran,
+        Script_Multani,
+        Script_OldHungarian,
+        Script_SignWriting,
+
+        // Unicode 9.0 additions
+        Script_Adlam,
+        Script_Bhaiksuki,
+        Script_Marchen,
+        Script_Newa,
+        Script_Osage,
+        Script_Tangut,
+
+        // Unicode 10.0 additions
+        Script_MasaramGondi,
+        Script_Nushu,
+        Script_Soyombo,
+        Script_ZanabazarSquare,
+
+        ScriptCount
+    };
+
+    enum Direction
+    {
+        DirL, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
+        DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN,
+        DirLRI, DirRLI, DirFSI, DirPDI
+    };
+
+    enum Decomposition
+    {
+        NoDecomposition,
+        Canonical,
+        Font,
+        NoBreak,
+        Initial,
+        Medial,
+        Final,
+        Isolated,
+        Circle,
+        Super,
+        Sub,
+        Vertical,
+        Wide,
+        Narrow,
+        Small,
+        Square,
+        Compat,
+        Fraction
+    };
+
+    enum JoiningType {
+        Joining_None,
+        Joining_Causing,
+        Joining_Dual,
+        Joining_Right,
+        Joining_Left,
+        Joining_Transparent
+    };
+
+    enum Joining
+    {
+        OtherJoining, Dual, Right, Center
+    };
+
+    enum CombiningClass
+    {
+        Combining_BelowLeftAttached       = 200,
+        Combining_BelowAttached           = 202,
+        Combining_BelowRightAttached      = 204,
+        Combining_LeftAttached            = 208,
+        Combining_RightAttached           = 210,
+        Combining_AboveLeftAttached       = 212,
+        Combining_AboveAttached           = 214,
+        Combining_AboveRightAttached      = 216,
+
+        Combining_BelowLeft               = 218,
+        Combining_Below                   = 220,
+        Combining_BelowRight              = 222,
+        Combining_Left                    = 224,
+        Combining_Right                   = 226,
+        Combining_AboveLeft               = 228,
+        Combining_Above                   = 230,
+        Combining_AboveRight              = 232,
+
+        Combining_DoubleBelow             = 233,
+        Combining_DoubleAbove             = 234,
+        Combining_IotaSubscript           = 240
+    };
+
+    enum UnicodeVersion {
+        Unicode_Unassigned,
+        Unicode_1_1,
+        Unicode_2_0,
+        Unicode_2_1_2,
+        Unicode_3_0,
+        Unicode_3_1,
+        Unicode_3_2,
+        Unicode_4_0,
+        Unicode_4_1,
+        Unicode_5_0,
+        Unicode_5_1,
+        Unicode_5_2,
+        Unicode_6_0,
+        Unicode_6_1,
+        Unicode_6_2,
+        Unicode_6_3,
+        Unicode_7_0,
+        Unicode_8_0,
+        Unicode_9_0,
+        Unicode_10_0
+    };
+
+    Category category();
+    Direction direction();
+    JoiningType joiningType();
+    // QT_DEPRECATED Joining joining();
+
+    unsigned char combiningClass();
+
+    QChar mirroredChar() const;
+    bool hasMirrored() const;
+
+    QString decomposition() const;
+    Decomposition decompositionTag() const;
+
+    inline int digitValue() const;
+    inline QChar toLower() const;
+    inline QChar toUpper() const;
+    inline QChar toTitleCase() const;
+    inline QChar toCaseFolded() const;
+
+    Script script() const;
+
+    inline UnicodeVersion unicodeVersion() const;
+
+    char toLatin1() const;
+    inline ushort unicode();
+
+    static inline QChar fromLatin1(char c);
+
+    Q_DECL_CONSTEXPR inline bool isNull() const;
+
+    inline bool isPrint() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isSpace() const;
+    inline bool isMark() const Q_DECL_NOTHROW;
+    inline bool isPunct() const Q_DECL_NOTHROW;
+    inline bool isSymbol() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isLetter() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isNumber() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isLetterOrNumber() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isDigit() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isLower() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isUpper() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isTitleCase() const Q_DECL_NOTHROW;
+
+    Q_DECL_CONSTEXPR inline bool isNonCharacter() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isHighSurrogate() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isLowSurrogate() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline bool isSurrogate() const Q_DECL_NOTHROW;
+
+    Q_DECL_CONSTEXPR inline uchar cell() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR inline uchar row() const Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR inline void setCell(uchar acell) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR inline void setRow(uchar arow) Q_DECL_NOTHROW;
+
+    static Q_DECL_CONSTEXPR inline bool isNonCharacter(uint ucs4) Q_DECL_NOTHROW;
+    static Q_DECL_CONSTEXPR inline bool isHighSurrogate(uint ucs4) Q_DECL_NOTHROW;
+    static Q_DECL_CONSTEXPR inline bool isLowSurrogate(uint ucs4) Q_DECL_NOTHROW;
+    static Q_DECL_CONSTEXPR inline bool isSurrogate(uint ucs4) Q_DECL_NOTHROW;
+    static Q_DECL_CONSTEXPR inline bool requiresSurrogates(uint ucs4) Q_DECL_NOTHROW;
+    static Q_DECL_CONSTEXPR inline uint surrogateToUcs4(ushort high, ushort low) Q_DECL_NOTHROW;
+    static Q_DECL_CONSTEXPR inline uint surrogateToUcs4(QChar high, QChar low) Q_DECL_NOTHROW;
+    static Q_DECL_CONSTEXPR inline ushort highSurrogate(uint ucs4) Q_DECL_NOTHROW;
+    static Q_DECL_CONSTEXPR inline ushort lowSurrogate(uint ucs4) Q_DECL_NOTHROW;
+
+    static Category QT_FASTCALL category(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Direction QT_FASTCALL direction(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static JoiningType QT_FASTCALL joiningType(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+// #if QT_DEPRECATED_SINCE(5, 3)
+    QT_DEPRECATED static Joining QT_FASTCALL joining(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+// #endif
+    static unsigned char QT_FASTCALL combiningClass(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+
+    static uint QT_FASTCALL mirroredChar(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static bool QT_FASTCALL hasMirrored(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+
+    static QString QT_FASTCALL decomposition(uint ucs4);
+    static Decomposition QT_FASTCALL decompositionTag(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+
+    static int QT_FASTCALL digitValue(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static uint QT_FASTCALL toLower(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static uint QT_FASTCALL toUpper(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static uint QT_FASTCALL toTitleCase(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static uint QT_FASTCALL toCaseFolded(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+
+    static Script QT_FASTCALL script(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+
+    static UnicodeVersion QT_FASTCALL unicodeVersion(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+
+    static UnicodeVersion QT_FASTCALL currentUnicodeVersion() Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+
+    static bool QT_FASTCALL isPrint(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Q_DECL_CONSTEXPR inline bool isSpace(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static bool QT_FASTCALL isMark(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static bool QT_FASTCALL isPunct(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static bool QT_FASTCALL isSymbol(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Q_DECL_CONSTEXPR inline bool isLetter(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Q_DECL_CONSTEXPR inline bool isNumber(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Q_DECL_CONSTEXPR inline bool isLetterOrNumber(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Q_DECL_CONSTEXPR inline bool isDigit(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Q_DECL_CONSTEXPR inline bool isLower(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Q_DECL_CONSTEXPR inline bool isUpper(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+    static Q_DECL_CONSTEXPR inline bool isTitleCase(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
+};

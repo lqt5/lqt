@@ -1,0 +1,269 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2016 Intel Corporation.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+// #include <QtCore/qnamespace.h>
+
+// #include <QtCore/qobjectdefs_impl.h>
+
+class Q_CORE_EXPORT QGenericArgument
+{
+public:
+    inline QGenericArgument(const char *aName = nullptr, const void *aData = nullptr);
+    inline void *data() const;
+    inline const char *name() const;
+};
+
+class Q_CORE_EXPORT QGenericReturnArgument: public QGenericArgument
+{
+public:
+    inline QGenericReturnArgument(const char *aName = nullptr, void *aData = nullptr)
+        : QGenericArgument(aName, aData)
+        {}
+};
+
+template <class T>
+class QArgument: public QGenericArgument
+{
+public:
+    inline QArgument(const char *aName, const T &aData)
+        : QGenericArgument(aName, static_cast<const void *>(&aData))
+        {}
+};
+template <class T>
+class QArgument<T &>: public QGenericArgument
+{
+public:
+    inline QArgument(const char *aName, T &aData)
+        : QGenericArgument(aName, static_cast<const void *>(&aData))
+        {}
+};
+
+
+template <typename T>
+class QReturnArgument: public QGenericReturnArgument
+{
+public:
+    inline QReturnArgument(const char *aName, T &aData)
+        : QGenericReturnArgument(aName, static_cast<void *>(&aData))
+        {}
+};
+
+struct Q_CORE_EXPORT QMetaObject
+{
+    class Connection;
+    const char *className() const;
+    const QMetaObject *superClass() const;
+
+    bool inherits(const QMetaObject *metaObject) const Q_DECL_NOEXCEPT;
+    QObject *cast(QObject *obj) const;
+    const QObject *cast(const QObject *obj) const;
+
+// #if !defined(QT_NO_TRANSLATION) || defined(Q_CLANG_QDOC)
+    QString tr(const char *s, const char *c, int n = -1) const;
+// #endif // QT_NO_TRANSLATION
+
+    int methodOffset() const;
+    int enumeratorOffset() const;
+    int propertyOffset() const;
+    int classInfoOffset() const;
+
+    int constructorCount() const;
+    int methodCount() const;
+    int enumeratorCount() const;
+    int propertyCount() const;
+    int classInfoCount() const;
+
+    int indexOfConstructor(const char *constructor) const;
+    int indexOfMethod(const char *method) const;
+    int indexOfSignal(const char *signal) const;
+    int indexOfSlot(const char *slot) const;
+    int indexOfEnumerator(const char *name) const;
+    int indexOfProperty(const char *name) const;
+    int indexOfClassInfo(const char *name) const;
+
+    QMetaMethod constructor(int index) const;
+    QMetaMethod method(int index) const;
+    QMetaEnum enumerator(int index) const;
+    QMetaProperty property(int index) const;
+    QMetaClassInfo classInfo(int index) const;
+    QMetaProperty userProperty() const;
+
+    static bool checkConnectArgs(const char *signal, const char *method);
+    static bool checkConnectArgs(const QMetaMethod &signal,
+                                 const QMetaMethod &method);
+    static QByteArray normalizedSignature(const char *method);
+    static QByteArray normalizedType(const char *type);
+
+    // internal index-based connect
+    static Connection connect(const QObject *sender, int signal_index,
+                        const QObject *receiver, int method_index,
+                        int type = 0, int *types = nullptr);
+    // internal index-based disconnect
+    static bool disconnect(const QObject *sender, int signal_index,
+                           const QObject *receiver, int method_index);
+    static bool disconnectOne(const QObject *sender, int signal_index,
+                              const QObject *receiver, int method_index);
+    // internal slot-name based connect
+    static void connectSlotsByName(QObject *o);
+
+    // internal index-based signal activation
+    static void activate(QObject *sender, int signal_index, void **argv);
+    static void activate(QObject *sender, const QMetaObject *, int local_signal_index, void **argv);
+    static void activate(QObject *sender, int signal_offset, int local_signal_index, void **argv);
+
+    static bool invokeMethod(QObject *obj, const char *member,
+                             Qt::ConnectionType,
+                             QGenericReturnArgument ret,
+                             QGenericArgument val0 = QGenericArgument(nullptr),
+                             QGenericArgument val1 = QGenericArgument(),
+                             QGenericArgument val2 = QGenericArgument(),
+                             QGenericArgument val3 = QGenericArgument(),
+                             QGenericArgument val4 = QGenericArgument(),
+                             QGenericArgument val5 = QGenericArgument(),
+                             QGenericArgument val6 = QGenericArgument(),
+                             QGenericArgument val7 = QGenericArgument(),
+                             QGenericArgument val8 = QGenericArgument(),
+                             QGenericArgument val9 = QGenericArgument());
+
+    static inline bool invokeMethod(QObject *obj, const char *member,
+                             QGenericReturnArgument ret,
+                             QGenericArgument val0 = QGenericArgument(nullptr),
+                             QGenericArgument val1 = QGenericArgument(),
+                             QGenericArgument val2 = QGenericArgument(),
+                             QGenericArgument val3 = QGenericArgument(),
+                             QGenericArgument val4 = QGenericArgument(),
+                             QGenericArgument val5 = QGenericArgument(),
+                             QGenericArgument val6 = QGenericArgument(),
+                             QGenericArgument val7 = QGenericArgument(),
+                             QGenericArgument val8 = QGenericArgument(),
+                             QGenericArgument val9 = QGenericArgument());
+
+    static inline bool invokeMethod(QObject *obj, const char *member,
+                             Qt::ConnectionType type,
+                             QGenericArgument val0 = QGenericArgument(nullptr),
+                             QGenericArgument val1 = QGenericArgument(),
+                             QGenericArgument val2 = QGenericArgument(),
+                             QGenericArgument val3 = QGenericArgument(),
+                             QGenericArgument val4 = QGenericArgument(),
+                             QGenericArgument val5 = QGenericArgument(),
+                             QGenericArgument val6 = QGenericArgument(),
+                             QGenericArgument val7 = QGenericArgument(),
+                             QGenericArgument val8 = QGenericArgument(),
+                             QGenericArgument val9 = QGenericArgument());
+
+    static inline bool invokeMethod(QObject *obj, const char *member,
+                             QGenericArgument val0 = QGenericArgument(nullptr),
+                             QGenericArgument val1 = QGenericArgument(),
+                             QGenericArgument val2 = QGenericArgument(),
+                             QGenericArgument val3 = QGenericArgument(),
+                             QGenericArgument val4 = QGenericArgument(),
+                             QGenericArgument val5 = QGenericArgument(),
+                             QGenericArgument val6 = QGenericArgument(),
+                             QGenericArgument val7 = QGenericArgument(),
+                             QGenericArgument val8 = QGenericArgument(),
+                             QGenericArgument val9 = QGenericArgument());
+
+    QObject *newInstance(QGenericArgument val0 = QGenericArgument(nullptr),
+                         QGenericArgument val1 = QGenericArgument(),
+                         QGenericArgument val2 = QGenericArgument(),
+                         QGenericArgument val3 = QGenericArgument(),
+                         QGenericArgument val4 = QGenericArgument(),
+                         QGenericArgument val5 = QGenericArgument(),
+                         QGenericArgument val6 = QGenericArgument(),
+                         QGenericArgument val7 = QGenericArgument(),
+                         QGenericArgument val8 = QGenericArgument(),
+                         QGenericArgument val9 = QGenericArgument()) const;
+
+    enum Call {
+        InvokeMetaMethod,
+        ReadProperty,
+        WriteProperty,
+        ResetProperty,
+        QueryPropertyDesignable,
+        QueryPropertyScriptable,
+        QueryPropertyStored,
+        QueryPropertyEditable,
+        QueryPropertyUser,
+        CreateInstance,
+        IndexOfMethod,
+        RegisterPropertyMetaType,
+        RegisterMethodArgumentMetaType
+    };
+
+    int static_metacall(Call, int, void **) const;
+    static int metacall(QObject *, Call, int, void **);
+
+    // struct { // private data
+    //     const QMetaObject *superdata;
+    //     const QByteArrayData *stringdata;
+    //     const uint *data;
+    //     typedef void (*StaticMetacallFunction)(QObject *, QMetaObject::Call, int, void **);
+    //     StaticMetacallFunction static_metacall;
+    //     const QMetaObject * const *relatedMetaObjects;
+    //     void *extradata; //reserved for future use
+    // } d;
+
+private:
+    Q_DISABLE_COPY(QMetaObject)
+};
+
+// class Q_CORE_EXPORT QMetaObject::Connection {
+//     void *d_ptr; //QObjectPrivate::Connection*
+//     explicit Connection(void *data) : d_ptr(data) {  }
+//     friend class QObject;
+//     friend class QObjectPrivate;
+//     friend struct QMetaObject;
+//     bool isConnected_helper() const;
+// public:
+//     ~Connection();
+//     Connection();
+//     Connection(const Connection &other);
+//     Connection &operator=(const Connection &other);
+// #ifdef Q_QDOC
+//     operator bool() const;
+// #else
+//     typedef void *Connection::*RestrictedBool;
+//     operator RestrictedBool() const { return d_ptr && isConnected_helper() ? &Connection::d_ptr : nullptr; }
+// #endif
+
+//     Connection(Connection &&o) Q_DECL_NOTHROW : d_ptr(o.d_ptr) { o.d_ptr = nullptr; }
+//     Connection &operator=(Connection &&other) Q_DECL_NOTHROW
+//     { qSwap(d_ptr, other.d_ptr); return *this; }
+// };

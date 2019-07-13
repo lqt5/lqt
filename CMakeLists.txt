@@ -23,27 +23,31 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1.0)
 
-project(lqt)
+project(lqt5)
+
+# set(REUSE_FILES 1)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin) 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
+set(CMAKE_PREFIX_PATH /Users/saniko/Qt/5.12.0/clang_64/lib/cmake/)
+set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 
-find_package(Qt4 REQUIRED)
-set(QT_USE_QTCORE 1)
-set(QT_USE_QTGUI 1)
-set(QT_USE_QTNETWORK 1)
-set(QT_USE_QTWEBKIT 1)
-set(QT_USE_QTOPENGL 1)
-set(QT_USE_QTSCRIPT 1)
-set(QT_USE_QTSVG 1)
-set(QT_USE_QTUITOOLS 1) 
-set(QT_USE_QTXML 1)
-set(QT_USE_QTSQL 1)
-set(QT_USE_QTXMLPATTERNS 1)
-include(${QT_USE_FILE})
+# set(QT_USE_QTCORE 1)
+# set(QT_USE_QTGUI 1)
+# set(QT_USE_QTNETWORK 1)
+# set(QT_USE_QTWEBKIT 1)
+# set(QT_USE_QTOPENGL 1)
+# set(QT_USE_QTSCRIPT 1)
+# set(QT_USE_QTSVG 1)
+# set(QT_USE_QTUITOOLS 1) 
+# set(QT_USE_QTXML 1)
+# set(QT_USE_QTSQL 1)
+# set(QT_USE_QTXMLPATTERNS 1)
+
+find_package (Qt5 REQUIRED Core Gui)
 
 set(EXTRA_LUA_OPTIONS )
 option(VERBOSE_BUILD "Create a verbose build which logs every binding call" OFF)
@@ -53,7 +57,7 @@ if(VERBOSE_BUILD)
 endif()
 
 if(noqt)
-	set(QT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+	set(QT_SCHEMA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
 	#set(nomerge TRUE)
 endif()
 
@@ -71,15 +75,26 @@ if(WIN32)
 	endif()
 	set(LUA_LIBS_FOR_MODULE ${LUA_LIBRARIES})
 else(WIN32)
+	# set(LUA_LIBS_FOR_MODULE ${LUA_LIBRARIES})
 	set(LUA_LIBS_FOR_MODULE )
 endif(WIN32)
 
 if(APPLE)
-   set(CMAKE_SHARED_MODULE_CREATE_CXX_FLAGS
+    set(CMAKE_SHARED_MODULE_CREATE_CXX_FLAGS
        "${CMAKE_SHARED_MODULE_CREATE_CXX_FLAGS} -flat_namespace -undefined dynamic_lookup")
 endif(APPLE)
 
 add_subdirectory(cpptoxml)
+
+include_directories(${Qt5Core_INCLUDE_DIRS})
+include_directories(${Qt5Gui_INCLUDE_DIRS})
+
+add_definitions(${Qt5Core_DEFINITIONS})
+add_definitions(${Qt5Gui_DEFINITIONS})
+
+# # Add compiler flags for building executables (-fPIE)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11")
 
 function(build_qt_lib_binding BINDING_HEADER)
 
@@ -93,9 +108,11 @@ function(build_qt_lib_binding BINDING_HEADER)
 	set_source_files_properties(${BINDING_SRC} PROPERTIES  GENERATED TRUE)
 
 	if (UNIX)
-		set (PP_CONFIG ${CMAKE_SOURCE_DIR}/cpptoxml/parser/rpp/pp-qt-configuration)
+		set (PP_CONFIG ${QT_SCHEMA_DIR}/lqt5.lqt)
+		# set (PP_CONFIG ${CMAKE_SOURCE_DIR}/cpptoxml/parser/rpp/pp-qt-configuration)
 	else()
-		set (PP_CONFIG ${CMAKE_SOURCE_DIR}/cpptoxml/parser/rpp/pp-qt-configuration-win)
+		set (PP_CONFIG ${QT_SCHEMA_DIR}/lqt5.lqt)
+		# set (PP_CONFIG ${CMAKE_SOURCE_DIR}/cpptoxml/parser/rpp/pp-qt-configuration-win)
 	endif()
 
 	if(NOT REUSE_FILES)
@@ -104,7 +121,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 							COMMAND cpptoxml
 								${BINDING_HEADER}
 								-C ${PP_CONFIG}
-								-Q ${QT_INCLUDE_DIR} 
+								-Q ${QT_SCHEMA_DIR} 
 								-o ${GEN_XML}
 							COMMENT "Generating XML: running cpptoxml on ${BINDING_NAME} "
 							VERBATIM)
@@ -117,7 +134,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 				set(${BINDING_NAME}_DEPENDS ${${BINDING_NAME}_DEPENDS} generate_${DEPNAME}_cpp)
 			endforeach()
 		endif()
-		
+
 		add_custom_target(generate_${BINDING_NAME}_cpp
 							COMMAND ${LUA_CMD}
 								"${CMAKE_SOURCE_DIR}/generator/generator.lua" 
@@ -162,7 +179,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 		set(${COMMON}_SRC ${${COMMON}_SRC}	${${BINDING_NAME}_GENERATED})
 	endif()
 
-	qt4_wrap_cpp(${COMMON}_MOC ${LQT_GEN_DIR}/${BINDING_NAME}_slot.hpp)
+	qt5_wrap_cpp(${COMMON}_MOC ${LQT_GEN_DIR}/${BINDING_NAME}_slot.hpp)
 	
 	include_directories(${CMAKE_SOURCE_DIR}/common ${LUA_INCLUDE_DIR} ${QT_INCLUDES})
 
@@ -186,25 +203,45 @@ if(noqt)
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test/noqt)
 	build_qt_lib_binding(noqt)
 else()
+
+	set(QT_LIBRARIES Qt5::Core Qt5::Gui)
 	build_qt_lib_binding(QtCore)
-	build_qt_lib_binding(QtNetwork QtCore)
-	build_qt_lib_binding(QtGui QtNetwork QtCore)
-	build_qt_lib_binding(QtScript QtGui QtNetwork QtCore)
-	build_qt_lib_binding(QtOpenGL QtGui QtNetwork QtCore)
-	build_qt_lib_binding(QtSvg QtScript QtGui QtNetwork QtCore)
-	build_qt_lib_binding(QtXml QtSvg QtScript QtGui QtNetwork QtCore)
-	build_qt_lib_binding(QtXmlPatterns QtCore QtXml)
-	build_qt_lib_binding(QtUiTools QtCore QtGui QtXml) 
-	build_qt_lib_binding(QtWebKit QtXmlPatterns QtSvg QtScript QtOpenGL QtGui QtNetwork QtCore QtXml)
-	build_qt_lib_binding(QtSql QtCore)
-	# TODO
-	#build_qt_lib_binding(QtScriptTools) # 4.5 only
-	#build_qt_lib_binding(Phonon)
+# 	build_qt_lib_binding(QtNetwork QtCore)
+# 	build_qt_lib_binding(QtGui QtNetwork QtCore)
+# 	build_qt_lib_binding(QtScript QtGui QtNetwork QtCore)
+# 	build_qt_lib_binding(QtOpenGL QtGui QtNetwork QtCore)
+# 	build_qt_lib_binding(QtSvg QtScript QtGui QtNetwork QtCore)
+# 	build_qt_lib_binding(QtXml QtSvg QtScript QtGui QtNetwork QtCore)
+# 	build_qt_lib_binding(QtXmlPatterns QtCore QtXml)
+# 	build_qt_lib_binding(QtUiTools QtCore QtGui QtXml) 
+# 	build_qt_lib_binding(QtWebKit QtXmlPatterns QtSvg QtScript QtOpenGL QtGui QtNetwork QtCore QtXml)
+# 	build_qt_lib_binding(QtSql QtCore)
+# 	# TODO
+# 	#build_qt_lib_binding(QtScriptTools) # 4.5 only
+# 	#build_qt_lib_binding(Phonon)
 endif()
 
+# # Find includes in corresponding build directories
+# set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# # Find the QtWidgets library
+# find_package(Qt5Widgets)
 
+# # Add the include directories for the Qt 5 Widgets module to
+# # the compile lines.
+# include_directories(${Qt5Widgets_INCLUDE_DIRS})
+# set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# # Use the compile definitions defined in the Qt 5 Widgets module
+# add_definitions(${Qt5Widgets_DEFINITIONS})
 
+# # Add compiler flags for building executables (-fPIE)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+# qt5_generate_moc(main.cpp main.moc)
 
+# # Tell CMake to create the helloworld executable
+# add_executable(helloworld main.cpp main.moc)
+
+# #Link the helloworld executable to the Qt 5 widgets library.
+# target_link_libraries(helloworld Qt5::Widgets)
 

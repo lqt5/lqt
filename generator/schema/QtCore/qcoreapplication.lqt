@@ -1,0 +1,183 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2013 Olivier Goffart <ogoffart@woboq.com>
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+// #include <QtCore/qglobal.h>
+// #include <QtCore/qstring.h>
+// #ifndef QT_NO_QOBJECT
+// #include <QtCore/qobject.h>
+// #include <QtCore/qcoreevent.h>
+// #include <QtCore/qeventloop.h>
+// #else
+// #include <QtCore/qscopedpointer.h>
+// #endif
+
+// #ifndef QT_NO_QOBJECT
+// #if defined(Q_OS_WIN) && !defined(tagMSG)
+// typedef struct tagMSG MSG;
+// #endif
+// #endif
+
+
+// class QCoreApplicationPrivate;
+// class QTextCodec;
+// class QTranslator;
+// class QPostEventList;
+// class QStringList;
+// class QAbstractEventDispatcher;
+// class QAbstractNativeEventFilter;
+
+// #define qApp QCoreApplication::instance()
+
+class Q_CORE_EXPORT QCoreApplication : public QObject
+{
+    LQT_OBJECT
+    Q_PROPERTY(QString applicationName READ applicationName WRITE setApplicationName NOTIFY applicationNameChanged)
+    Q_PROPERTY(QString applicationVersion READ applicationVersion WRITE setApplicationVersion NOTIFY applicationVersionChanged)
+    Q_PROPERTY(QString organizationName READ organizationName WRITE setOrganizationName NOTIFY organizationNameChanged)
+    Q_PROPERTY(QString organizationDomain READ organizationDomain WRITE setOrganizationDomain NOTIFY organizationDomainChanged)
+    Q_PROPERTY(bool quitLockEnabled READ isQuitLockEnabled WRITE setQuitLockEnabled)
+
+public:
+    enum { ApplicationFlags = QT_VERSION
+    };
+
+    QCoreApplication(int &argc, char **argv
+#ifndef Q_QDOC
+                     , int = ApplicationFlags
+#endif
+            );
+
+    ~QCoreApplication();
+
+    static QStringList arguments();
+
+    static void setAttribute(Qt::ApplicationAttribute attribute, bool on = true);
+    static bool testAttribute(Qt::ApplicationAttribute attribute);
+
+    static void setOrganizationDomain(const QString &orgDomain);
+    static QString organizationDomain();
+    static void setOrganizationName(const QString &orgName);
+    static QString organizationName();
+    static void setApplicationName(const QString &application);
+    static QString applicationName();
+    static void setApplicationVersion(const QString &version);
+    static QString applicationVersion();
+
+    static void setSetuidAllowed(bool allow);
+    static bool isSetuidAllowed();
+
+    static QCoreApplication *instance() { return self; }
+
+    static int exec();
+    static void processEvents(QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents);
+    static void processEvents(QEventLoop::ProcessEventsFlags flags, int maxtime);
+    static void exit(int retcode=0);
+
+    static bool sendEvent(QObject *receiver, QEvent *event);
+    static void postEvent(QObject *receiver, QEvent *event, int priority = Qt::NormalEventPriority);
+    static void sendPostedEvents(QObject *receiver = nullptr, int event_type = 0);
+    static void removePostedEvents(QObject *receiver, int eventType = 0);
+
+    QT_DEPRECATED static bool hasPendingEvents();
+
+    static QAbstractEventDispatcher *eventDispatcher();
+    static void setEventDispatcher(QAbstractEventDispatcher *eventDispatcher);
+
+    virtual bool notify(QObject *, QEvent *);
+
+    static bool startingUp();
+    static bool closingDown();
+
+    static QString applicationDirPath();
+    static QString applicationFilePath();
+    static qint64 applicationPid() Q_DECL_CONST_FUNCTION;
+
+// #if QT_CONFIG(library)
+    static void setLibraryPaths(const QStringList &);
+    static QStringList libraryPaths();
+    static void addLibraryPath(const QString &);
+    static void removeLibraryPath(const QString &);
+// #endif // QT_CONFIG(library)
+
+// #ifndef QT_NO_TRANSLATION
+    static bool installTranslator(QTranslator * messageFile);
+    static bool removeTranslator(QTranslator * messageFile);
+// #endif
+
+    static QString translate(const char * context,
+                             const char * key,
+                             const char * disambiguation = nullptr,
+                             int n = -1);
+
+    QT_DEPRECATED static void flush();
+
+    void installNativeEventFilter(QAbstractNativeEventFilter *filterObj);
+    void removeNativeEventFilter(QAbstractNativeEventFilter *filterObj);
+
+    static bool isQuitLockEnabled();
+    static void setQuitLockEnabled(bool enabled);
+
+public Q_SLOTS:
+    static void quit();
+
+Q_SIGNALS:
+    void aboutToQuit(QPrivateSignal);
+
+    void organizationNameChanged();
+    void organizationDomainChanged();
+    void applicationNameChanged();
+    void applicationVersionChanged();
+
+protected:
+    bool event(QEvent *) override;
+
+    virtual bool compressEvent(QEvent *, QObject *receiver, QPostEventList *);
+
+protected:
+    QCoreApplication(QCoreApplicationPrivate &p);
+
+private:
+    Q_DISABLE_COPY(QCoreApplication)
+};
+
+// Q_CORE_EXPORT void qAddPreRoutine(QtStartUpFunction);
+// Q_CORE_EXPORT void qAddPostRoutine(QtCleanUpFunction);
+// Q_CORE_EXPORT void qRemovePostRoutine(QtCleanUpFunction);
+// Q_CORE_EXPORT QString qAppName();                // get application name

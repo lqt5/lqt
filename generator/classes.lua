@@ -484,6 +484,10 @@ function fill_wrapper_code(f)
 		ignore(f.xarg.fullname, 'abstract method', f.xarg.member_of_class)
 		return nil
 	end
+	if f.xarg.friend then
+		ignore(f.xarg.fullname, 'friend method', f.xarg.member_of_class)
+		return nil
+	end
 	if f.xarg.member_of_class and f.xarg.static~='1' then
 		if not typesystem[f.xarg.member_of_class..'*'] then
 			ignore(f.xarg.fullname, 'not a member of wrapped class', f.xarg.member_of_class)
