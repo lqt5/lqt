@@ -212,11 +212,18 @@ int lqtL_createenumlist (lua_State *L, lqt_Enumlist list[]) {
 }
 
 static int lqtL_tostring (lua_State *L) {
-    if (!lua_isuserdata(L, 1) || lua_islightuserdata(L, 1)) return 0;
+    if (!lua_isuserdata(L, 1) || lua_islightuserdata(L, 1)) {
+        lua_pushfstring(L, "%s: %p"
+            , lua_typename(L, lua_type(L, 1))
+            , lua_topointer(L, 1)
+        );
+        return 1;
+    }
     lua_getmetatable(L, 1);
     if (!lua_istable(L, -1)) {
         lua_pop(L, 1); // (0)
-        return 0;
+        lua_pushfstring(L, "userdata: %p", lua_touserdata(L, 1));
+        return 1;
     }
     lua_getfield(L, -1, "__type"); // (2)
     lua_remove(L, -2); // (1)

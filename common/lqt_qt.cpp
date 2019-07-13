@@ -166,6 +166,8 @@ static int lqtL_pushqobject(lua_State *L, QObject * object) {
             meta = meta->superClass();
         }
     }
+    QString className = meta->className();
+    luaL_error(L, "QObject `%s` not registered!", className.toStdString().c_str());
     return 0;
 }
 
@@ -513,7 +515,16 @@ int lqtL_qvariant_value(lua_State *L) {
 		case QVariant::String: lqtL_passudata(L, new QString(self->value<QString>()), "QString*"); return 1;
 		case QVariant::StringList: lqtL_passudata(L, new QStringList(self->value<QStringList>()), "QStringList*"); return 1;
 		case QVariant::Time: lqtL_passudata(L, new QTime(self->value<QTime>()), "QTime*"); return 1;
-		case QVariant::Url: lqtL_passudata(L, new QUrl(self->value<QUrl>()), "QUrl*"); return 1;
+        case QVariant::Url: lqtL_passudata(L, new QUrl(self->value<QUrl>()), "QUrl*"); return 1;
+        case QVariant::Map: lqtL_passudata(L, new QVariantMap(self->value<QVariantMap>()), "QVariantMap*"); return 1;
+        case QVariant::Hash: lqtL_passudata(L, new QVariantHash(self->value<QVariantHash>()), "QVariantHash*"); return 1;
+        case QVariant::EasingCurve: lqtL_passudata(L, new QEasingCurve(self->value<QEasingCurve>()), "QEasingCurve*"); return 1;
+        // case QVariant::Uuid: lqtL_passudata(L, new QUuid(self->value<QUuid>()), "QUuid*"); return 1;
+        case QVariant::ModelIndex: lqtL_passudata(L, new QModelIndex(self->value<QModelIndex>()), "QModelIndex*"); return 1;
+        case QVariant::PersistentModelIndex: lqtL_passudata(L, new QPersistentModelIndex(self->value<QPersistentModelIndex>()), "QPersistentModelIndex*"); return 1;
+        // case QVariant::RegularExpression: lqtL_passudata(L, new QRegularExpression(self->toRegularExpression()), "QRegularExpression*"); return 1;
+        // case QVariant::LastCoreType: lqtL_passudata(L, new QLastCoreType(self->value<QLastCoreType>()), "QLastCoreType*"); return 1;
+
 #ifdef MODULE_qtgui
 		/* QtGui types */
 		case QVariant::Bitmap: lqtL_passudata(L, new QBitmap(self->value<QBitmap>()), "QBitmap*"); return 1;
@@ -550,6 +561,8 @@ void lqtL_qvariant_custom_qtgui(lua_State *L)
 #endif
 {
 	lua_getfield(L, LUA_REGISTRYINDEX, "QVariant*");
+    if (!lua_istable(L, -1))
+        luaL_error(L, "QVariant not registered!");
 	int qvariant = lua_gettop(L);
 
 	lua_pushliteral(L, "value");
