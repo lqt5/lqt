@@ -79,45 +79,53 @@ qt_types['QRectF'] = {
 qt_types['QRectF const&'] = qt_types['QRectF']
 ]]
 	
-qt_types['QByteArray'] = {
-	get = function(i) return 'QByteArray(lua_tostring(L, '..i..'), lua_objlen(L, '..i..'))', 1, 'QByteArray' end,
-	push = function(i) return 'lua_pushlstring(L, '..i..'.constData(), '..i..'.size())', 1 end,
-	test = function(i) return 'lqtL_isstring(L, '..i..')', 1 end,
-	onstack = 'string,',
-}
-qt_types['QByteArray const&'] = qt_types['QByteArray']
+-- qt_types['QByteArray'] = {
+-- 	get = function(i) return 'QByteArray(lua_tostring(L, '..i..'), lua_objlen(L, '..i..'))', 1, 'QByteArray' end,
+-- 	push = function(i) return 'lua_pushlstring(L, '..i..'.constData(), '..i..'.size())', 1 end,
+-- 	test = function(i) return 'lqtL_isstring(L, '..i..')', 1 end,
+-- 	onstack = 'string,',
+-- }
+-- qt_types['QByteArray const&'] = qt_types['QByteArray']
 
-qt_types['QList<QByteArray>'] = {
-	get = function(i) return 'lqtL_getStringList(L, '..i..')', 1, 'QList<QByteArray>' end,
-	push = function(i) return 'lqtL_pushStringList(L, '..i..')', 1 end,
-	test = function(i) return 'lua_istable(L, '..i..')', 1 end,
-	onstack = 'table,',
-}
+-- qt_types['QFlag'] = {
+-- 	get = function(i) return 'QFlag(lua_tonumber(L, '..i..')', 1, 'QFlag' end,
+-- 	push = function(i) return 'lua_pushnumber(L, '..i..'.operator int())', 1 end,
+-- 	test = function(i) return 'lqtL_isnumber(L, '..i..')', 1 end,
+-- 	onstack = 'number,',
+-- }
+-- qt_types['QFlag const&'] = qt_types['QFlag']
 
-if not getmetatable(qt_types) then
-	setmetatable(qt_types, {
-		__index = function(t, k)
-			if type(k)=='string'
-				and string.match(k, '^QFlags<[%w:]+>$') then
-				local e = string.match(k, '^QFlags<([%w:]+)>$')
-				if not qt_types[e] then return nil end
-				e = string.gsub(e, '::', '.')
-				local ret = {
-					get = function(i)
-						return '('..k..'(lqtL_getflags(L, '..i..', "'..e..'")))', 1
-					end,
-					push = function(i)
-						return 'lqtL_pushflags(L, '..i..', "'..e..'")', 1
-					end,
-					test = function(i)
-						return 'lqtL_isflags(L, '..i..')', 1
-					end,
-					onstack = 'table,',
-				}
-				return ret
-			end
-		end,
-	})
-end
+-- qt_types['QList<QByteArray>'] = {
+-- 	get = function(i) return 'lqtL_getStringList(L, '..i..')', 1, 'QList<QByteArray>' end,
+-- 	push = function(i) return 'lqtL_pushStringList(L, '..i..')', 1 end,
+-- 	test = function(i) return 'lua_istable(L, '..i..')', 1 end,
+-- 	onstack = 'table,',
+-- }
+
+-- if not getmetatable(qt_types) then
+-- 	setmetatable(qt_types, {
+-- 		__index = function(t, k)
+-- 			if type(k)=='string'
+-- 				and string.match(k, '^QFlags<[%w:]+>$') then
+-- 				local e = string.match(k, '^QFlags<([%w:]+)>$')
+-- 				if not qt_types[e] then return nil end
+-- 				e = string.gsub(e, '::', '.')
+-- 				local ret = {
+-- 					get = function(i)
+-- 						return '('..k..'(lqtL_getflags(L, '..i..', "'..e..'")))', 1
+-- 					end,
+-- 					push = function(i)
+-- 						return 'lqtL_pushflags(L, '..i..', "'..e..'")', 1
+-- 					end,
+-- 					test = function(i)
+-- 						return 'lqtL_isflags(L, '..i..')', 1
+-- 					end,
+-- 					onstack = 'table,',
+-- 				}
+-- 				return ret
+-- 			end
+-- 		end,
+-- 	})
+-- end
 
 return qt_types
