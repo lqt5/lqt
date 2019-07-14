@@ -431,7 +431,7 @@ public:
 // #if QT_DEPRECATED_SINCE(5, 0)
     // QT_DEPRECATED static inline QString fromAscii(const char *str, int size = -1);
     // QT_DEPRECATED static inline QString fromAscii(const QByteArray &str);
-    Q_REQUIRED_RESULT QByteArray toAscii() const;
+    // Q_REQUIRED_RESULT QByteArray toAscii() const;
 // #endif
 
     inline int toWCharArray(wchar_t *array) const;

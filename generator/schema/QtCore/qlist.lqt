@@ -1,0 +1,361 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef QLIST_H
+#define QLIST_H
+
+// #include <QtCore/qalgorithms.h>
+// #include <QtCore/qiterator.h>
+// #include <QtCore/qrefcount.h>
+// #include <QtCore/qarraydata.h>
+// #include <QtCore/qhashfunctions.h>
+
+// #include <iterator>
+// #include <list>
+// #include <algorithm>
+// #ifdef Q_COMPILER_INITIALIZER_LISTS
+// #include <initializer_list>
+// #endif
+
+// #include <stdlib.h>
+// #include <new>
+// #include <limits.h>
+// #include <string.h>
+
+// #ifdef Q_CC_MSVC
+// #pragma warning( push )
+// #pragma warning( disable : 4127 ) // "conditional expression is constant"
+// #endif
+
+QT_BEGIN_NAMESPACE
+
+
+template <typename T> class QVector;
+template <typename T> class QSet;
+
+// template <typename T> struct QListSpecialMethods
+// {
+// protected:
+//     ~QListSpecialMethods() {}
+// };
+// template <> struct QListSpecialMethods<QByteArray>;
+// template <> struct QListSpecialMethods<QString>;
+
+struct Q_CORE_EXPORT QListData {
+    // tags for tag-dispatching of QList implementations,
+    // based on QList's three different memory layouts:
+    struct NotArrayCompatibleLayout {};
+    struct NotIndirectLayout {};
+    struct ArrayCompatibleLayout   : NotIndirectLayout {};                           // data laid out like a C array
+    struct InlineWithPaddingLayout : NotArrayCompatibleLayout, NotIndirectLayout {}; // data laid out like a C array with padding
+    struct IndirectLayout          : NotArrayCompatibleLayout {};                    // data allocated on the heap
+
+    struct Data {
+        QtPrivate::RefCount ref;
+        int alloc, begin, end;
+        void *array[1];
+    };
+    enum { DataHeaderSize = sizeof(Data) - sizeof(void *) };
+
+    Data *detach(int alloc);
+    Data *detach_grow(int *i, int n);
+    void realloc(int alloc);
+    void realloc_grow(int growth);
+    inline void dispose() { dispose(d); }
+    static void dispose(Data *d);
+    static const Data shared_null;
+    Data *d;
+    void **erase(void **xi);
+    void **append(int n);
+    void **append();
+    void **append(const QListData &l);
+    void **prepend();
+    void **insert(int i);
+    void remove(int i);
+    void remove(int i, int n);
+    void move(int from, int to);
+    inline int size() const Q_DECL_NOTHROW { return d->end - d->begin; }
+    inline bool isEmpty() const Q_DECL_NOTHROW { return d->end  == d->begin; }
+    inline void **at(int i) const Q_DECL_NOTHROW { return d->array + d->begin + i; }
+    inline void **begin() const Q_DECL_NOTHROW { return d->array + d->begin; }
+    inline void **end() const Q_DECL_NOTHROW { return d->array + d->end; }
+};
+
+template <typename T>
+class QList
+// #ifndef Q_QDOC
+//     : public QListSpecialMethods<T>
+// #endif
+{
+public:
+    inline QList() Q_DECL_NOTHROW;
+    QList(const QList<T> &l);
+    ~QList();
+    QList<T> &operator=(const QList<T> &l);
+
+    inline void swap(QList<T> &other) Q_DECL_NOTHROW;
+
+    bool operator==(const QList<T> &l) const;
+    inline bool operator!=(const QList<T> &l) const { return !(*this == l); }
+
+    inline int size() const Q_DECL_NOTHROW { return p.size(); }
+
+    inline void detach() { if (d->ref.isShared()) detach_helper(); }
+
+    inline void detachShared();
+
+    inline bool isDetached() const;
+// #if !defined(QT_NO_UNSHARABLE_CONTAINERS)
+    inline void setSharable(bool sharable);
+// #endif
+    inline bool isSharedWith(const QList<T> &other) const Q_DECL_NOTHROW;
+
+    inline bool isEmpty() const Q_DECL_NOTHROW;
+
+    void clear();
+
+    const T &at(int i) const;
+    const T &operator[](int i) const;
+    T &operator[](int i);
+
+    void reserve(int size);
+    void append(const T &t);
+    void append(const QList<T> &t);
+    void prepend(const T &t);
+    void insert(int i, const T &t);
+    void replace(int i, const T &t);
+    void removeAt(int i);
+    int removeAll(const T &t);
+    bool removeOne(const T &t);
+    T takeAt(int i);
+    T takeFirst();
+    T takeLast();
+    void move(int from, int to);
+    void swap(int i, int j);
+    int indexOf(const T &t, int from = 0) const;
+    int lastIndexOf(const T &t, int from = -1) const;
+    bool contains(const T &t) const;
+    int count(const T &t) const;
+
+//     class const_iterator;
+
+//     class iterator {
+//     public:
+//         Node *i;
+//         typedef std::random_access_iterator_tag  iterator_category;
+//         // ### Qt6: use int
+//         typedef qptrdiff difference_type;
+//         typedef T value_type;
+//         typedef T *pointer;
+//         typedef T &reference;
+
+//         inline iterator() Q_DECL_NOTHROW : i(nullptr) {}
+//         inline iterator(Node *n) Q_DECL_NOTHROW : i(n) {}
+// #if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+//         // can't remove it in Qt 5, since doing so would make the type trivial,
+//         // which changes the way it's passed to functions by value.
+//         inline iterator(const iterator &o) Q_DECL_NOTHROW : i(o.i){}
+// #endif
+//         inline T &operator*() const { return i->t(); }
+//         inline T *operator->() const { return &i->t(); }
+//         inline T &operator[](difference_type j) const { return i[j].t(); }
+//         inline bool operator==(const iterator &o) const Q_DECL_NOTHROW { return i == o.i; }
+//         inline bool operator!=(const iterator &o) const Q_DECL_NOTHROW { return i != o.i; }
+//         inline bool operator<(const iterator& other) const Q_DECL_NOTHROW { return i < other.i; }
+//         inline bool operator<=(const iterator& other) const Q_DECL_NOTHROW { return i <= other.i; }
+//         inline bool operator>(const iterator& other) const Q_DECL_NOTHROW { return i > other.i; }
+//         inline bool operator>=(const iterator& other) const Q_DECL_NOTHROW { return i >= other.i; }
+// #ifndef QT_STRICT_ITERATORS
+//         inline bool operator==(const const_iterator &o) const Q_DECL_NOTHROW
+//             { return i == o.i; }
+//         inline bool operator!=(const const_iterator &o) const Q_DECL_NOTHROW
+//             { return i != o.i; }
+//         inline bool operator<(const const_iterator& other) const Q_DECL_NOTHROW
+//             { return i < other.i; }
+//         inline bool operator<=(const const_iterator& other) const Q_DECL_NOTHROW
+//             { return i <= other.i; }
+//         inline bool operator>(const const_iterator& other) const Q_DECL_NOTHROW
+//             { return i > other.i; }
+//         inline bool operator>=(const const_iterator& other) const Q_DECL_NOTHROW
+//             { return i >= other.i; }
+// #endif
+//         inline iterator &operator++() { ++i; return *this; }
+//         inline iterator operator++(int) { Node *n = i; ++i; return n; }
+//         inline iterator &operator--() { i--; return *this; }
+//         inline iterator operator--(int) { Node *n = i; i--; return n; }
+//         inline iterator &operator+=(difference_type j) { i+=j; return *this; }
+//         inline iterator &operator-=(difference_type j) { i-=j; return *this; }
+//         inline iterator operator+(difference_type j) const { return iterator(i+j); }
+//         inline iterator operator-(difference_type j) const { return iterator(i-j); }
+//         friend inline iterator operator+(difference_type j, iterator k) { return k + j; }
+//         inline int operator-(iterator j) const { return int(i - j.i); }
+//     };
+//     friend class iterator;
+
+//     class const_iterator {
+//     public:
+//         Node *i;
+//         typedef std::random_access_iterator_tag  iterator_category;
+//         // ### Qt6: use int
+//         typedef qptrdiff difference_type;
+//         typedef T value_type;
+//         typedef const T *pointer;
+//         typedef const T &reference;
+
+//         inline const_iterator() Q_DECL_NOTHROW : i(nullptr) {}
+//         inline const_iterator(Node *n) Q_DECL_NOTHROW : i(n) {}
+// #if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+//         // can't remove it in Qt 5, since doing so would make the type trivial,
+//         // which changes the way it's passed to functions by value.
+//         inline const_iterator(const const_iterator &o) Q_DECL_NOTHROW : i(o.i) {}
+// #endif
+// #ifdef QT_STRICT_ITERATORS
+//         inline explicit const_iterator(const iterator &o) Q_DECL_NOTHROW : i(o.i) {}
+// #else
+//         inline const_iterator(const iterator &o) Q_DECL_NOTHROW : i(o.i) {}
+// #endif
+//         inline const T &operator*() const { return i->t(); }
+//         inline const T *operator->() const { return &i->t(); }
+//         inline const T &operator[](difference_type j) const { return i[j].t(); }
+//         inline bool operator==(const const_iterator &o) const Q_DECL_NOTHROW { return i == o.i; }
+//         inline bool operator!=(const const_iterator &o) const Q_DECL_NOTHROW { return i != o.i; }
+//         inline bool operator<(const const_iterator& other) const Q_DECL_NOTHROW { return i < other.i; }
+//         inline bool operator<=(const const_iterator& other) const Q_DECL_NOTHROW { return i <= other.i; }
+//         inline bool operator>(const const_iterator& other) const Q_DECL_NOTHROW { return i > other.i; }
+//         inline bool operator>=(const const_iterator& other) const Q_DECL_NOTHROW { return i >= other.i; }
+//         inline const_iterator &operator++() { ++i; return *this; }
+//         inline const_iterator operator++(int) { Node *n = i; ++i; return n; }
+//         inline const_iterator &operator--() { i--; return *this; }
+//         inline const_iterator operator--(int) { Node *n = i; i--; return n; }
+//         inline const_iterator &operator+=(difference_type j) { i+=j; return *this; }
+//         inline const_iterator &operator-=(difference_type j) { i-=j; return *this; }
+//         inline const_iterator operator+(difference_type j) const { return const_iterator(i+j); }
+//         inline const_iterator operator-(difference_type j) const { return const_iterator(i-j); }
+//         friend inline const_iterator operator+(difference_type j, const_iterator k) { return k + j; }
+//         inline int operator-(const_iterator j) const { return int(i - j.i); }
+//     };
+//     friend class const_iterator;
+
+//     // stl style
+//     typedef std::reverse_iterator<iterator> reverse_iterator;
+//     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+//     inline iterator begin() { detach(); return reinterpret_cast<Node *>(p.begin()); }
+//     inline const_iterator begin() const Q_DECL_NOTHROW { return reinterpret_cast<Node *>(p.begin()); }
+//     inline const_iterator cbegin() const Q_DECL_NOTHROW { return reinterpret_cast<Node *>(p.begin()); }
+//     inline const_iterator constBegin() const Q_DECL_NOTHROW { return reinterpret_cast<Node *>(p.begin()); }
+//     inline iterator end() { detach(); return reinterpret_cast<Node *>(p.end()); }
+//     inline const_iterator end() const Q_DECL_NOTHROW { return reinterpret_cast<Node *>(p.end()); }
+//     inline const_iterator cend() const Q_DECL_NOTHROW { return reinterpret_cast<Node *>(p.end()); }
+//     inline const_iterator constEnd() const Q_DECL_NOTHROW { return reinterpret_cast<Node *>(p.end()); }
+//     reverse_iterator rbegin() { return reverse_iterator(end()); }
+//     reverse_iterator rend() { return reverse_iterator(begin()); }
+//     const_reverse_iterator rbegin() const Q_DECL_NOTHROW { return const_reverse_iterator(end()); }
+//     const_reverse_iterator rend() const Q_DECL_NOTHROW { return const_reverse_iterator(begin()); }
+//     const_reverse_iterator crbegin() const Q_DECL_NOTHROW { return const_reverse_iterator(end()); }
+//     const_reverse_iterator crend() const Q_DECL_NOTHROW { return const_reverse_iterator(begin()); }
+//     iterator insert(iterator before, const T &t);
+//     iterator erase(iterator pos);
+//     iterator erase(iterator first, iterator last);
+
+//     // more Qt
+//     typedef iterator Iterator;
+//     typedef const_iterator ConstIterator;
+    inline int count() const;
+    inline int length() const;
+    inline T& first();
+    inline const T& constFirst() const;
+    inline const T& first() const;
+    T& last();
+    const T& last() const;
+    inline const T& constLast() const;
+    inline void removeFirst();
+    inline void removeLast();
+    inline bool startsWith(const T &t);
+    inline bool endsWith(const T &t);
+    QList<T> mid(int pos, int length = -1) const;
+
+    T value(int i) const;
+    T value(int i, const T &defaultValue) const;
+
+    // stl compatibility
+    inline void push_back(const T &t);
+    inline void push_front(const T &t);
+    inline T& front();
+    inline const T& front() const;
+    inline T& back();
+    inline const T& back() const;
+    inline void pop_front();
+    inline void pop_back();
+    inline bool empty() const;
+//     typedef int size_type;
+//     typedef T value_type;
+//     typedef value_type *pointer;
+//     typedef const value_type *const_pointer;
+//     typedef value_type &reference;
+//     typedef const value_type &const_reference;
+//     // ### Qt6: use int
+//     typedef qptrdiff difference_type;
+
+    // comfort
+    QList<T> &operator+=(const QList<T> &l);
+    inline QList<T> operator+(const QList<T> &l) const;
+    inline QList<T> &operator+=(const T &t);
+    inline QList<T> &operator<< (const T &t);
+    inline QList<T> &operator<<(const QList<T> &l);
+
+    QVector<T> toVector() const;
+    QSet<T> toSet() const;
+
+    static QList<T> fromVector(const QVector<T> &vector);
+    static QList<T> fromSet(const QSet<T> &set);
+
+    static inline QList<T> fromStdList(const std::list<T> &list);
+    inline std::list<T> toStdList() const;
+};
+
+QT_END_NAMESPACE
+
+#include <QtCore/qbytearraylist.lqt>
+#include <QtCore/qstringlist.lqt>
+
+// #ifdef Q_CC_MSVC
+// #pragma warning( pop )
+// #endif
+
+#endif // QLIST_H

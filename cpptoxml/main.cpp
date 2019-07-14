@@ -435,6 +435,7 @@ QString findIncludeFile(const QString& sourceName, const QString& qtdir)
 	} while (0)
 
 	TRY_DIRECTORY(qtdir+'/'+sourceName+'/'+sourceName);
+	TRY_DIRECTORY(qtdir+'/'+sourceName+'/'+sourceName+".lqt");
 	TRY_DIRECTORY(qtdir+"/Headers/"+sourceName);
 	TRY_DIRECTORY(QString("%1/%2.framework/Headers/%2").arg(qtdir, sourceName));
 	TRY_DIRECTORY(QString("/Library/Frameworks/%1.framework/Headers/%1").arg(sourceName));

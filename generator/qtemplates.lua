@@ -6,11 +6,11 @@ return {
 	
 	qtcore = {
 		['QList<T>'] = {
-			-- 'QList<QString>',
+			'QList<QString>',
 			-- 'QList<QFileInfo>',
-			-- 'QList<QVariant>',
+			'QList<QVariant>',
 			-- 'QList<QModelIndex>',
-			-- 'QList<int>',
+			'QList<int>',
 			-- 'QList<QUrl>',
 		},
 		['QFlags<Enum>'] = {

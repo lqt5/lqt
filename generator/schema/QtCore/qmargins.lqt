@@ -1,0 +1,118 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef QMARGINS_H
+#define QMARGINS_H
+
+#include <QtCore/qnamespace.lqt>
+
+QT_BEGIN_NAMESPACE
+
+/*****************************************************************************
+  QMargins class
+ *****************************************************************************/
+
+class QMargins
+{
+public:
+    Q_DECL_CONSTEXPR QMargins() Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR QMargins(int left, int top, int right, int bottom) Q_DECL_NOTHROW;
+
+    Q_DECL_CONSTEXPR bool isNull() const Q_DECL_NOTHROW;
+
+    Q_DECL_CONSTEXPR int left() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR int top() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR int right() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR int bottom() const Q_DECL_NOTHROW;
+
+    Q_DECL_RELAXED_CONSTEXPR void setLeft(int left) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setTop(int top) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setRight(int right) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setBottom(int bottom) Q_DECL_NOTHROW;
+
+    Q_DECL_RELAXED_CONSTEXPR QMargins &operator+=(const QMargins &margins) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMargins &operator-=(const QMargins &margins) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMargins &operator+=(int) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMargins &operator-=(int) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMargins &operator*=(int) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMargins &operator/=(int);
+    Q_DECL_RELAXED_CONSTEXPR QMargins &operator*=(qreal) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMargins &operator/=(qreal);
+};
+
+Q_DECLARE_TYPEINFO(QMargins, Q_MOVABLE_TYPE);
+
+/*****************************************************************************
+  QMarginsF class
+ *****************************************************************************/
+
+class QMarginsF
+{
+public:
+    Q_DECL_CONSTEXPR QMarginsF() Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR QMarginsF(qreal left, qreal top, qreal right, qreal bottom) Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR QMarginsF(const QMargins &margins) Q_DECL_NOTHROW;
+
+    Q_DECL_CONSTEXPR bool isNull() const Q_DECL_NOTHROW;
+
+    Q_DECL_CONSTEXPR qreal left() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR qreal top() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR qreal right() const Q_DECL_NOTHROW;
+    Q_DECL_CONSTEXPR qreal bottom() const Q_DECL_NOTHROW;
+
+    Q_DECL_RELAXED_CONSTEXPR void setLeft(qreal left) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setTop(qreal top) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setRight(qreal right) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setBottom(qreal bottom) Q_DECL_NOTHROW;
+
+    Q_DECL_RELAXED_CONSTEXPR QMarginsF &operator+=(const QMarginsF &margins) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMarginsF &operator-=(const QMarginsF &margins) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMarginsF &operator+=(qreal addend) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMarginsF &operator-=(qreal subtrahend) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMarginsF &operator*=(qreal factor) Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR QMarginsF &operator/=(qreal divisor);
+
+    Q_DECL_CONSTEXPR inline QMargins toMargins() const Q_DECL_NOTHROW;
+};
+
+Q_DECLARE_TYPEINFO(QMarginsF, Q_MOVABLE_TYPE);
+
+QT_END_NAMESPACE
+
+#endif // QMARGINS_H

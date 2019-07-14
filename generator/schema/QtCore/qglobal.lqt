@@ -53,10 +53,12 @@
 // #ifdef QT_BOOTSTRAPPED
 // #include <QtCore/qconfig-bootstrapped.h>
 // #else
-// #include <QtCore/qconfig.h>
-// #include <QtCore/qtcore-config.h>
+#include <QtCore/qconfig.lqt>
+#include <QtCore/qtcore-config.lqt>
 // #endif
 #define Q_CORE_EXPORT
+
+#define QT_REQUIRE_CONFIG(feature)
 
 # define QT_PREPEND_NAMESPACE(name) ::name
 # define QT_USE_NAMESPACE

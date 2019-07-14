@@ -1,6 +1,6 @@
 #ifndef QT_QTCORE_MODULE_H
 #define QT_QTCORE_MODULE_H
-// #include <QtCore/QtCoreDepends>
+#include <QtCore/QtCoreDepends.lqt>
 #include "qglobal.lqt"
 // #if QT_CONFIG(animation)
 // #include "qabstractanimation.h"
@@ -30,8 +30,8 @@
 // #include "qbasictimer.h"
 // #include "qbitarray.h"
 // #include "qbuffer.h"
-// #include "qbytearray.h"
-// #include "qbytearraylist.h"
+#include "qbytearray.lqt"
+#include "qbytearraylist.lqt"
 // #include "qbytearraymatcher.h"
 // #include "qcache.h"
 // #include "qcborarray.h"
@@ -119,12 +119,12 @@
 // #include "qlibraryinfo.h"
 // #include "qline.h"
 // #include "qlinkedlist.h"
-// #include "qlist.h"
+#include "qlist.lqt"
 // #include "qlocale.h"
 // #include "qlockfile.h"
 // #include "qloggingcategory.h"
 // #include "qmap.h"
-// #include "qmargins.h"
+#include "qmargins.lqt"
 // #include "qmath.h"
 // #include "qmessageauthenticationcode.h"
 #include "qmetaobject.lqt"
@@ -164,7 +164,7 @@
 // #include "qqueue.h"
 // #include "qrandom.h"
 // #include "qreadwritelock.h"
-// #include "qrect.h"
+#include "qrect.lqt"
 // #include "qrefcount.h"
 // #include "qregexp.h"
 // #if QT_CONFIG(regularexpression)
@@ -189,12 +189,12 @@
 // #include "qsettings.h"
 // #include "qshareddata.h"
 // #include "qsharedmemory.h"
-// #include "qsharedpointer.h"
+#include "qsharedpointer.lqt"
 // #include "qsignalmapper.h"
 // #if QT_CONFIG(statemachine)
 // #include "qsignaltransition.h"
 // #endif
-// #include "qsize.h"
+#include "qsize.lqt"
 // // #include "qsocketnotifier.h"
 // #if QT_CONFIG(sortfilterproxymodel)
 // #include "qsortfilterproxymodel.h"
@@ -211,7 +211,7 @@
 #include "qstring.lqt"
 // #include "qstringalgorithms.h"
 // #include "qstringbuilder.h"
-// #include "qstringlist.h"
+#include "qstringlist.lqt"
 // #if QT_CONFIG(stringlistmodel)
 // #include "qstringlistmodel.h"
 // #endif

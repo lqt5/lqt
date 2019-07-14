@@ -1,9 +1,9 @@
 #ifndef QT_QTWIDGETS_MODULE_H
 #define QT_QTWIDGETS_MODULE_H
-// #include <QtWidgets/QtWidgetsDepends>
-// #include "qtwidgetsglobal.h"
+#include <QtWidgets/QtWidgetsDepends.lqt>
+#include "qtwidgetsglobal.lqt"
 // #if QT_CONFIG(abstractbutton)
-// #include "qabstractbutton.h"
+#include "qabstractbutton.lqt"
 // #endif
 // #if QT_CONFIG(itemviews)
 // #include "qabstractitemdelegate.h"
@@ -209,7 +209,7 @@
 // #endif
 // #include "qproxystyle.h"
 // #if QT_CONFIG(pushbutton)
-// #include "qpushbutton.h"
+#include "qpushbutton.lqt"
 // #endif
 // #if QT_CONFIG(radiobutton)
 // #include "qradiobutton.h"
@@ -311,7 +311,7 @@
 // #if QT_CONFIG(whatsthis)
 // #include "qwhatsthis.h"
 // #endif
-// #include "qwidget.h"
+#include "qwidget.lqt"
 // #include "qwidgetaction.h"
 // #if QT_CONFIG(wizard)
 // #include "qwizard.h"

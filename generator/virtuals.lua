@@ -155,10 +155,8 @@ function virtual_overload(v)
         ]]..fallback..[[ 
       } else
         lua_error(L);
-]] ..
-	-- [avoid] warning: control may reach end of non-void function [-Wreturn-type]'
-	(v.return_type and '        return false;' or '')
-.. [[
+		]]..fallback.. -- [avoid] warning: control may reach end of non-void function [-Wreturn-type]'
+[[
 
     }
   } else {

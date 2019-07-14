@@ -5,9 +5,6 @@
 #define __STDC__
 
 // Qt
-#define Q_GUI_EXPORT
-#define Q_WIDGETS_EXPORT
-
 #define Q_DECL_NOTHROW
 #define Q_DECL_NOEXCEPT
 #define Q_DECL_EQ_DELETE
@@ -18,6 +15,7 @@
 #define QT_DEPRECATED
 #define Q_DECL_CONST_FUNCTION
 #define QT_PREPEND_NAMESPACE(a) a
+#define Q_DECLARE_SHARED(a)
 
 #define QT_FASTCALL
 #define Q_DECL_CONST_FUNCTION const
@@ -26,6 +24,8 @@
 #define Q_SIGNALS signals
 
 // not yet supported
+#define Q_DECL_UNUSED
+#define Q_ENUM(a)
 // #define Q_FLAGS(a)
 // #define Q_PRIVATE_SLOT(a, b)
 // #define Q_DECLARE_INTERFACE(a,b)
@@ -35,6 +35,7 @@
 // #define Q_OS_OS2
 // #define Q_NO_USING_KEYWORD
 #define Q_DECLARE_PRIVATE(a)
+#define Q_DECLARE_TYPEINFO_BODY(TYPE, FLAGS)
 
 // There are symbols in Qt that exist in Debug but
 // not in release
