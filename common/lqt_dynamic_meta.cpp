@@ -26,6 +26,9 @@
 
 #include "lqt_common.hpp"
 
+#define LQT_OBJMETADATA_STORE ("*" LQT_OBJMETADATA)
+#define LQT_OBJMETASTRING_STORE ("*" LQT_OBJMETASTRING)
+
 // static const uint qt_meta_data_LqtSlotAcceptor[] = {
 //  // content:
 //        8,       // revision
@@ -96,12 +99,17 @@ void dump(T *data, size_t len) {
 static unsigned int * lqtL_touintarray (lua_State *L, int idx) {
 
     size_t n = lua_objlen(L, idx);
-    unsigned int *p = (unsigned int *) lua_newuserdata(L, (n + 1) * sizeof(unsigned int));
+    // n(uint) + uint[n] + eod(uint)
+    unsigned int *p = (unsigned int *) lua_newuserdata(L, (n + 2) * sizeof(unsigned int));
+    // record array size
+    p[0] = n;
+    // eod
     p[n] = 0;
+    // printf("lqtL_touintarray n=%d\n", n);
 
     for (int i = 1; i <= n; i++) {
         lua_rawgeti(L, idx - 1, i);
-        p[i - 1] = lua_tointeger(L, -1);
+        p[i] = lua_tointeger(L, -1);
         lua_pop(L, 1);
     }
     lua_remove(L, idx - 1);
@@ -109,7 +117,7 @@ static unsigned int * lqtL_touintarray (lua_State *L, int idx) {
     // printf("dump lqtL_touintarray data, size = %d\n", (int) n);
     // dump(p, n);
 
-    return p;
+    return &p[1];
 }
 
 static QByteArrayData* lqlL_tostringdata (lua_State *L, int idx) {
@@ -134,12 +142,17 @@ static QByteArrayData* lqlL_tostringdata (lua_State *L, int idx) {
 
     size_t data_size = sizeof(QByteArrayData) * n;
 
-    QByteArrayData *p = (QByteArrayData *) lua_newuserdata(L
-        , data_size + stringdata0_len
+    // n(uint) + QByteArrayData[n] + stringdata0[]
+    unsigned int *p = (unsigned int *) lua_newuserdata(L
+        , sizeof(unsigned int) + data_size + stringdata0_len
     );
+    // record literal size
+    p[0] = literals.size();
+
+    QByteArrayData *data = (QByteArrayData *) &p[1];
 
     // Skip QByteArrayData data[n];
-    char *stringdata0 = ((char *) p) + data_size;
+    char *stringdata0 = ((char *) data) + data_size;
 
     n = 0;
     size_t offset = data_size;
@@ -147,7 +160,9 @@ static QByteArrayData* lqlL_tostringdata (lua_State *L, int idx) {
         const char *s = literal.toUtf8().constData();
         size_t sz = strlen(s);
 
-        QByteArrayData *array = &p[n++];
+        QByteArrayData *array = &data[n++];
+        // call QByteArrayData constructor
+        //  TODO: call QByteArrayData destructor when free?
         new (array) QByteArrayData();
 
         array->ref.atomic.store(-1);
@@ -169,7 +184,46 @@ static QByteArrayData* lqlL_tostringdata (lua_State *L, int idx) {
     // printf("Dump stringdata\n");
     // dump((unsigned char *)p, data_size + stringdata0_len);
 
-    return p;
+    return data;
+}
+
+static bool lqtL_is_meta_dirty(lua_State *L
+    , uint data_len
+    , uint stringdata_len
+) {
+    // printf("lqtL_is_meta_dirty %d %d\n", data_len, stringdata_len);
+
+    lua_getfield(L, -3, LQT_OBJMETADATA_STORE);
+    if (!lua_isuserdata(L, -1))
+    {
+        lua_pop(L, 1);
+        return true;
+    }
+    uint *p = (uint *) lua_touserdata(L, -1);
+    // printf("data: %d %d\n", p[0], data_len);
+    if (p[0] != data_len)
+    {
+        lua_pop(L, 1);
+        return true;
+    }
+    lua_pop(L, 1);
+
+    lua_getfield(L, -3, LQT_OBJMETASTRING_STORE);
+    if (!lua_isuserdata(L, -1))
+    {
+        lua_pop(L, 1);
+        return true;
+    }
+    p = (uint *) lua_touserdata(L, -1);
+    // printf("stringdata: %d %d\n", p[0], stringdata_len);
+    if (p[0] != stringdata_len)
+    {
+        lua_pop(L, 1);
+        return true;
+    }
+    lua_pop(L, 1);
+
+    return false;
 }
 
 const QMetaObject& lqlL_getMetaObject (lua_State *L
@@ -187,7 +241,11 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
         }
         lua_getfield(L, -2, LQT_OBJMETADATA);
 
-        // qDebug() << QString("Copying qmeta object for slots in %1").arg(name);
+        if(!lqtL_is_meta_dirty(L, lua_objlen(L, -1), lua_objlen(L, -2))) {
+            return meta_data;
+        }
+
+        qDebug() << QString("Copying qmeta object for slots in %1").arg(name);
         // printf("Dump qt_meta_stringdata_LqtSlotAcceptor\n");
         // dump((unsigned char *) &qt_meta_stringdata_LqtSlotAcceptor, sizeof(qt_meta_stringdata_LqtSlotAcceptor));
         // printf("Dump qt_meta_data_LqtSlotAcceptor\n");
@@ -213,9 +271,9 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
 
         // printf("%p %p\n", meta_data.d.stringdata, meta_data.d.data);
 
-        // store converted userdata/arraydata to object env table
-        lua_setfield(L, -3, "*" LQT_OBJMETADATA);
-        lua_setfield(L, -2, "*" LQT_OBJMETASTRING);
+        // store converted userdata/arraydata to object's env table
+        lua_setfield(L, -3, LQT_OBJMETASTRING_STORE);
+        lua_setfield(L, -2, LQT_OBJMETADATA_STORE);
     }
     lua_pop(L, 1);
     //qDebug() << (lua_gettop(L) - oldtop);
