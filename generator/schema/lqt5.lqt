@@ -5,7 +5,9 @@
 #define __STDC__
 
 // Qt
-#define Q_CORE_EXPORT
+#define Q_GUI_EXPORT
+#define Q_WIDGETS_EXPORT
+
 #define Q_DECL_NOTHROW
 #define Q_DECL_NOEXCEPT
 #define Q_DECL_EQ_DELETE
@@ -32,7 +34,7 @@
 // #define Q_OVERRIDE(a)
 // #define Q_OS_OS2
 // #define Q_NO_USING_KEYWORD
-// #define Q_DECLARE_PRIVATE(a)
+#define Q_DECLARE_PRIVATE(a)
 
 // There are symbols in Qt that exist in Debug but
 // not in release

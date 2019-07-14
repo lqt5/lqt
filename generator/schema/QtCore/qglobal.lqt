@@ -53,6 +53,7 @@
 // #include <QtCore/qconfig.h>
 // #include <QtCore/qtcore-config.h>
 // #endif
+#define Q_CORE_EXPORT
 
 /*
    Size-dependent types (architechture-dependent byte order)
@@ -296,7 +297,7 @@ typedef double qreal;
 // #include <QtCore/qsysinfo.h>
 // #include <QtCore/qlogging.h>
 
-// #include <QtCore/qflags.h>
+#include <QtCore/qflags.lqt>
 
 // #include <QtCore/qatomic.h>
 // #include <QtCore/qglobalstatic.h>

@@ -1,3 +1,4 @@
 build/*
 xcode/*
 common/lqt_addmethod.h
+generator/schema/*/*.h

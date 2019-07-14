@@ -37,10 +37,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-// #include <QtCore/qchar.h>
+#include <QtCore/qchar.lqt>
 // #include <QtCore/qbytearray.h>
 // #include <QtCore/qrefcount.h>
-// #include <QtCore/qnamespace.h>
+#include <QtCore/qnamespace.lqt>
 // #include <QtCore/qstringliteral.h>
 // #include <QtCore/qstringalgorithms.h>
 // #include <QtCore/qstringview.h>

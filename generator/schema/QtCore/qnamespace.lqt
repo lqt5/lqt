@@ -38,6 +38,8 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qglobal.lqt>
+
 #if !defined(Q_QDOC) && !defined(Q_MOC_RUN)
 struct QMetaObject;
 const QMetaObject *qt_getQtMetaObject(); // defined in qobject.h (which can't be included here)

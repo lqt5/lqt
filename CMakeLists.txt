@@ -47,7 +47,7 @@ set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 # set(QT_USE_QTSQL 1)
 # set(QT_USE_QTXMLPATTERNS 1)
 
-find_package (Qt5 REQUIRED Core Gui)
+find_package (Qt5 REQUIRED Core Gui Widgets)
 
 set(EXTRA_LUA_OPTIONS )
 option(VERBOSE_BUILD "Create a verbose build which logs every binding call" OFF)
@@ -88,9 +88,11 @@ add_subdirectory(cpptoxml)
 
 include_directories(${Qt5Core_INCLUDE_DIRS})
 include_directories(${Qt5Gui_INCLUDE_DIRS})
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
 
 add_definitions(${Qt5Core_DEFINITIONS})
 add_definitions(${Qt5Gui_DEFINITIONS})
+add_definitions(${Qt5Widgets_DEFINITIONS})
 
 # # Add compiler flags for building executables (-fPIE)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
@@ -203,11 +205,18 @@ if(noqt)
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test/noqt)
 	build_qt_lib_binding(noqt)
 else()
-
 	set(QT_LIBRARIES Qt5::Core Qt5::Gui)
 	build_qt_lib_binding(QtCore)
+
 # 	build_qt_lib_binding(QtNetwork QtCore)
+
+	set(QT_LIBRARIES Qt5::Gui)
+	build_qt_lib_binding(QtGui QtCore)
 # 	build_qt_lib_binding(QtGui QtNetwork QtCore)
+
+	set(QT_LIBRARIES Qt5::Widgets)
+	build_qt_lib_binding(QtWidgets QtGui QtCore)
+
 # 	build_qt_lib_binding(QtScript QtGui QtNetwork QtCore)
 # 	build_qt_lib_binding(QtOpenGL QtGui QtNetwork QtCore)
 # 	build_qt_lib_binding(QtSvg QtScript QtGui QtNetwork QtCore)
