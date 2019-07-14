@@ -1,0 +1,242 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef QVECTOR_H
+#define QVECTOR_H
+
+// #include <QtCore/qalgorithms.h>
+// #include <QtCore/qiterator.h>
+#include <QtCore/qlist.lqt>
+// #include <QtCore/qrefcount.h>
+// #include <QtCore/qarraydata.h>
+// #include <QtCore/qhashfunctions.h>
+
+// #include <iterator>
+// #include <vector>
+// #include <stdlib.h>
+// #include <string.h>
+// #ifdef Q_COMPILER_INITIALIZER_LISTS
+// #include <initializer_list>
+// #endif
+
+// #include <algorithm>
+
+QT_BEGIN_NAMESPACE
+
+template <typename T>
+class QVector
+{
+//     typedef QTypedArrayData<T> Data;
+//     Data *d;
+
+public:
+    inline QVector() Q_DECL_NOTHROW;
+    explicit QVector(int size);
+    QVector(int size, const T &t);
+    inline QVector(const QVector<T> &v);
+    inline ~QVector();
+    QVector<T> &operator=(const QVector<T> &v);
+// #if defined(Q_COMPILER_RVALUE_REFS) || defined(Q_CLANG_QDOC)
+//     QVector(QVector<T> &&other) Q_DECL_NOTHROW : d(other.d) { other.d = Data::sharedNull(); }
+//     QVector<T> &operator=(QVector<T> &&other) Q_DECL_NOTHROW
+//     { QVector moved(std::move(other)); swap(moved); return *this; }
+// #endif
+    void swap(QVector<T> &other) Q_DECL_NOTHROW;
+// #ifdef Q_COMPILER_INITIALIZER_LISTS
+//     inline QVector(std::initializer_list<T> args);
+// #endif
+    bool operator==(const QVector<T> &v) const;
+    inline bool operator!=(const QVector<T> &v);
+
+    inline int size() const;
+
+    inline bool isEmpty() const;
+
+    void resize(int size);
+
+    inline int capacity() const;
+    void reserve(int size);
+    inline void squeeze();
+
+    inline void detach();
+    inline bool isDetached() const;
+// #if !defined(QT_NO_UNSHARABLE_CONTAINERS)
+    inline void setSharable(bool sharable);
+// #endif
+
+    inline bool isSharedWith(const QVector<T> &other) const;
+
+    inline T *data() { detach(); return d->begin(); }
+    inline const T *data() const { return d->begin(); }
+    inline const T *constData() const { return d->begin(); }
+    void clear();
+
+    const T &at(int i) const;
+    T &operator[](int i);
+    const T &operator[](int i) const;
+    void append(const T &t);
+// #if defined(Q_COMPILER_RVALUE_REFS) || defined(Q_CLANG_QDOC)
+//     void append(T &&t);
+// #endif
+    inline void append(const QVector<T> &l);
+    void prepend(T &&t);
+    void prepend(const T &t);
+    // void insert(int i, T &&t);
+    void insert(int i, const T &t);
+    void insert(int i, int n, const T &t);
+    void replace(int i, const T &t);
+    void remove(int i);
+    void remove(int i, int n);
+    inline void removeFirst();
+    inline void removeLast();
+    T takeFirst();
+    T takeLast();
+
+    QVector<T> &fill(const T &t, int size = -1);
+
+    int indexOf(const T &t, int from = 0) const;
+    int lastIndexOf(const T &t, int from = -1) const;
+    bool contains(const T &t) const;
+    int count(const T &t) const;
+
+    // QList compatibility
+    void removeAt(int i);
+    int removeAll(const T &t);
+    bool removeOne(const T &t);
+    int length() const;
+    T takeAt(int i);
+    void move(int from, int to);
+
+//     // STL-style
+//     // typedef typename Data::iterator iterator;
+//     typedef typename Data::const_iterator const_iterator;
+//     typedef std::reverse_iterator<iterator> reverse_iterator;
+//     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+// #if !defined(QT_STRICT_ITERATORS) || defined(Q_CLANG_QDOC)
+//     inline iterator begin() { detach(); return d->begin(); }
+//     inline const_iterator begin() const Q_DECL_NOTHROW { return d->constBegin(); }
+//     inline const_iterator cbegin() const Q_DECL_NOTHROW { return d->constBegin(); }
+//     inline const_iterator constBegin() const Q_DECL_NOTHROW { return d->constBegin(); }
+//     inline iterator end() { detach(); return d->end(); }
+//     inline const_iterator end() const Q_DECL_NOTHROW { return d->constEnd(); }
+//     inline const_iterator cend() const Q_DECL_NOTHROW { return d->constEnd(); }
+//     inline const_iterator constEnd() const Q_DECL_NOTHROW { return d->constEnd(); }
+// #else
+//     inline iterator begin(iterator = iterator()) { detach(); return d->begin(); }
+//     inline const_iterator begin(const_iterator = const_iterator()) const Q_DECL_NOTHROW { return d->constBegin(); }
+//     inline const_iterator cbegin(const_iterator = const_iterator()) const Q_DECL_NOTHROW { return d->constBegin(); }
+//     inline const_iterator constBegin(const_iterator = const_iterator()) const Q_DECL_NOTHROW { return d->constBegin(); }
+//     inline iterator end(iterator = iterator()) { detach(); return d->end(); }
+//     inline const_iterator end(const_iterator = const_iterator()) const Q_DECL_NOTHROW { return d->constEnd(); }
+//     inline const_iterator cend(const_iterator = const_iterator()) const Q_DECL_NOTHROW { return d->constEnd(); }
+//     inline const_iterator constEnd(const_iterator = const_iterator()) const Q_DECL_NOTHROW { return d->constEnd(); }
+// #endif
+//     reverse_iterator rbegin() { return reverse_iterator(end()); }
+//     reverse_iterator rend() { return reverse_iterator(begin()); }
+//     const_reverse_iterator rbegin() const Q_DECL_NOTHROW { return const_reverse_iterator(end()); }
+//     const_reverse_iterator rend() const Q_DECL_NOTHROW { return const_reverse_iterator(begin()); }
+//     const_reverse_iterator crbegin() const Q_DECL_NOTHROW { return const_reverse_iterator(end()); }
+//     const_reverse_iterator crend() const Q_DECL_NOTHROW { return const_reverse_iterator(begin()); }
+//     iterator insert(iterator before, int n, const T &x);
+//     inline iterator insert(iterator before, const T &x) { return insert(before, 1, x); }
+//     inline iterator insert(iterator before, T &&x);
+//     iterator erase(iterator begin, iterator end);
+//     inline iterator erase(iterator pos) { return erase(pos, pos+1); }
+
+    // more Qt
+    inline int count() const;
+    inline T& first();
+    inline const T &first() const;
+    inline const T &constFirst() const;
+    inline T& last();
+    inline const T &last() const;
+    inline const T &constLast() const;
+    inline bool startsWith(const T &t) const;
+    inline bool endsWith(const T &t) const;
+    QVector<T> mid(int pos, int len = -1) const;
+
+    T value(int i) const;
+    T value(int i, const T &defaultValue) const;
+
+//     // STL compatibility
+//     typedef T value_type;
+//     typedef value_type* pointer;
+//     typedef const value_type* const_pointer;
+//     typedef value_type& reference;
+//     typedef const value_type& const_reference;
+//     typedef qptrdiff difference_type;
+//     typedef iterator Iterator;
+//     typedef const_iterator ConstIterator;
+//     typedef int size_type;
+    inline void push_back(const T &t);
+// #if defined(Q_COMPILER_RVALUE_REFS) || defined(Q_CLANG_QDOC)
+//     void push_back(T &&t) { append(std::move(t)); }
+//     void push_front(T &&t) { prepend(std::move(t)); }
+// #endif
+    inline void push_front(const T &t);
+    void pop_back();
+    void pop_front();
+    inline bool empty() const;
+    inline T& front();
+//     inline const_reference front() const { return first(); }
+//     inline reference back() { return last(); }
+//     inline const_reference back() const { return last(); }
+    void shrink_to_fit();
+
+    // comfort
+    QVector<T> &operator+=(const QVector<T> &l);
+    inline QVector<T> operator+(const QVector<T> &l) const;
+    inline QVector<T> &operator+=(const T &t);
+    inline QVector<T> &operator<< (const T &t);
+    inline QVector<T> &operator<<(const QVector<T> &l);
+//     inline QVector<T> &operator+=(T &&t)
+//     inline QVector<T> &operator<<(T &&t)
+
+    QList<T> toList() const;
+
+    static QVector<T> fromList(const QList<T> &list);
+
+    static inline QVector<T> fromStdVector(const std::vector<T> &vector);
+    inline std::vector<T> toStdVector() const;
+};
+
+
+QT_END_NAMESPACE
+
+#endif // QVECTOR_H

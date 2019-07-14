@@ -13,6 +13,9 @@ return {
 			'QList<int>',
 			-- 'QList<QUrl>',
 		},
+		['QVector<T>'] = {
+			'QVector<int>',
+		},
 		['QFlags<Enum>'] = {
 			-- 'QFlags<KeyboardModifier>',
 		},
@@ -45,6 +48,11 @@ return {
 			-- 'QVector<QColor>',
 			-- 'QVector<QTextFormat>',
 			-- 'QVector<QLineF>',
+		},
+	},
+	qtwidgets = {
+		['QVector<T>'] = {
+			-- 'QVector<int>',
 		},
 	},
 	qtnetwork = {

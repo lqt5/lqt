@@ -56,6 +56,7 @@ class QAbstractButtonPrivate;
 class Q_WIDGETS_EXPORT QAbstractButton : public QWidget
 {
     LQT_OBJECT
+
     Q_OBJECT
 
     Q_PROPERTY(QString text READ text WRITE setText)

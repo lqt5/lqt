@@ -46,7 +46,7 @@
 // #ifndef QT_NO_QOBJECT
 #include <QtCore/qobject.lqt>
 #include <QtCore/qcoreevent.lqt>
-// #include <QtCore/qeventloop.h>
+#include <QtCore/qeventloop.lqt>
 // #else
 // #include <QtCore/qscopedpointer.h>
 // #endif

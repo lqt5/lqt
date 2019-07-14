@@ -206,7 +206,9 @@ void lqtL_qobject_custom (lua_State *L) {
     int qobject = lua_gettop(L);
 
     lua_pushstring(L, "__addmethod");
-        luaL_dostring(L, add_method_string);
+        luaL_dostring(L, (const char *) add_method_string);
+	        if(!lua_isfunction(L, -1))
+    	    	lua_error(L);
             lua_pushstring(L, LQT_OBJMETASTRING);
             lua_pushstring(L, LQT_OBJMETADATA);
             lua_pushstring(L, LQT_OBJSLOTS);
@@ -214,6 +216,8 @@ void lqtL_qobject_custom (lua_State *L) {
             lua_pushnumber(L, QMetaType::Void);
             lua_pushcfunction(L, lqt_metaConvertType);
         lua_pcall(L, 6, 1, 0);
+        if(!lua_isfunction(L, -1))
+        	lua_error(L);
     lua_rawset(L, qobject);
 
     lua_pushstring(L, "__methods");

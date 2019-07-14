@@ -1,8 +1,10 @@
 package.cpath = package.cpath .. ';../build/lib/?.so'
+
 local QtCore = require "qtcore"
 local QtGui = require "qtgui"
+local QtWidgets = require 'qtwidgets'
 
-A = QtGui.QApplication(1, {'Protected test'})
+A = QtWidgets.QApplication(1, {'Protected test'})
 
 -- We will implement our custom model
 M = QtCore.QAbstractListModel()
@@ -13,6 +15,14 @@ M.luaData = {'Hello', 'World'}
 -- these are implemented virtual methods
 function M:rowCount()
 	return #self.luaData
+end
+
+function M:parent(model)
+	return model
+end
+
+function M:columnCount()
+	return 3
 end
 
 local empty = QtCore.QVariant()
@@ -28,24 +38,24 @@ end
 function M:addAnotherString(str)
 	table.insert(self.luaData, str)
 	local row = #self.luaData - 1
-	local index = self:createIndex(row, 0, 0)
+	local index = self:createIndex(row, 0)
 	self:dataChanged(index, index)
 end
 
 -- some simple layout - list and a button
-MW = QtGui.QWidget()
+MW = QtWidgets.QWidget()
 
-W = QtGui.QListView()
+W = QtWidgets.QListView()
 W:setModel(M)
 
-B = QtGui.QPushButton('Add Lua data')
+B = QtWidgets.QPushButton('Add Lua data')
 local counter = 1
 B:connect('2clicked()', function()
 	M:addAnotherString('Added text ' .. counter)
 	counter = counter + 1
 end)
 
-L = QtGui.QVBoxLayout()
+L = QtWidgets.QVBoxLayout()
 L:addWidget(W)
 L:addWidget(B)
 MW:setLayout(L)

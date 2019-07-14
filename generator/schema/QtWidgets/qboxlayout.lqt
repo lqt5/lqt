@@ -114,6 +114,8 @@ private:
 
 class Q_WIDGETS_EXPORT QHBoxLayout : public QBoxLayout
 {
+    LQT_OBJECT
+
     Q_OBJECT
 public:
     QHBoxLayout();
@@ -127,6 +129,8 @@ private:
 
 class Q_WIDGETS_EXPORT QVBoxLayout : public QBoxLayout
 {
+    LQT_OBJECT
+
     Q_OBJECT
 public:
     QVBoxLayout();

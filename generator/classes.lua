@@ -85,6 +85,7 @@ function fix_arguments(index)
 				a.xarg.defaultvalue = context..'::'..dv..call
 			elseif fullnames[dv] or dv == dv:upper() or (firstChar == 'Q' and #call == 0) or firstChar == "'" then
 				a.xarg.defaultvalue = dv..call
+			elseif templates.contains(a.xarg.type_base) then
 			else
 				ignore(a.xarg.context..'::'..a.xarg.name, 'Unsupported default value', a.xarg.defaultvalue)
 				a.xarg.default = nil

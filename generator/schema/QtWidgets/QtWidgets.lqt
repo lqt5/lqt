@@ -6,12 +6,12 @@
 #include "qabstractbutton.lqt"
 // #endif
 // #if QT_CONFIG(itemviews)
-// #include "qabstractitemdelegate.h"
+#include "qabstractitemdelegate.lqt"
 // #endif
 // #if QT_CONFIG(itemviews)
-// #include "qabstractitemview.h"
+#include "qabstractitemview.lqt"
 // #endif
-// #include "qabstractscrollarea.h"
+#include "qabstractscrollarea.lqt"
 // #if QT_CONFIG(abstractslider)
 #include "qabstractslider.lqt"
 // #endif
@@ -171,7 +171,7 @@
 // #include "qlineedit.h"
 // #endif
 // #if QT_CONFIG(listview)
-// #include "qlistview.h"
+#include "qlistview.lqt"
 // #endif
 // #if QT_CONFIG(listwidget)
 // #include "qlistwidget.h"
@@ -258,7 +258,7 @@
 // #include "qstyleditemdelegate.h"
 // #endif
 // #include "qstylefactory.h"
-// #include "qstyleoption.h"
+#include "qstyleoption.lqt"
 // #include "qstylepainter.h"
 // #include "qstyleplugin.h"
 // #include "qsystemtrayicon.h"

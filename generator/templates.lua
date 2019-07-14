@@ -30,6 +30,16 @@ end
 -- added to idindex after the traversal
 local idindex_add = {}
 
+function contains(name)
+	for _,t in pairs(translate[module_name] or {}) do
+		for _,decl in pairs(t) do
+			if decl == name then
+				return true
+			end
+		end
+	end
+	return false
+end
 
 --- Return true if an instance of templated class should be created.
 function should_copy(class)

@@ -7,7 +7,7 @@
 // #endif
 // #include "qabstracteventdispatcher.h"
 // #if QT_CONFIG(itemmodel)
-// #include "qabstractitemmodel.h"
+#include "qabstractitemmodel.lqt"
 // #endif
 // #include "qabstractnativeeventfilter.h"
 // #if QT_CONFIG(proxymodel)
@@ -62,7 +62,7 @@
 // #include "qeasingcurve.h"
 // #include "qelapsedtimer.h"
 // #include "qendian.h"
-// #include "qeventloop.h"
+#include "qeventloop.lqt"
 // #if QT_CONFIG(qeventtransition)
 // #include "qeventtransition.h"
 // #endif
@@ -70,8 +70,8 @@
 // #include "qexception.h"
 // #endif
 // #include "qfactoryinterface.h"
-// #include "qfile.h"
-// #include "qfiledevice.h"
+#include "qfile.lqt"
+#include "qfiledevice.lqt"
 // #include "qfileinfo.h"
 // #include "qfileselector.h"
 // #if QT_CONFIG(filesystemwatcher)
@@ -103,7 +103,7 @@
 // #if QT_CONFIG(identityproxymodel)
 // #include "qidentityproxymodel.h"
 // #endif
-// #include "qiodevice.h"
+#include "qiodevice.lqt"
 // #include "qisenum.h"
 // #if QT_CONFIG(itemmodel)
 // #include "qitemselectionmodel.h"
@@ -247,7 +247,7 @@
 // #include "qvariantanimation.h"
 // #endif
 // #include "qvarlengtharray.h"
-// #include "qvector.h"
+#include "qvector.lqt"
 // #include "qversionnumber.h"
 // #include "qversiontagging.h"
 // #include "qwaitcondition.h"

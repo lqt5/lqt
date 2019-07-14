@@ -88,7 +88,11 @@ local function parse_return_type(return_type)
 	local map = {
 		['bool'] = 'false',
 		['int'] = '-1',
+		['long long'] = '-1',
 	}
+	if not map[return_type] then
+		print('return_type', return_type)
+	end
 	return map[return_type] or (return_type .. '()')
 end
 
@@ -137,16 +141,14 @@ function virtual_overload(v)
 	fallback = (v.return_type and 'return this->' or 'this->') .. v.xarg.fullname .. '(' .. fallback .. ');' ..
 				(v.return_type and '' or ' return;')
 	if v.xarg.abstract then
-		-- fallback = 'luaL_error(L, "Abstract method %s for %s not implemented! In %s", "' .. v.xarg.name .. '", lqtL_source(L,oldtop+1));'
-		fallback = string.format([[luaL_error(L, "Abstract method %%s for %%s not implemented! In %%s"
+		fallback = string.format([[luaL_error(L, "Abstract method %%s:%%s not implemented!"
 				, "%s"
 				, "%s"
-				, lqtL_source(L,oldtop+1)
 			);
 			return %s;
 ]]
-			, v.xarg.name
 			, v.xarg.member_of_class
+			, v.xarg.name
 			, parse_return_type(v.return_type)
 		)
 	end
