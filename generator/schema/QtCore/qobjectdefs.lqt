@@ -37,10 +37,14 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QOBJECTDEFS_H
+#define QOBJECTDEFS_H
 
-// #include <QtCore/qnamespace.h>
+#include <QtCore/qnamespace.lqt>
 
 // #include <QtCore/qobjectdefs_impl.h>
+
+QT_BEGIN_NAMESPACE
 
 class Q_CORE_EXPORT QGenericArgument
 {
@@ -267,3 +271,7 @@ private:
 //     Connection &operator=(Connection &&other) Q_DECL_NOTHROW
 //     { qSwap(d_ptr, other.d_ptr); return *this; }
 // };
+
+QT_END_NAMESPACE
+
+#endif // QOBJECTDEFS_H

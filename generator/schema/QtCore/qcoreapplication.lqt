@@ -38,6 +38,9 @@
 **
 ****************************************************************************/
 
+#ifndef QCOREAPPLICATION_H
+#define QCOREAPPLICATION_H
+
 #include <QtCore/qglobal.lqt>
 #include <QtCore/qstring.lqt>
 // #ifndef QT_NO_QOBJECT
@@ -54,6 +57,7 @@
 // #endif
 // #endif
 
+QT_BEGIN_NAMESPACE
 
 // class QCoreApplicationPrivate;
 // class QTextCodec;
@@ -181,3 +185,7 @@ private:
 // Q_CORE_EXPORT void qAddPostRoutine(QtCleanUpFunction);
 // Q_CORE_EXPORT void qRemovePostRoutine(QtCleanUpFunction);
 // Q_CORE_EXPORT QString qAppName();                // get application name
+
+QT_END_NAMESPACE
+
+#endif // QCOREAPPLICATION_H

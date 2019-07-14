@@ -37,6 +37,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QSTRING_H
+#define QSTRING_H
+
 #include <QtCore/qchar.lqt>
 // #include <QtCore/qbytearray.h>
 // #include <QtCore/qrefcount.h>
@@ -47,6 +50,8 @@
 
 // #include <string>
 // #include <iterator>
+
+QT_BEGIN_NAMESPACE
 
 class QCharRef;
 class QRegExp;
@@ -523,3 +528,11 @@ public:
 
     QString(int size, Qt::Initialization);
 };
+
+QT_END_NAMESPACE
+
+// #if defined(QT_USE_FAST_OPERATOR_PLUS) || defined(QT_USE_QSTRINGBUILDER)
+// #include <QtCore/qstringbuilder.h>
+// #endif
+
+#endif // QSTRING_H

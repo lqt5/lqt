@@ -1,5 +1,5 @@
-// #ifndef QT_QTGUI_MODULE_H
-// #define QT_QTGUI_MODULE_H
+#ifndef QT_QTGUI_MODULE_H
+#define QT_QTGUI_MODULE_H
 // #include <QtGui/QtGuiDepends>
 // #include "qtguiglobal.h"
 // #include "qabstracttextdocumentlayout.h"
@@ -110,4 +110,4 @@
 // #include "qwindow.h"
 // #include "qwindowdefs.h"
 // #include "qtguiversion.h"
-// #endif
+#endif

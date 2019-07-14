@@ -1,5 +1,5 @@
-// #ifndef QT_QTCORE_MODULE_H
-// #define QT_QTCORE_MODULE_H
+#ifndef QT_QTCORE_MODULE_H
+#define QT_QTCORE_MODULE_H
 // #include <QtCore/QtCoreDepends>
 #include "qglobal.lqt"
 // #if QT_CONFIG(animation)
@@ -254,4 +254,4 @@
 // #include "qwineventnotifier.h"
 // #include "qxmlstream.h"
 // #include "qtcoreversion.h"
-// #endif
+#endif

@@ -37,6 +37,19 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qglobal.lqt>
+
+#ifndef QFLAGS_H
+#define QFLAGS_H
+
+// #ifdef Q_COMPILER_INITIALIZER_LISTS
+// #include <initializer_list>
+// #endif
+
+QT_BEGIN_NAMESPACE
+
+class QDataStream;
+
 class QFlag
 {
 public:
@@ -94,3 +107,8 @@ public:
 typedef QFlags<Enum> Flags;
 
 #define Q_DECLARE_OPERATORS_FOR_FLAGS(Flags)
+
+
+QT_END_NAMESPACE
+
+#endif // QFLAGS_H

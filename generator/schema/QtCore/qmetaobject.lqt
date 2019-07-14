@@ -38,8 +38,13 @@
 **
 ****************************************************************************/
 
-// #include <QtCore/qobjectdefs.h>
-// #include <QtCore/qvariant.h>
+#ifndef QMETAOBJECT_H
+#define QMETAOBJECT_H
+
+#include <QtCore/qobjectdefs.lqt>
+#include <QtCore/qvariant.lqt>
+
+QT_BEGIN_NAMESPACE
 
 template <typename T> class QList;
 
@@ -231,3 +236,7 @@ public:
     inline const QMetaObject *enclosingMetaObject() const { return mobj; }
 };
 // Q_DECLARE_TYPEINFO(QMetaClassInfo, Q_MOVABLE_TYPE);
+
+QT_END_NAMESPACE
+
+#endif // QMETAOBJECT_H

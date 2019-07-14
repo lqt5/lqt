@@ -38,10 +38,16 @@
 **
 ****************************************************************************/
 
-// #include <QtCore/qnamespace.h>
-// #include <QtCore/qbytearray.h>
-// #include <QtCore/qobjectdefs.h>
+#ifndef QCOREEVENT_H
+#define QCOREEVENT_H
 
+#include <QtCore/qnamespace.lqt>
+// #include <QtCore/qbytearray.h>
+#include <QtCore/qobjectdefs.lqt>
+
+QT_BEGIN_NAMESPACE
+
+class QEventPrivate;
 class Q_CORE_EXPORT QEvent           // event base class
 {
     Q_GADGET
@@ -339,3 +345,7 @@ public:
     ~QDeferredDeleteEvent();
     int loopLevel() const { return level; }
 };
+
+QT_END_NAMESPACE
+
+#endif // QCOREEVENT_H

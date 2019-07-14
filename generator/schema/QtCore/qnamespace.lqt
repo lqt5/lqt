@@ -38,7 +38,12 @@
 **
 ****************************************************************************/
 
+#ifndef QNAMESPACE_H
+#define QNAMESPACE_H
+
 #include <QtCore/qglobal.lqt>
+
+QT_BEGIN_NAMESPACE
 
 #if !defined(Q_QDOC) && !defined(Q_MOC_RUN)
 struct QMetaObject;
@@ -1816,3 +1821,7 @@ public:
     // static bool unregisterCallback(Callback, qInternalCallback);
     // static bool activateCallbacks(Callback, void **);
 };
+
+QT_END_NAMESPACE
+
+#endif // QNAMESPACE_H

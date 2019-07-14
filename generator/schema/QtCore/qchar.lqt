@@ -38,8 +38,12 @@
 **
 ****************************************************************************/
 
-// #include <QtCore/qglobal.h>
+#ifndef QCHAR_H
+#define QCHAR_H
 
+#include <QtCore/qglobal.lqt>
+
+QT_BEGIN_NAMESPACE
 
 // class QString;
 
@@ -484,3 +488,7 @@ public:
     static Q_DECL_CONSTEXPR inline bool isUpper(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
     static Q_DECL_CONSTEXPR inline bool isTitleCase(uint ucs4) Q_DECL_NOTHROW Q_DECL_CONST_FUNCTION;
 };
+
+QT_END_NAMESPACE
+
+#endif // QCHAR_H

@@ -38,18 +38,18 @@
 **
 ****************************************************************************/
 
-// #ifndef QVARIANT_H
-// #define QVARIANT_H
+#ifndef QVARIANT_H
+#define QVARIANT_H
 
 // #include <QtCore/qatomic.h>
 // #include <QtCore/qbytearray.h>
 // #include <QtCore/qlist.h>
-// #include <QtCore/qmetatype.h>
+#include <QtCore/qmetatype.lqt>
 // #include <QtCore/qmap.h>
 // #include <QtCore/qhash.h>
-// #include <QtCore/qstring.h>
+#include <QtCore/qstring.lqt>
 // #include <QtCore/qstringlist.h>
-// #include <QtCore/qobject.h>
+#include <QtCore/qobject.lqt>
 // #ifndef QT_BOOTSTRAPPED
 // #include <QtCore/qbytearraylist.h>
 // #endif
@@ -58,7 +58,7 @@
 // #include <variant>
 // #endif
 
-// QT_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 // class QBitArray;
 // class QDataStream;
@@ -429,3 +429,7 @@ public:
     inline DataPtr &data_ptr() { return d; }
     inline const DataPtr &data_ptr() const { return d; }
 };
+
+QT_END_NAMESPACE
+
+#endif // QVARIANT_H

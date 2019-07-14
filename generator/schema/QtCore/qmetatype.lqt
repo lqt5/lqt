@@ -39,13 +39,27 @@
 **
 ****************************************************************************/
 
-// #include <QtCore/qglobal.h>
+#ifndef QMETATYPE_H
+#define QMETATYPE_H
+
+#include <QtCore/qglobal.lqt>
 // #include <QtCore/qatomic.h>
 // #include <QtCore/qbytearray.h>
 // #include <QtCore/qvarlengtharray.h>
 // #ifndef QT_NO_QOBJECT
-// #include <QtCore/qobjectdefs.h>
+#include <QtCore/qobjectdefs.lqt>
 // #endif
+
+QT_BEGIN_NAMESPACE
+
+// from qcborcommon.h
+enum class QCborSimpleType : quint8;
+
+template <typename T>
+struct QMetaTypeId2;
+
+template <typename T>
+inline Q_DECL_CONSTEXPR int qMetaTypeId();
 
 class Q_CORE_EXPORT QMetaType {
     enum ExtensionFlag { NoExtensionFlags,
@@ -205,3 +219,7 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QMetaType::TypeFlags)
+
+QT_END_NAMESPACE
+
+#endif // QMETATYPE_H

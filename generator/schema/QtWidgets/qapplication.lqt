@@ -37,8 +37,8 @@
 **
 ****************************************************************************/
 
-// #ifndef QAPPLICATION_H
-// #define QAPPLICATION_H
+#ifndef QAPPLICATION_H
+#define QAPPLICATION_H
 
 // #include <QtWidgets/qtwidgetsglobal.h>
 // #include <QtCore/qcoreapplication.h>
@@ -51,19 +51,19 @@
 // #endif
 #include <QtGui/qguiapplication.lqt>
 
-// QT_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
-// class QDesktopWidget;
-// class QStyle;
-// class QEventLoop;
-// class QIcon;
-// template <typename T> class QList;
-// class QLocale;
-// class QPlatformNativeInterface;
+class QDesktopWidget;
+class QStyle;
+class QEventLoop;
+class QIcon;
+template <typename T> class QList;
+class QLocale;
+class QPlatformNativeInterface;
 
-// class QApplication;
-// class QApplicationPrivate;
+class QApplication;
+class QApplicationPrivate;
 // #if defined(qApp)
 // #undef qApp
 // #endif
@@ -228,3 +228,7 @@ private:
     friend class QGestureManager;
 // #endif
 };
+
+QT_END_NAMESPACE
+
+#endif // QAPPLICATION_H

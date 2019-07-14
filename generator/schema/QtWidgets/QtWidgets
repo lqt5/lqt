@@ -1,5 +1,5 @@
-// #ifndef QT_QTWIDGETS_MODULE_H
-// #define QT_QTWIDGETS_MODULE_H
+#ifndef QT_QTWIDGETS_MODULE_H
+#define QT_QTWIDGETS_MODULE_H
 // #include <QtWidgets/QtWidgetsDepends>
 // #include "qtwidgetsglobal.h"
 // #if QT_CONFIG(abstractbutton)
@@ -317,4 +317,4 @@
 // #include "qwizard.h"
 // #endif
 // #include "qtwidgetsversion.h"
-// #endif
+#endif

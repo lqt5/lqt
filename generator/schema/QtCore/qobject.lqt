@@ -41,17 +41,19 @@
 #ifndef QOBJECT_H
 #define QOBJECT_H
 
-// #include <QtCore/qobjectdefs.h>
-// #include <QtCore/qstring.h>
+#include <QtCore/qobjectdefs.lqt>
+#include <QtCore/qstring.lqt>
 // #include <QtCore/qbytearray.h>
 // #include <QtCore/qlist.h>
 // #ifdef QT_INCLUDE_COMPAT
-// #include <QtCore/qcoreevent.h>
+#include <QtCore/qcoreevent.lqt>
 // #endif
 // #include <QtCore/qscopedpointer.h>
-// #include <QtCore/qmetatype.h>
+#include <QtCore/qmetatype.lqt>
 
 // #include <QtCore/qobject_impl.h>
+
+QT_BEGIN_NAMESPACE
 
 class QEvent;
 class QTimerEvent;
@@ -337,5 +339,7 @@ public:
 private:
     Q_DISABLE_COPY(QSignalBlocker)
 };
+
+QT_END_NAMESPACE
 
 #endif // QOBJECT_H

@@ -37,8 +37,8 @@
 **
 ****************************************************************************/
 
-// #ifndef QGUIAPPLICATION_H
-// #define QGUIAPPLICATION_H
+#ifndef QGUIAPPLICATION_H
+#define QGUIAPPLICATION_H
 
 // #include <QtGui/qtguiglobal.h>
 // #include <QtCore/qcoreapplication.h>
@@ -49,6 +49,7 @@
 // #include <QtCore/qpoint.h>
 // #include <QtCore/qsize.h>
 
+QT_BEGIN_NAMESPACE
 
 class QSessionManager;
 class QGuiApplicationPrivate;
@@ -200,3 +201,7 @@ private:
     Q_DISABLE_COPY(QGuiApplication)
     Q_DECLARE_PRIVATE(QGuiApplication)
 };
+
+QT_END_NAMESPACE
+
+#endif // QGUIAPPLICATION_H

@@ -38,6 +38,9 @@
 **
 ****************************************************************************/
 
+#ifndef QGLOBAL_H
+#define QGLOBAL_H
+
 /*
    QT_VERSION is (major << 16) + (minor << 8) + patch.
 */
@@ -54,6 +57,18 @@
 // #include <QtCore/qtcore-config.h>
 // #endif
 #define Q_CORE_EXPORT
+
+# define QT_PREPEND_NAMESPACE(name) ::name
+# define QT_USE_NAMESPACE
+# define QT_BEGIN_NAMESPACE
+# define QT_END_NAMESPACE
+# define QT_BEGIN_INCLUDE_NAMESPACE
+# define QT_END_INCLUDE_NAMESPACE
+# define QT_FORWARD_DECLARE_CLASS(name) class name;
+# define QT_FORWARD_DECLARE_STRUCT(name) struct name;
+# define QT_MANGLE_NAMESPACE(name) name
+
+QT_BEGIN_NAMESPACE
 
 /*
    Size-dependent types (architechture-dependent byte order)
@@ -291,6 +306,8 @@ typedef double qreal;
 // Q_CORE_EXPORT void qsrand(uint seed);
 // Q_CORE_EXPORT int qrand();
 
+QT_END_NAMESPACE
+
 // // We need to keep QTypeInfo, QSysInfo, QFlags, qDebug & family in qglobal.h for compatibility with Qt 4.
 // // Be careful when changing the order of these files.
 // #include <QtCore/qtypeinfo.h>
@@ -303,3 +320,5 @@ typedef double qreal;
 // #include <QtCore/qglobalstatic.h>
 // #include <QtCore/qnumeric.h>
 // #include <QtCore/qversiontagging.h>
+
+#endif /* QGLOBAL_H */
