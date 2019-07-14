@@ -1,3 +1,38 @@
+--[[
+ // content:
+       8,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       6,   14, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       3,       // signalCount
+
+ // signals: name, argc, parameters, tag, flags
+       1,    2,   44,    2, 0x06 /* Public */,
+       6,    1,   49,    2, 0x06 /* Public */,
+       8,    1,   52,    2, 0x06 /* Public */,
+
+ // slots: name, argc, parameters, tag, flags
+      11,    2,   55,    2, 0x09 /* Protected */,
+      12,    1,   60,    2, 0x09 /* Protected */,
+      13,    1,   63,    2, 0x09 /* Protected */,
+
+ // signals: parameters
+    QMetaType::Void, 0x80000000 | 3, QMetaType::Bool,    4,    5,
+    QMetaType::Void, QMetaType::QIcon,    7,
+    QMetaType::Void, 0x80000000 | 9,   10,
+
+ // slots: parameters
+    QMetaType::Void, 0x80000000 | 3, QMetaType::Bool,    4,    5,
+    QMetaType::Void, QMetaType::QIcon,    7,
+    QMetaType::Void, 0x80000000 | 9,   10,
+
+       0        // eod
+]]
+
 return function(LQT_OBJMETASTRING
     , LQT_OBJMETADATA
     , LQT_OBJSLOTS
@@ -69,20 +104,36 @@ return function(LQT_OBJMETASTRING
                 [-1] = metaMethods,
 
                 -- Qt5 meta data header
-                8,                  -- revision
-                0,                  -- classname
-                0, 0,               -- classinfo
-                #metaMethods, 14,   -- methods(count, offset)
-                0, 0,               -- properties
-                0, 0,               -- enums/sets
-                0, 0,               -- constructors
-                0,                  -- flags
-                0,                  -- signalCount
+                8,                      -- revision
+                0,                      -- classname
+                0, 0,                   -- classinfo
+                #metaMethods * 2, 14,   -- methods(count, offset)
+                0, 0,                   -- properties
+                0, 0,                   -- enums/sets
+                0, 0,                   -- constructors
+                0,                      -- flags
+                #metaMethods,           -- signalCount
                 -- Qt5 meta method data
             }
 
-            local offset = #metaData + (#metaMethods * 5)
+            local offset = #metaData + (#metaMethods * 5 * 2)
             -- build slot methods
+
+            -- signals: name, argc, parameters, tag, flags
+            for _,methodInfo in ipairs(metaMethods) do
+                -- name index
+                table.insert(metaData, methodInfo[-1])
+                -- argc
+                table.insert(metaData, #methodInfo / 2)
+                -- parameters offset
+                table.insert(metaData, offset)
+                -- tag
+                table.insert(metaData, 2)
+                -- flags
+                table.insert(metaData, 0x0A)
+                -- increment data offset
+                offset = (offset + 1 + #methodInfo)
+            end
 
             -- slots: name, argc, parameters, tag, flags
             for _,methodInfo in ipairs(metaMethods) do
@@ -99,6 +150,18 @@ return function(LQT_OBJMETASTRING
                 -- increment data offset
                 offset = (offset + 1 + #methodInfo)
             end
+
+            -- signals: parameters
+            --  return_type param_types[argc] string_index[args]
+            for _,methodInfo in ipairs(metaMethods) do
+                -- return_type always is void
+                table.insert(metaData, MetaVoidType)
+                -- parameters(MetaTypes[n] + NameIndex[n]
+                for _,data in ipairs(methodInfo) do
+                    table.insert(metaData, data)
+                end
+            end
+
             -- slots: parameters
             --  return_type param_types[argc] string_index[args]
             for _,methodInfo in ipairs(metaMethods) do
@@ -138,12 +201,16 @@ return function(LQT_OBJMETASTRING
         table.insert(metaMethods, methodInfo)
 
         if func then
-        --     metaData:insert(0x0a)
             table.insert(metaSlots, func)
+            table.insert(metaSlots, func)
+
+            table.insert(metaSignals, '__slot' .. signature:match '%b()')
             table.insert(metaSignals, '__slot' .. signature:match '%b()')
         else
-        --     metaData:insert(0x05)
             table.insert(metaSlots, false)
+            table.insert(metaSlots, false)
+
+            table.insert(metaSignals, false)
             table.insert(metaSignals, false)
         end
 
@@ -164,4 +231,3 @@ return function(LQT_OBJMETASTRING
         self[LQT_OBJSIGS] = metaSignals
     end
 end
-

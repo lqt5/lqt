@@ -60,6 +60,8 @@
 
 #define QT_REQUIRE_CONFIG(feature)
 
+#define QT6_VIRTUAL
+
 # define QT_PREPEND_NAMESPACE(name) ::name
 # define QT_USE_NAMESPACE
 # define QT_BEGIN_NAMESPACE

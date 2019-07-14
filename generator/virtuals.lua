@@ -78,6 +78,19 @@ function fill_virtuals(classes)
 	end
 end
 
+local function parse_return_type(return_type)
+	if not return_type then
+		return ''
+	elseif return_type:find('%*$') then
+		return 'nullptr';
+	end
+
+	local map = {
+		['bool'] = 'false',
+		['int'] = '-1',
+	}
+	return map[return_type] or (return_type .. '()')
+end
 
 --- Generates a virtual overload for function 'v'.
 -- Returns nil if a parameter or return type is of unknown/ignored type. Normal
@@ -124,7 +137,18 @@ function virtual_overload(v)
 	fallback = (v.return_type and 'return this->' or 'this->') .. v.xarg.fullname .. '(' .. fallback .. ');' ..
 				(v.return_type and '' or ' return;')
 	if v.xarg.abstract then
-		fallback = 'luaL_error(L, "Abstract method %s for %s not implemented! In %s", "' .. v.xarg.name .. '", lqtL_source(L,oldtop+1));'
+		-- fallback = 'luaL_error(L, "Abstract method %s for %s not implemented! In %s", "' .. v.xarg.name .. '", lqtL_source(L,oldtop+1));'
+		fallback = string.format([[luaL_error(L, "Abstract method %%s for %%s not implemented! In %%s"
+				, "%s"
+				, "%s"
+				, lqtL_source(L,oldtop+1)
+			);
+			return %s;
+]]
+			, v.xarg.name
+			, v.xarg.member_of_class
+			, parse_return_type(v.return_type)
+		)
 	end
 	ret = proto .. ' {\n'
 	ret = ret .. '  int oldtop = lua_gettop(L);\n'

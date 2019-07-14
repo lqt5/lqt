@@ -26,6 +26,7 @@
 // not yet supported
 #define Q_DECL_UNUSED
 #define Q_ENUM(a)
+#define Q_FLAG(a)
 // #define Q_FLAGS(a)
 // #define Q_PRIVATE_SLOT(a, b)
 // #define Q_DECLARE_INTERFACE(a,b)

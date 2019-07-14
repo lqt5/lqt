@@ -5,10 +5,11 @@ local arg = {n = select('#', ...), [0] = arg[0], ...}
 
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
+local QtWidgets = require 'qtwidgets'
 
-local app = QtGui.QApplication(1 + arg.n, arg)
+local app = QtWidgets.QApplication(1 + arg.n, arg)
 
-quit = QtGui.QPushButton("Quit")
+quit = QtWidgets.QPushButton("Quit")
 quit:resize(75, 30)
 quit:setFont(QtGui.QFont("Times", 18, 75))
 

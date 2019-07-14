@@ -2,14 +2,15 @@
 package.cpath = package.cpath .. ';../build/lib/?.so'
 
 local QtCore = require 'qtcore'
-local QtGui = require 'qtgui'
+-- local QtGui = require 'qtgui'
+local QtWidgets = require 'qtwidgets'
 
-local app = QtGui.QApplication(1 + select('#', ...), {arg[0], ...})
+local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
 
 -- the conversion from Lua string to QString is automatic
-local hello = QtGui.QPushButton.new("Hello World!")
+local hello = QtWidgets.QPushButton.new("Hello World!")
 -- but not the other way round
-print(hello:text():toUtf8())
+-- print(hello:text():toUtf8())
 
 hello:resize(100, 30)
 hello:show()

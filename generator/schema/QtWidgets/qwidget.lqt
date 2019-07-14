@@ -46,10 +46,10 @@
 #include <QtCore/qmargins.lqt>
 #include <QtGui/qpaintdevice.lqt>
 // #include <QtGui/qpalette.h>
-// #include <QtGui/qfont.h>
+#include <QtGui/qfont.lqt>
 // #include <QtGui/qfontmetrics.h>
 // #include <QtGui/qfontinfo.h>
-// #include <QtWidgets/qsizepolicy.h>
+#include <QtWidgets/qsizepolicy.lqt>
 // #include <QtGui/qregion.h>
 // #include <QtGui/qbrush.h>
 // #include <QtGui/qcursor.h>

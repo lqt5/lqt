@@ -1,0 +1,152 @@
+/****************************************************************************
+**
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the QtWidgets module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 3 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
+** packaging of this file. Please review the following information to
+** ensure the GNU Lesser General Public License version 3 requirements
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef QSIZEPOLICY_H
+#define QSIZEPOLICY_H
+
+#include <QtWidgets/qtwidgetsglobal.lqt>
+#include <QtCore/qobject.lqt>
+// #include <QtCore/qalgorithms.h>
+
+QT_BEGIN_NAMESPACE
+
+#define QT_SIZEPOLICY_CONSTEXPR Q_DECL_CONSTEXPR
+
+// class QVariant;
+// class QSizePolicy;
+
+// Q_DECL_CONST_FUNCTION inline uint qHash(QSizePolicy key, uint seed = 0) Q_DECL_NOTHROW;
+
+class Q_WIDGETS_EXPORT QSizePolicy
+{
+    Q_GADGET
+
+public:
+    enum PolicyFlag {
+        GrowFlag = 1,
+        ExpandFlag = 2,
+        ShrinkFlag = 4,
+        IgnoreFlag = 8
+    };
+
+    enum Policy {
+        Fixed = 0,
+        Minimum = GrowFlag,
+        Maximum = ShrinkFlag,
+        Preferred = GrowFlag | ShrinkFlag,
+        MinimumExpanding = GrowFlag | ExpandFlag,
+        Expanding = GrowFlag | ShrinkFlag | ExpandFlag,
+        Ignored = ShrinkFlag | GrowFlag | IgnoreFlag
+    };
+    Q_ENUM(Policy)
+
+    enum ControlType {
+        DefaultType      = 0x00000001,
+        ButtonBox        = 0x00000002,
+        CheckBox         = 0x00000004,
+        ComboBox         = 0x00000008,
+        Frame            = 0x00000010,
+        GroupBox         = 0x00000020,
+        Label            = 0x00000040,
+        Line             = 0x00000080,
+        LineEdit         = 0x00000100,
+        PushButton       = 0x00000200,
+        RadioButton      = 0x00000400,
+        Slider           = 0x00000800,
+        SpinBox          = 0x00001000,
+        TabWidget        = 0x00002000,
+        ToolButton       = 0x00004000
+    };
+    Q_DECLARE_FLAGS(ControlTypes, ControlType)
+    Q_FLAG(ControlTypes)
+
+    QT_SIZEPOLICY_CONSTEXPR QSizePolicy() Q_DECL_NOTHROW;
+
+// #if defined(Q_COMPILER_UNIFORM_INIT) && !defined(Q_QDOC)
+//     QT_SIZEPOLICY_CONSTEXPR QSizePolicy(Policy horizontal, Policy vertical, ControlType type = DefaultType) Q_DECL_NOTHROW
+//         : bits{0, 0, quint32(horizontal), quint32(vertical),
+//                type == DefaultType ? 0 : toControlTypeFieldValue(type), 0, 0, 0}
+//     {}
+// #else
+    QSizePolicy(Policy horizontal, Policy vertical, ControlType type = DefaultType) Q_DECL_NOTHROW;
+// #endif // uniform-init
+    QT_SIZEPOLICY_CONSTEXPR Policy horizontalPolicy() const Q_DECL_NOTHROW { return static_cast<Policy>(bits.horPolicy); }
+    QT_SIZEPOLICY_CONSTEXPR Policy verticalPolicy() const Q_DECL_NOTHROW { return static_cast<Policy>(bits.verPolicy); }
+    ControlType controlType() const Q_DECL_NOTHROW;
+
+    Q_DECL_RELAXED_CONSTEXPR void setHorizontalPolicy(Policy d) Q_DECL_NOTHROW { bits.horPolicy = d; }
+    Q_DECL_RELAXED_CONSTEXPR void setVerticalPolicy(Policy d) Q_DECL_NOTHROW { bits.verPolicy = d; }
+    void setControlType(ControlType type) Q_DECL_NOTHROW;
+
+    QT_SIZEPOLICY_CONSTEXPR Qt::Orientations expandingDirections() const Q_DECL_NOTHROW;
+
+    Q_DECL_RELAXED_CONSTEXPR void setHeightForWidth(bool b) Q_DECL_NOTHROW;
+    QT_SIZEPOLICY_CONSTEXPR bool hasHeightForWidth() const Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setWidthForHeight(bool b) Q_DECL_NOTHROW;
+    QT_SIZEPOLICY_CONSTEXPR bool hasWidthForHeight() const Q_DECL_NOTHROW;
+
+    QT_SIZEPOLICY_CONSTEXPR bool operator==(const QSizePolicy& s) const Q_DECL_NOTHROW;
+    QT_SIZEPOLICY_CONSTEXPR bool operator!=(const QSizePolicy& s) const Q_DECL_NOTHROW;
+
+    friend Q_DECL_CONST_FUNCTION uint qHash(QSizePolicy key, uint seed) Q_DECL_NOTHROW;
+
+    operator QVariant() const;
+
+    QT_SIZEPOLICY_CONSTEXPR int horizontalStretch() const Q_DECL_NOTHROW;
+    QT_SIZEPOLICY_CONSTEXPR int verticalStretch() const Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setHorizontalStretch(int stretchFactor);
+    Q_DECL_RELAXED_CONSTEXPR void setVerticalStretch(int stretchFactor);
+
+    QT_SIZEPOLICY_CONSTEXPR bool retainSizeWhenHidden() const Q_DECL_NOTHROW;
+    Q_DECL_RELAXED_CONSTEXPR void setRetainSizeWhenHidden(bool retainSize) Q_DECL_NOTHROW;
+
+    Q_DECL_RELAXED_CONSTEXPR void transpose() Q_DECL_NOTHROW;
+    Q_REQUIRED_RESULT
+// #ifndef Q_QDOC
+//    QT_SIZEPOLICY_CONSTEXPR_AND_UNIFORM_INIT
+// #endif
+    QSizePolicy transposed() const Q_DECL_NOTHROW;
+};
+Q_DECLARE_OPERATORS_FOR_FLAGS(QSizePolicy::ControlTypes)
+
+#undef QT_SIZEPOLICY_CONSTEXPR
+
+QT_END_NAMESPACE
+
+#endif // QSIZEPOLICY_H

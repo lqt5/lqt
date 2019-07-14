@@ -13,7 +13,7 @@
 // #endif
 // #include "qabstractscrollarea.h"
 // #if QT_CONFIG(abstractslider)
-// #include "qabstractslider.h"
+#include "qabstractslider.lqt"
 // #endif
 // #if QT_CONFIG(spinbox)
 // #include "qabstractspinbox.h"
@@ -22,7 +22,7 @@
 // #include "qaction.h"
 // #include "qactiongroup.h"
 #include "qapplication.lqt"
-// #include "qboxlayout.h"
+#include "qboxlayout.lqt"
 // #if QT_CONFIG(buttongroup)
 // #include "qbuttongroup.h"
 // #endif
@@ -92,7 +92,7 @@
 // #if QT_CONFIG(formlayout)
 // #include "qformlayout.h"
 // #endif
-// #include "qframe.h"
+#include "qframe.lqt"
 // #include "qgesture.h"
 // #include "qgesturerecognizer.h"
 // #if QT_CONFIG(graphicsview)
@@ -137,7 +137,7 @@
 // #if QT_CONFIG(graphicsview)
 // #include "qgraphicswidget.h"
 // #endif
-// #include "qgridlayout.h"
+#include "qgridlayout.lqt"
 // #if QT_CONFIG(groupbox)
 // #include "qgroupbox.h"
 // #endif
@@ -162,10 +162,10 @@
 // #if QT_CONFIG(label)
 // #include "qlabel.h"
 // #endif
-// #include "qlayout.h"
-// #include "qlayoutitem.h"
+#include "qlayout.lqt"
+#include "qlayoutitem.lqt"
 // #if QT_CONFIG(lcdnumber)
-// #include "qlcdnumber.h"
+#include "qlcdnumber.lqt"
 // #endif
 // #if QT_CONFIG(lineedit)
 // #include "qlineedit.h"
@@ -233,9 +233,9 @@
 // #if QT_CONFIG(sizegrip)
 // #include "qsizegrip.h"
 // #endif
-// #include "qsizepolicy.h"
+#include "qsizepolicy.lqt"
 // #if QT_CONFIG(slider)
-// #include "qslider.h"
+#include "qslider.lqt"
 // #endif
 // #if QT_CONFIG(spinbox)
 // #include "qspinbox.h"

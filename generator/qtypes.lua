@@ -102,30 +102,30 @@ qt_types['QRectF const&'] = qt_types['QRectF']
 -- 	onstack = 'table,',
 -- }
 
--- if not getmetatable(qt_types) then
--- 	setmetatable(qt_types, {
--- 		__index = function(t, k)
--- 			if type(k)=='string'
--- 				and string.match(k, '^QFlags<[%w:]+>$') then
--- 				local e = string.match(k, '^QFlags<([%w:]+)>$')
--- 				if not qt_types[e] then return nil end
--- 				e = string.gsub(e, '::', '.')
--- 				local ret = {
--- 					get = function(i)
--- 						return '('..k..'(lqtL_getflags(L, '..i..', "'..e..'")))', 1
--- 					end,
--- 					push = function(i)
--- 						return 'lqtL_pushflags(L, '..i..', "'..e..'")', 1
--- 					end,
--- 					test = function(i)
--- 						return 'lqtL_isflags(L, '..i..')', 1
--- 					end,
--- 					onstack = 'table,',
--- 				}
--- 				return ret
--- 			end
--- 		end,
--- 	})
--- end
+if not getmetatable(qt_types) then
+	setmetatable(qt_types, {
+		__index = function(t, k)
+			if type(k)=='string'
+				and string.match(k, '^QFlags<[%w:]+>$') then
+				local e = string.match(k, '^QFlags<([%w:]+)>$')
+				if not qt_types[e] then return nil end
+				e = string.gsub(e, '::', '.')
+				local ret = {
+					get = function(i)
+						return '('..k..'(lqtL_getflags(L, '..i..', "'..e..'")))', 1
+					end,
+					push = function(i)
+						return 'lqtL_pushflags(L, '..i..', "'..e..'")', 1
+					end,
+					test = function(i)
+						return 'lqtL_isflags(L, '..i..')', 1
+					end,
+					onstack = 'table,',
+				}
+				return ret
+			end
+		end,
+	})
+end
 
 return qt_types

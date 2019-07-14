@@ -18,7 +18,7 @@
 // #include "qdrag.h"
 // #endif
 // #include "qevent.h"
-// #include "qfont.h"
+#include "qfont.lqt"
 // #include "qfontdatabase.h"
 // #include "qfontinfo.h"
 // #include "qfontmetrics.h"

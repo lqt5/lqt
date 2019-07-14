@@ -3,13 +3,14 @@ package.cpath = package.cpath .. ';../build/lib/?.so'
 
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
+local QtWidgets = require 'qtwidgets'
 
-local app = QtGui.QApplication(1 + select('#', ...), {arg[0], ...})
+local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
 
-local window = QtGui.QWidget()
+local window = QtWidgets.QWidget()
 window:resize(200, 120)
 
-local quit = QtGui.QPushButton("Quit", window)
+local quit = QtWidgets.QPushButton("Quit", window)
 quit:setFont(QtGui.QFont('Times', 18, 75))
 quit:setGeometry(10, 40, 180, 40)
 

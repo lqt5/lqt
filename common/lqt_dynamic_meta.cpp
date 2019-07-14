@@ -245,7 +245,7 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
             return meta_data;
         }
 
-        qDebug() << QString("Copying qmeta object for slots in %1").arg(name);
+        // qDebug() << QString("Copying qmeta object for slots in %1").arg(name);
         // printf("Dump qt_meta_stringdata_LqtSlotAcceptor\n");
         // dump((unsigned char *) &qt_meta_stringdata_LqtSlotAcceptor, sizeof(qt_meta_stringdata_LqtSlotAcceptor));
         // printf("Dump qt_meta_data_LqtSlotAcceptor\n");
