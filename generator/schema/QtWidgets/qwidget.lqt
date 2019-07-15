@@ -45,18 +45,18 @@
 #include <QtCore/qobject.lqt>
 #include <QtCore/qmargins.lqt>
 #include <QtGui/qpaintdevice.lqt>
-// #include <QtGui/qpalette.h>
+#include <QtGui/qpalette.lqt>
 #include <QtGui/qfont.lqt>
-// #include <QtGui/qfontmetrics.h>
-// #include <QtGui/qfontinfo.h>
+#include <QtGui/qfontmetrics.lqt>
+#include <QtGui/qfontinfo.lqt>
 #include <QtWidgets/qsizepolicy.lqt>
-// #include <QtGui/qregion.h>
-// #include <QtGui/qbrush.h>
-// #include <QtGui/qcursor.h>
+#include <QtGui/qregion.lqt>
+#include <QtGui/qbrush.lqt>
+#include <QtGui/qcursor.lqt>
 #include <QtGui/qkeysequence.lqt>
 
 // #ifdef QT_INCLUDE_COMPAT
-// #include <QtGui/qevent.h>
+#include <QtGui/qevent.lqt>
 // #endif
 
 QT_BEGIN_NAMESPACE

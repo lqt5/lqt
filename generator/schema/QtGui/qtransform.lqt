@@ -40,13 +40,13 @@
 #define QTRANSFORM_H
 
 #include <QtGui/qtguiglobal.lqt>
-// #include <QtGui/qmatrix.h>
-// #include <QtGui/qpainterpath.h>
-// #include <QtGui/qpolygon.h>
-// #include <QtGui/qregion.h>
+#include <QtGui/qmatrix.lqt>
+#include <QtGui/qpainterpath.lqt>
+#include <QtGui/qpolygon.lqt>
+#include <QtGui/qregion.lqt>
 #include <QtGui/qwindowdefs.lqt>
-// #include <QtCore/qline.h>
-// #include <QtCore/qpoint.h>
+#include <QtCore/qline.lqt>
+#include <QtCore/qpoint.lqt>
 #include <QtCore/qrect.lqt>
 
 QT_BEGIN_NAMESPACE

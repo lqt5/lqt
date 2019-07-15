@@ -44,7 +44,7 @@
 #ifndef QBYTEARRAYLIST_H
 #define QBYTEARRAYLIST_H
 
-// #include <QtCore/qbytearray.h>
+#include <QtCore/qbytearray.lqt>
 
 QT_BEGIN_NAMESPACE
 

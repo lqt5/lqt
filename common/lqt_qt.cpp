@@ -210,6 +210,7 @@ void lqtL_qobject_custom (lua_State *L) {
 	    if(!lua_isfunction(L, -1))
     		lua_error(L);
 
+	    lua_getfield(L, -3, "QObject");
 	    lua_getfield(L, LUA_REGISTRYINDEX, "QObject*");
         lua_pushstring(L, LQT_OBJMETASTRING);
         lua_pushstring(L, LQT_OBJMETADATA);
@@ -217,7 +218,7 @@ void lqtL_qobject_custom (lua_State *L) {
         lua_pushstring(L, LQT_OBJSIGS);
         lua_pushnumber(L, QMetaType::Void);
         lua_pushcfunction(L, lqt_metaConvertType);
-	    lua_pcall(L, 7, 1, 0);
+	    lua_pcall(L, 8, 1, 0);
 
 	    if(!lua_isboolean(L, -1))
     		lua_error(L);

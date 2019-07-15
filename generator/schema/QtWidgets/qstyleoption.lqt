@@ -41,25 +41,25 @@
 #define QSTYLEOPTION_H
 
 #include <QtWidgets/qtwidgetsglobal.lqt>
-// #include <QtCore/qlocale.h>
+#include <QtCore/qlocale.lqt>
 #include <QtCore/qvariant.lqt>
 // #if QT_CONFIG(spinbox)
-// #include <QtWidgets/qabstractspinbox.h>
+#include <QtWidgets/qabstractspinbox.lqt>
 // #endif
 #include <QtGui/qicon.lqt>
-// #include <QtGui/qmatrix.h>
+#include <QtGui/qmatrix.lqt>
 // #if QT_CONFIG(slider)
 #include <QtWidgets/qslider.lqt>
 // #endif
-// #include <QtWidgets/qstyle.h>
+#include <QtWidgets/qstyle.lqt>
 // #if QT_CONFIG(tabbar)
-// #include <QtWidgets/qtabbar.h>
+#include <QtWidgets/qtabbar.lqt>
 // #endif
 // #if QT_CONFIG(tabwidget)
-// #include <QtWidgets/qtabwidget.h>
+#include <QtWidgets/qtabwidget.lqt>
 // #endif
 // #if QT_CONFIG(rubberband)
-// #include <QtWidgets/qrubberband.h>
+#include <QtWidgets/qrubberband.lqt>
 // #endif
 #include <QtWidgets/qframe.lqt>
 // #if QT_CONFIG(itemviews)

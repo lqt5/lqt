@@ -40,22 +40,12 @@
 #ifndef QVECTOR_H
 #define QVECTOR_H
 
-// #include <QtCore/qalgorithms.h>
-// #include <QtCore/qiterator.h>
+#include <QtCore/qalgorithms.lqt>
+#include <QtCore/qiterator.lqt>
 #include <QtCore/qlist.lqt>
-// #include <QtCore/qrefcount.h>
-// #include <QtCore/qarraydata.h>
-// #include <QtCore/qhashfunctions.h>
-
-// #include <iterator>
-// #include <vector>
-// #include <stdlib.h>
-// #include <string.h>
-// #ifdef Q_COMPILER_INITIALIZER_LISTS
-// #include <initializer_list>
-// #endif
-
-// #include <algorithm>
+#include <QtCore/qrefcount.lqt>
+#include <QtCore/qarraydata.lqt>
+#include <QtCore/qhashfunctions.lqt>
 
 QT_BEGIN_NAMESPACE
 

@@ -33,7 +33,8 @@
        0        // eod
 ]]
 
-return function(QObject
+return function(QObject_global
+    , QObject_metatable
     , LQT_OBJMETASTRING
     , LQT_OBJMETADATA
     , LQT_OBJSLOTS
@@ -232,12 +233,12 @@ return function(QObject
         self[LQT_OBJSIGS] = metaSignals
     end
 
-    rawset(QObject, '__addslot', function(self, name, func)
+    rawset(QObject_metatable, '__addslot', function(self, name, func)
         assert(type(func) == 'function')
         return hook(self, name, func)
     end)
 
-    rawset(QObject, '__addsignal', function(self, name)
+    rawset(QObject_metatable, '__addsignal', function(self, name)
         return hook(self, name)
     end)
 
@@ -245,6 +246,26 @@ return function(QObject
     --  this:__addproperty()
     --  this:__addenum()
     --  this:__addset()
+
+    rawset(QObject_metatable, 'create', function(self, ctor_args, ...)
+        local obj = self.new(unpack(ctor_args or {}))
+
+        local env = debug.getfenv(self)
+        table.foreach(env, function(k,v)
+            obj[k] = v
+        end)
+
+        local __init = rawget(env, '__init')
+        if type(__init) == 'function' then
+            __init(obj, ...)
+        end
+
+        obj.__super = self
+
+        return obj
+    end)
+    -- also modify the static QObject::create function
+    -- QObject_global.create = create
 
     return true
 end

@@ -46,8 +46,6 @@
 #include <QtWidgets/qwidget.lqt>
 // #endif
 
-// #include <limits.h>
-
 QT_BEGIN_NAMESPACE
 
 

@@ -43,8 +43,6 @@
 
 #include <QtCore/qfiledevice.lqt>
 #include <QtCore/qstring.lqt>
-// #include <stdio.h>
-
 
 QT_BEGIN_NAMESPACE
 

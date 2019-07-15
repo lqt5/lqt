@@ -41,7 +41,7 @@
 #define QRGB_H
 
 #include <QtGui/qtguiglobal.lqt>
-// #include <QtCore/qprocessordetection.h>
+#include <QtCore/qprocessordetection.lqt>
 
 QT_BEGIN_NAMESPACE
 

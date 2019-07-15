@@ -40,14 +40,13 @@
 #ifndef QGUIAPPLICATION_H
 #define QGUIAPPLICATION_H
 
-// #include <QtGui/qtguiglobal.h>
-// #include <QtCore/qcoreapplication.h>
+#include <QtGui/qtguiglobal.lqt>
 #include <QtCore/qcoreapplication.lqt>
-// #include <QtGui/qwindowdefs.h>
-// #include <QtGui/qinputmethod.h>
-// #include <QtCore/qlocale.h>
-// #include <QtCore/qpoint.h>
-// #include <QtCore/qsize.h>
+#include <QtGui/qwindowdefs.lqt>
+#include <QtGui/qinputmethod.lqt>
+#include <QtCore/qlocale.lqt>
+#include <QtCore/qpoint.lqt>
+#include <QtCore/qsize.lqt>
 
 QT_BEGIN_NAMESPACE
 

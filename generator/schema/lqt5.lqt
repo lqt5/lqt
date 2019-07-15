@@ -16,6 +16,9 @@
 #define QT_DEPRECATED
 #define Q_DECL_CONST_FUNCTION
 #define Q_DECLARE_SHARED(a)
+#define QT_DEPRECATED_X(a)
+#define Q_ATTRIBUTE_FORMAT_PRINTF(a)
+#define Q_DECLARE_METATYPE(a)
 
 #define QT_FASTCALL
 #define Q_DECL_CONST_FUNCTION const
@@ -27,9 +30,13 @@
 #define Q_DECL_UNUSED
 #define Q_ENUM(a)
 #define Q_FLAG(a)
+
+#define inline
+#define noexcept
+#define constexpr const
 // #define Q_FLAGS(a)
 // #define Q_PRIVATE_SLOT(a, b)
-// #define Q_DECLARE_INTERFACE(a,b)
+#define Q_DECLARE_INTERFACE(a,b)
 // #define Q_INTERFACES(a)
 
 // #define Q_OVERRIDE(a)

@@ -42,7 +42,7 @@
 
 #include <QtWidgets/qtwidgetsglobal.lqt>
 #include <QtCore/qobject.lqt>
-// #include <QtCore/qalgorithms.h>
+#include <QtCore/qalgorithms.lqt>
 
 QT_BEGIN_NAMESPACE
 

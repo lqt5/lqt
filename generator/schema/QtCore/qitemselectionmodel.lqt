@@ -42,8 +42,8 @@
 
 #include <QtCore/qglobal.lqt>
 
-// #include <QtCore/qset.h>
-// #include <QtCore/qvector.h>
+#include <QtCore/qset.lqt>
+#include <QtCore/qvector.lqt>
 #include <QtCore/qlist.lqt>
 #include <QtCore/qabstractitemmodel.lqt>
 

@@ -56,6 +56,11 @@
 #include <QtCore/qconfig.lqt>
 #include <QtCore/qtcore-config.lqt>
 // #endif
+
+#include <QtCore/qsystemdetection.lqt>
+#include <QtCore/qprocessordetection.lqt>
+#include <QtCore/qcompilerdetection.lqt>
+
 #define Q_CORE_EXPORT
 
 #define QT_REQUIRE_CONFIG(feature)
@@ -71,6 +76,9 @@
 # define QT_FORWARD_DECLARE_CLASS(name) class name;
 # define QT_FORWARD_DECLARE_STRUCT(name) struct name;
 # define QT_MANGLE_NAMESPACE(name) name
+
+#define Q_PRIVATE_SLOT(_)
+
 
 QT_BEGIN_NAMESPACE
 
@@ -127,6 +135,8 @@ typedef double qreal;
 #define Q_DISABLE_COPY(Class) \
     Class(const Class &) Q_DECL_EQ_DELETE;\
     Class &operator=(const Class &) Q_DECL_EQ_DELETE;
+
+#  define Q_ALWAYS_INLINE inline
 
 /*
  * If we're compiling C++ code:
@@ -314,15 +324,15 @@ QT_END_NAMESPACE
 
 // // We need to keep QTypeInfo, QSysInfo, QFlags, qDebug & family in qglobal.h for compatibility with Qt 4.
 // // Be careful when changing the order of these files.
-// #include <QtCore/qtypeinfo.h>
-// #include <QtCore/qsysinfo.h>
-// #include <QtCore/qlogging.h>
+#include <QtCore/qtypeinfo.lqt>
+#include <QtCore/qsysinfo.lqt>
+#include <QtCore/qlogging.lqt>
 
 #include <QtCore/qflags.lqt>
 
-// #include <QtCore/qatomic.h>
-// #include <QtCore/qglobalstatic.h>
-// #include <QtCore/qnumeric.h>
-// #include <QtCore/qversiontagging.h>
+#include <QtCore/qatomic.lqt>
+#include <QtCore/qglobalstatic.lqt>
+#include <QtCore/qnumeric.lqt>
+#include <QtCore/qversiontagging.lqt>
 
 #endif /* QGLOBAL_H */

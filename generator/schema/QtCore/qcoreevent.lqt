@@ -42,7 +42,7 @@
 #define QCOREEVENT_H
 
 #include <QtCore/qnamespace.lqt>
-// #include <QtCore/qbytearray.h>
+#include <QtCore/qbytearray.lqt>
 #include <QtCore/qobjectdefs.lqt>
 
 QT_BEGIN_NAMESPACE

@@ -43,15 +43,15 @@
 
 #include <QtCore/qobjectdefs.lqt>
 #include <QtCore/qstring.lqt>
-// #include <QtCore/qbytearray.h>
-// #include <QtCore/qlist.h>
+#include <QtCore/qbytearray.lqt>
+#include <QtCore/qlist.lqt>
 // #ifdef QT_INCLUDE_COMPAT
 #include <QtCore/qcoreevent.lqt>
 // #endif
-// #include <QtCore/qscopedpointer.h>
+#include <QtCore/qscopedpointer.lqt>
 #include <QtCore/qmetatype.lqt>
 
-// #include <QtCore/qobject_impl.h>
+#include <QtCore/qobject_impl.lqt>
 
 QT_BEGIN_NAMESPACE
 
@@ -111,8 +111,10 @@ public:
 class Q_CORE_EXPORT QObject
 {
     LQT_OBJECT
+
+    Q_OBJECT
     Q_PROPERTY(QString objectName READ objectName WRITE setObjectName NOTIFY objectNameChanged)
-    // Q_DECLARE_PRIVATE(QObject)
+    Q_DECLARE_PRIVATE(QObject)
 
 public:
 	explicit QObject(QObject *parent=nullptr);
@@ -214,17 +216,17 @@ public:
     void dumpObjectTree() const;
     void dumpObjectInfo() const;
 
-// #ifndef QT_NO_PROPERTIES
+#ifndef QT_NO_PROPERTIES
     bool setProperty(const char *name, const QVariant &value);
     QVariant property(const char *name) const;
     QList<QByteArray> dynamicPropertyNames() const;
-// #endif // QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
 
-// #ifndef QT_NO_USERDATA
+#ifndef QT_NO_USERDATA
     static uint registerUserData();
     void setUserData(uint id, QObjectUserData* data);
     QObjectUserData* userData(uint id) const;
-// #endif // QT_NO_USERDATA
+#endif // QT_NO_USERDATA
 
 Q_SIGNALS:
     void destroyed(QObject * = nullptr);

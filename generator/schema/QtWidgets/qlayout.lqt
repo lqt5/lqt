@@ -47,8 +47,6 @@
 #include <QtCore/qrect.lqt>
 #include <QtCore/qmargins.lqt>
 
-// #include <limits.h>
-
 QT_BEGIN_NAMESPACE
 
 

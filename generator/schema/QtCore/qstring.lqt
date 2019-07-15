@@ -41,15 +41,12 @@
 #define QSTRING_H
 
 #include <QtCore/qchar.lqt>
-// #include <QtCore/qbytearray.h>
-// #include <QtCore/qrefcount.h>
+#include <QtCore/qbytearray.lqt>
+#include <QtCore/qrefcount.lqt>
 #include <QtCore/qnamespace.lqt>
-// #include <QtCore/qstringliteral.h>
-// #include <QtCore/qstringalgorithms.h>
-// #include <QtCore/qstringview.h>
-
-// #include <string>
-// #include <iterator>
+#include <QtCore/qstringliteral.lqt>
+#include <QtCore/qstringalgorithms.lqt>
+#include <QtCore/qstringview.lqt>
 
 QT_BEGIN_NAMESPACE
 

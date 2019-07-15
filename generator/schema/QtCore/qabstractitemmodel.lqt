@@ -42,7 +42,7 @@
 
 #include <QtCore/qvariant.lqt>
 #include <QtCore/qobject.lqt>
-// #include <QtCore/qhash.h>
+#include <QtCore/qhash.lqt>
 #include <QtCore/qvector.lqt>
 
 QT_REQUIRE_CONFIG(itemmodel);

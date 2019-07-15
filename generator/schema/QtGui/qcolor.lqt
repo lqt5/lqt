@@ -41,10 +41,10 @@
 #define QCOLOR_H
 
 #include <QtGui/qtguiglobal.lqt>
-// #include <QtGui/qrgb.h>
+#include <QtGui/qrgb.lqt>
 #include <QtCore/qnamespace.lqt>
 #include <QtCore/qstringlist.lqt>
-// #include <QtGui/qrgba64.h>
+#include <QtGui/qrgba64.lqt>
 
 QT_BEGIN_NAMESPACE
 

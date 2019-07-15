@@ -41,14 +41,10 @@
 #define QSHAREDPOINTER_H
 
 #include <QtCore/qglobal.lqt>
-// #include <QtCore/qatomic.h>
-// #include <QtCore/qshareddata.h>
+#include <QtCore/qatomic.lqt>
+#include <QtCore/qshareddata.lqt>
 
-// #ifndef Q_QDOC
-// # include <QtCore/qsharedpointer_impl.h>
-// #else
-
-// QT_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 // These classes are here to fool qdoc into generating a better documentation

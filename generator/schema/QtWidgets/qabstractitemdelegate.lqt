@@ -42,7 +42,7 @@
 
 #include <QtWidgets/qtwidgetsglobal.lqt>
 #include <QtCore/qobject.lqt>
-// #include <QtWidgets/qstyleoption.h>
+#include <QtWidgets/qstyleoption.lqt>
 
 QT_REQUIRE_CONFIG(itemviews);
 

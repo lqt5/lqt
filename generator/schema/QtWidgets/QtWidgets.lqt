@@ -160,7 +160,7 @@
 // #include "qkeysequenceedit.h"
 // #endif
 // #if QT_CONFIG(label)
-// #include "qlabel.h"
+#include "qlabel.lqt"
 // #endif
 #include "qlayout.lqt"
 #include "qlayoutitem.lqt"
@@ -168,7 +168,7 @@
 #include "qlcdnumber.lqt"
 // #endif
 // #if QT_CONFIG(lineedit)
-// #include "qlineedit.h"
+#include "qlineedit.lqt"
 // #endif
 // #if QT_CONFIG(listview)
 #include "qlistview.lqt"
@@ -278,7 +278,7 @@
 // #include "qtextbrowser.h"
 // #endif
 // #if QT_CONFIG(textedit)
-// #include "qtextedit.h"
+#include "qtextedit.lqt"
 // #endif
 // #if QT_CONFIG(toolbar)
 // #include "qtoolbar.h"

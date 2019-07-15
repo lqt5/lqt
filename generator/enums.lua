@@ -65,7 +65,7 @@ function fill_typesystem(types)
 	local etype = function(en)
 		return {
 			push = function(n)
-				return 'lqtL_pushenum(L, '..n..', "'..string.gsub(en, '::', '.')..'")', 1
+				return 'lqtL_pushenum(L, (int) '..n..', "'..string.gsub(en, '::', '.')..'")', 1
 			end,
 			get = function(n)
 				return 'static_cast<'..en..'>'

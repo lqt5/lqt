@@ -42,9 +42,9 @@
 
 #include <QtCore/qmargins.lqt>
 #include <QtCore/qsize.lqt>
-// #include <QtCore/qpoint.h>
+#include <QtCore/qpoint.lqt>
 
-// QT_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_CORE_EXPORT QRect
 {

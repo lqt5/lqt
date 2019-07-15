@@ -40,28 +40,11 @@
 #ifndef QLIST_H
 #define QLIST_H
 
-// #include <QtCore/qalgorithms.h>
-// #include <QtCore/qiterator.h>
-// #include <QtCore/qrefcount.h>
-// #include <QtCore/qarraydata.h>
-// #include <QtCore/qhashfunctions.h>
-
-// #include <iterator>
-// #include <list>
-// #include <algorithm>
-// #ifdef Q_COMPILER_INITIALIZER_LISTS
-// #include <initializer_list>
-// #endif
-
-// #include <stdlib.h>
-// #include <new>
-// #include <limits.h>
-// #include <string.h>
-
-// #ifdef Q_CC_MSVC
-// #pragma warning( push )
-// #pragma warning( disable : 4127 ) // "conditional expression is constant"
-// #endif
+#include <QtCore/qalgorithms.lqt>
+#include <QtCore/qiterator.lqt>
+#include <QtCore/qrefcount.lqt>
+#include <QtCore/qarraydata.lqt>
+#include <QtCore/qhashfunctions.lqt>
 
 QT_BEGIN_NAMESPACE
 
@@ -69,13 +52,13 @@ QT_BEGIN_NAMESPACE
 template <typename T> class QVector;
 template <typename T> class QSet;
 
-// template <typename T> struct QListSpecialMethods
-// {
-// protected:
-//     ~QListSpecialMethods() {}
-// };
-// template <> struct QListSpecialMethods<QByteArray>;
-// template <> struct QListSpecialMethods<QString>;
+template <typename T> struct QListSpecialMethods
+{
+protected:
+    ~QListSpecialMethods() {}
+};
+template <> struct QListSpecialMethods<QByteArray>;
+template <> struct QListSpecialMethods<QString>;
 
 struct Q_CORE_EXPORT QListData {
     // tags for tag-dispatching of QList implementations,

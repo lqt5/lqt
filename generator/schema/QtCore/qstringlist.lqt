@@ -43,20 +43,20 @@
 #ifndef QSTRINGLIST_H
 #define QSTRINGLIST_H
 
-// #include <QtCore/qalgorithms.h>
-// #include <QtCore/qregexp.h>
-// #include <QtCore/qstring.h>
-// #include <QtCore/qstringmatcher.h>
+#include <QtCore/qalgorithms.lqt>
+#include <QtCore/qregexp.lqt>
+#include <QtCore/qstring.lqt>
+#include <QtCore/qstringmatcher.lqt>
 
 QT_BEGIN_NAMESPACE
 
-// class QRegExp;
-// class QRegularExpression;
+class QRegExp;
+class QRegularExpression;
 
-// typedef QListIterator<QString> QStringListIterator;
-// typedef QMutableListIterator<QString> QMutableStringListIterator;
+typedef QListIterator<QString> QStringListIterator;
+typedef QMutableListIterator<QString> QMutableStringListIterator;
 
-// class QStringList;
+class QStringList;
 
 // #ifdef Q_QDOC
 // class QStringList : public QList<QString>

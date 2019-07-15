@@ -43,9 +43,9 @@
 #define QMETATYPE_H
 
 #include <QtCore/qglobal.lqt>
-// #include <QtCore/qatomic.h>
+#include <QtCore/qatomic.lqt>
 #include <QtCore/qbytearray.lqt>
-// #include <QtCore/qvarlengtharray.h>
+#include <QtCore/qvarlengtharray.lqt>
 // #ifndef QT_NO_QOBJECT
 #include <QtCore/qobjectdefs.lqt>
 // #endif

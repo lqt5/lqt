@@ -44,8 +44,6 @@
 #include <QtWidgets/qsizepolicy.lqt>
 #include <QtCore/qrect.lqt>
 
-// #include <limits.h>
-
 QT_BEGIN_NAMESPACE
 
 

@@ -41,17 +41,17 @@
 #ifndef QVARIANT_H
 #define QVARIANT_H
 
-// #include <QtCore/qatomic.h>
-// #include <QtCore/qbytearray.h>
-// #include <QtCore/qlist.h>
+#include <QtCore/qatomic.lqt>
+#include <QtCore/qbytearray.lqt>
+#include <QtCore/qlist.lqt>
 #include <QtCore/qmetatype.lqt>
-// #include <QtCore/qmap.h>
-// #include <QtCore/qhash.h>
+#include <QtCore/qmap.lqt>
+#include <QtCore/qhash.lqt>
 #include <QtCore/qstring.lqt>
-// #include <QtCore/qstringlist.h>
+#include <QtCore/qstringlist.lqt>
 #include <QtCore/qobject.lqt>
 // #ifndef QT_BOOTSTRAPPED
-// #include <QtCore/qbytearraylist.h>
+#include <QtCore/qbytearraylist.lqt>
 // #endif
 
 // #if QT_HAS_INCLUDE(<variant>) && __cplusplus >= 201703L
