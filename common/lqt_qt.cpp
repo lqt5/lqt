@@ -169,12 +169,12 @@ static int lqtL_connect(lua_State *L) {
         QMetaMethod m = senderMeta->method(idxS);
         methodName = QString(m.methodSignature()).replace(QRegExp("^[^\\(]+"), QString("LQT_SLOT_%1").arg(methodId++));
 
-        lua_getfield(L, 1, "__addmethod");
+        lua_getfield(L, 1, "__addslot");
         lua_pushvalue(L, 1);
         lua_pushstring(L, qPrintable(methodName));
         lua_pushvalue(L, 3);
         lua_call(L, 3, 0);
-        
+
         methodName.prepend("1");
     } else {
         receiver = static_cast<QObject*>(lqtL_toudata(L, 3, "QObject*"));
@@ -205,20 +205,24 @@ void lqtL_qobject_custom (lua_State *L) {
     lua_getfield(L, LUA_REGISTRYINDEX, "QObject*");
     int qobject = lua_gettop(L);
 
-    lua_pushstring(L, "__addmethod");
-        luaL_dostring(L, (const char *) add_method_string);
-	        if(!lua_isfunction(L, -1))
-    	    	lua_error(L);
-            lua_pushstring(L, LQT_OBJMETASTRING);
-            lua_pushstring(L, LQT_OBJMETADATA);
-            lua_pushstring(L, LQT_OBJSLOTS);
-            lua_pushstring(L, LQT_OBJSIGS);
-            lua_pushnumber(L, QMetaType::Void);
-            lua_pushcfunction(L, lqt_metaConvertType);
-        lua_pcall(L, 6, 1, 0);
-        if(!lua_isfunction(L, -1))
-        	lua_error(L);
-    lua_rawset(L, qobject);
+    luaL_dostring(L, (const char *) add_method_string);
+    {
+	    if(!lua_isfunction(L, -1))
+    		lua_error(L);
+
+	    lua_getfield(L, LUA_REGISTRYINDEX, "QObject*");
+        lua_pushstring(L, LQT_OBJMETASTRING);
+        lua_pushstring(L, LQT_OBJMETADATA);
+        lua_pushstring(L, LQT_OBJSLOTS);
+        lua_pushstring(L, LQT_OBJSIGS);
+        lua_pushnumber(L, QMetaType::Void);
+        lua_pushcfunction(L, lqt_metaConvertType);
+	    lua_pcall(L, 7, 1, 0);
+
+	    if(!lua_isboolean(L, -1))
+    		lua_error(L);
+    	lua_pop(L, 1);
+    }
 
     lua_pushstring(L, "__methods");
     lua_pushcfunction(L, lqtL_methods);

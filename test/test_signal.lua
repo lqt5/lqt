@@ -5,8 +5,8 @@ local QtCore = require'qtcore'
 
 local qa = QtCore.QCoreApplication.new(1, {'virt_test'})
 
-qa:__addmethod('valueChanged(int)')
-qa:__addmethod('setValue(int,int)', function(_, arg1, arg2) slider:setValue(val) end)
+qa:__addsignal('valueChanged(int)')
+qa:__addslot('setValue(int,int)', function(_, arg1, arg2) slider:setValue(val) end)
 
 qa:connect('2destroyed(QObject*)', function()
 end)

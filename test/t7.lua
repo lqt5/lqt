@@ -17,8 +17,9 @@ local LCD_Range = function(...)
 	slider:setRange(0, 99)
 	slider:setValue(0)
 
-	this:__addmethod('valueChanged(int)')
-	this:__addmethod('setValue(int)', function(_, val) slider:setValue(val) end)
+	this:__addsignal('valueChanged(int)')
+	this:__addslot('setValue(int)', function(_, val) slider:setValue(val) end)
+
 	-- slider:connect('2valueChanged(int)', lcd, '1display(int)')
 	QtCore.QObject.connect(slider, '2valueChanged(int)', lcd, '1display(int)')
 	QtCore.QObject.connect(slider, '2valueChanged(int)', this, '2valueChanged(int)')

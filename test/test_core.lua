@@ -52,3 +52,7 @@ end
 
 -- print(qa.libraryPaths():at(0):toStdString())
 -- print(QtCore.QStringList())
+-- print(QtCore.QByteArrayList())
+-- local list = QtCore['QList<QByteArray>']()
+
+-- print(qa:dynamicPropertyNames())

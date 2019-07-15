@@ -33,14 +33,15 @@
        0        // eod
 ]]
 
-return function(LQT_OBJMETASTRING
+return function(QObject
+    , LQT_OBJMETASTRING
     , LQT_OBJMETADATA
     , LQT_OBJSLOTS
     , LQT_OBJSIGS
     , MetaVoidType
     , MetaConvertType
 )
-    return function(self, signature, func)
+    local function hook(self, signature, func)
         local metaName = 'LuaObject('.. tostring(self) .. ')'
         local metaStrings = self[LQT_OBJMETASTRING]
         local metaData = self[LQT_OBJMETADATA]
@@ -230,4 +231,20 @@ return function(LQT_OBJMETASTRING
         self[LQT_OBJSLOTS] = metaSlots
         self[LQT_OBJSIGS] = metaSignals
     end
+
+    rawset(QObject, '__addslot', function(self, name, func)
+        assert(type(func) == 'function')
+        return hook(self, name, func)
+    end)
+
+    rawset(QObject, '__addsignal', function(self, name)
+        return hook(self, name)
+    end)
+
+    -- TODO:
+    --  this:__addproperty()
+    --  this:__addenum()
+    --  this:__addset()
+
+    return true
 end

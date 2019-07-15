@@ -2,3 +2,5 @@ build/*
 xcode/*
 common/lqt_addmethod.h
 generator/schema/*/*.h
+examples/Qt-5.12.0/*
+

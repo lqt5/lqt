@@ -44,7 +44,7 @@
 
 #include <QtCore/qglobal.lqt>
 // #include <QtCore/qatomic.h>
-// #include <QtCore/qbytearray.h>
+#include <QtCore/qbytearray.lqt>
 // #include <QtCore/qvarlengtharray.h>
 // #ifndef QT_NO_QOBJECT
 #include <QtCore/qobjectdefs.lqt>

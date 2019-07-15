@@ -7,6 +7,7 @@ return {
 	qtcore = {
 		['QList<T>'] = {
 			'QList<QString>',
+			'QList<QByteArray>',
 			-- 'QList<QFileInfo>',
 			'QList<QVariant>',
 			-- 'QList<QModelIndex>',

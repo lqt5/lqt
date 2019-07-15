@@ -15,7 +15,6 @@
 #define QT_ASCII_CAST_WARN
 #define QT_DEPRECATED
 #define Q_DECL_CONST_FUNCTION
-#define QT_PREPEND_NAMESPACE(a) a
 #define Q_DECLARE_SHARED(a)
 
 #define QT_FASTCALL
