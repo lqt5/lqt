@@ -49,9 +49,7 @@ QT_BEGIN_NAMESPACE
 
 class Q_CORE_EXPORT QStringListModel : public QAbstractListModel
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     explicit QStringListModel(QObject *parent = nullptr);
     explicit QStringListModel(const QStringList &strings, QObject *parent = nullptr);

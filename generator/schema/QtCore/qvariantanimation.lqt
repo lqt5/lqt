@@ -53,9 +53,7 @@ QT_BEGIN_NAMESPACE
 class QVariantAnimationPrivate;
 class Q_CORE_EXPORT QVariantAnimation : public QAbstractAnimation
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_PROPERTY(QVariant startValue READ startValue WRITE setStartValue)
     Q_PROPERTY(QVariant endValue READ endValue WRITE setEndValue)
     Q_PROPERTY(QVariant currentValue READ currentValue NOTIFY valueChanged)

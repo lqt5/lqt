@@ -59,7 +59,7 @@ class QTextList;
 
 class Q_GUI_EXPORT QTextObject : public QObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 protected:
     explicit QTextObject(QTextDocument *doc);
@@ -89,7 +89,7 @@ private:
 class QTextBlockGroupPrivate;
 class Q_GUI_EXPORT QTextBlockGroup : public QTextObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 protected:
     explicit QTextBlockGroup(QTextDocument *doc);
@@ -117,7 +117,7 @@ public:
 class QTextFramePrivate;
 class Q_GUI_EXPORT QTextFrame : public QTextObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 public:
     explicit QTextFrame(QTextDocument *doc);

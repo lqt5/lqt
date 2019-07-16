@@ -49,9 +49,7 @@ QT_BEGIN_NAMESPACE
 class QAnimationGroupPrivate;
 class Q_CORE_EXPORT QAnimationGroup : public QAbstractAnimation
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 public:
     QAnimationGroup(QObject *parent = nullptr);

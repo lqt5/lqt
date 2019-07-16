@@ -50,9 +50,7 @@ QT_BEGIN_NAMESPACE
 class QEventTransitionPrivate;
 class Q_CORE_EXPORT QEventTransition : public QAbstractTransition
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_PROPERTY(QObject* eventSource READ eventSource WRITE setEventSource)
     Q_PROPERTY(QEvent::Type eventType READ eventType WRITE setEventType)
 public:

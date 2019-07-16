@@ -57,9 +57,7 @@ class Q_CORE_EXPORT QSettings : public QObject
 // #endif
 {
 // #ifndef QT_NO_QOBJECT
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 // #else
 //     QScopedPointer<QSettingsPrivate> d_ptr;
 // #endif

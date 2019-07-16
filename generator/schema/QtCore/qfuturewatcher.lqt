@@ -53,9 +53,7 @@ class QEvent;
 class QFutureWatcherBasePrivate;
 // class Q_CORE_EXPORT QFutureWatcherBase : public QObject
 // {
-//     LQT_OBJECT
-
-//     Q_OBJECT
+//    LQT_OBJECT Q_OBJECT
 //     Q_DECLARE_PRIVATE(QFutureWatcherBase)
 
 // public:

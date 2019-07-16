@@ -49,9 +49,7 @@ QT_BEGIN_NAMESPACE
 class QParallelAnimationGroupPrivate;
 class Q_CORE_EXPORT QParallelAnimationGroup : public QAnimationGroup
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 public:
     QParallelAnimationGroup(QObject *parent = nullptr);

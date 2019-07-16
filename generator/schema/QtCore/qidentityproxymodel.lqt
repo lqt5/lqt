@@ -52,9 +52,7 @@ class QIdentityProxyModelPrivate;
 
 class Q_CORE_EXPORT QIdentityProxyModel : public QAbstractProxyModel
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     explicit QIdentityProxyModel(QObject* parent = nullptr);
     ~QIdentityProxyModel();

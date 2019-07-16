@@ -107,9 +107,7 @@ Q_DECLARE_SHARED(QProcessEnvironment)
 
 class Q_CORE_EXPORT QProcess : public QIODevice
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     enum ProcessError {
         FailedToStart, //### file not found, resource error

@@ -127,9 +127,7 @@ class QWidgetPrivate;
 
 class Q_WIDGETS_EXPORT QWidget : public QObject, public QPaintDevice
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_DECLARE_PRIVATE(QWidget)
 
     Q_PROPERTY(bool modal READ isModal)

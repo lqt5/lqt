@@ -54,9 +54,7 @@ class QStyleOptionButton;
 
 class Q_WIDGETS_EXPORT QPushButton : public QAbstractButton
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
     Q_PROPERTY(bool autoDefault READ autoDefault WRITE setAutoDefault)
     Q_PROPERTY(bool default READ isDefault WRITE setDefault)

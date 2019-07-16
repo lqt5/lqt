@@ -53,7 +53,7 @@ class QOpenGLTimerQueryPrivate;
 
 class Q_GUI_EXPORT QOpenGLTimerQuery : public QObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 public:
     explicit QOpenGLTimerQuery(QObject *parent = nullptr);
@@ -81,7 +81,7 @@ class QOpenGLTimeMonitorPrivate;
 
 class Q_GUI_EXPORT QOpenGLTimeMonitor : public QObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 public:
     explicit QOpenGLTimeMonitor(QObject *parent = nullptr);

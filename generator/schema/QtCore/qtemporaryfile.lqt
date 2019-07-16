@@ -58,9 +58,7 @@ class QLockFilePrivate;
 class Q_CORE_EXPORT QTemporaryFile : public QFile
 {
 // #ifndef QT_NO_QOBJECT
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 // #endif
     Q_DECLARE_PRIVATE(QTemporaryFile)
 

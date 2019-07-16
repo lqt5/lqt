@@ -55,9 +55,7 @@ class QIODevicePrivate;
 class Q_CORE_EXPORT QIODevice
     : public QObject
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     enum OpenModeFlag {
         NotOpen = 0x0000,

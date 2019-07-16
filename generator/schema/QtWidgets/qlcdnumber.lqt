@@ -50,9 +50,7 @@ QT_REQUIRE_CONFIG(lcdnumber);
 class QLCDNumberPrivate;
 class Q_WIDGETS_EXPORT QLCDNumber : public QFrame // LCD number widget
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_PROPERTY(bool smallDecimalPoint READ smallDecimalPoint WRITE setSmallDecimalPoint)
     Q_PROPERTY(int digitCount READ digitCount WRITE setDigitCount)
     Q_PROPERTY(Mode mode READ mode WRITE setMode)

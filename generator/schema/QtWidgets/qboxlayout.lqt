@@ -53,9 +53,7 @@ class QBoxLayoutPrivate;
 
 class Q_WIDGETS_EXPORT QBoxLayout : public QLayout
 {
-    LQT_OBJECT
-    
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_DECLARE_PRIVATE(QBoxLayout)
 public:
     enum Direction { LeftToRight, RightToLeft, TopToBottom, BottomToTop,
@@ -112,9 +110,7 @@ private:
 
 class Q_WIDGETS_EXPORT QHBoxLayout : public QBoxLayout
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     QHBoxLayout();
     explicit QHBoxLayout(QWidget *parent);
@@ -127,9 +123,7 @@ private:
 
 class Q_WIDGETS_EXPORT QVBoxLayout : public QBoxLayout
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     QVBoxLayout();
     explicit QVBoxLayout(QWidget *parent);

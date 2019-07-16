@@ -53,9 +53,7 @@ QT_BEGIN_NAMESPACE
 class QThreadPoolPrivate;
 class Q_CORE_EXPORT QThreadPool : public QObject
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_DECLARE_PRIVATE(QThreadPool)
     Q_PROPERTY(int expiryTimeout READ expiryTimeout WRITE setExpiryTimeout)
     Q_PROPERTY(int maxThreadCount READ maxThreadCount WRITE setMaxThreadCount)

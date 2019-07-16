@@ -62,9 +62,7 @@ class QToolButton;
 
 class Q_WIDGETS_EXPORT QLineEdit : public QWidget
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
     Q_PROPERTY(QString inputMask READ inputMask WRITE setInputMask)
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged USER true)

@@ -71,9 +71,7 @@ class QApplicationPrivate;
 
 class Q_WIDGETS_EXPORT QApplication : public QGuiApplication
 {
-    LQT_OBJECT
-    
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_PROPERTY(QIcon windowIcon READ windowIcon WRITE setWindowIcon)
     Q_PROPERTY(int cursorFlashTime READ cursorFlashTime WRITE setCursorFlashTime)
     Q_PROPERTY(int doubleClickInterval  READ doubleClickInterval WRITE setDoubleClickInterval)

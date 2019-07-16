@@ -146,9 +146,7 @@ template <class Key, class T> class QMap;
 
 class Q_CORE_EXPORT QAbstractItemModel : public QObject
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
     friend class QPersistentModelIndexData;
     friend class QAbstractItemViewPrivate;
@@ -346,9 +344,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QAbstractItemModel::CheckIndexOptions)
 
 class Q_CORE_EXPORT QAbstractTableModel : public QAbstractItemModel
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 public:
     explicit QAbstractTableModel(QObject *parent = nullptr);
@@ -374,10 +370,7 @@ private:
 
 class Q_CORE_EXPORT QAbstractListModel : public QAbstractItemModel
 {
-    LQT_OBJECT
-
-    Q_OBJECT
-
+    LQT_OBJECT Q_OBJECT
 public:
     explicit QAbstractListModel(QObject *parent = nullptr);
     ~QAbstractListModel();

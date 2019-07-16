@@ -51,9 +51,7 @@ class QItemSelection;
 
 class Q_CORE_EXPORT QAbstractProxyModel : public QAbstractItemModel
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel WRITE setSourceModel NOTIFY sourceModelChanged)
 
 public:

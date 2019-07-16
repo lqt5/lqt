@@ -52,9 +52,7 @@ class QBufferPrivate;
 class Q_CORE_EXPORT QBuffer : public QIODevice
 {
 // #ifndef QT_NO_QOBJECT
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 // #endif
 
 public:

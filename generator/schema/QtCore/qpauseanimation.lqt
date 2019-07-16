@@ -50,9 +50,7 @@ class QPauseAnimationPrivate;
 
 class Q_CORE_EXPORT QPauseAnimation : public QAbstractAnimation
 {
-    LQT_OBJECT
-
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
     Q_PROPERTY(int duration READ duration WRITE setDuration)
 public:
     QPauseAnimation(QObject *parent = nullptr);
