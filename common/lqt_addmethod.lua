@@ -46,8 +46,8 @@ return function(QObject_global
         local metaName = 'LuaObject('.. tostring(self) .. ')'
         local metaStrings = self[LQT_OBJMETASTRING]
         local metaData = self[LQT_OBJMETADATA]
-        local metaSlots = self[LQT_OBJSLOTS]
-        local metaSignals = self[LQT_OBJSIGS]
+        local metaSlots = {}
+        local metaSignals = {}
         local metaMethods
 
         -- add meta string(ignore duplicate string)
@@ -91,9 +91,6 @@ return function(QObject_global
             }
 
             metaMethods = {}
-
-            metaSlots = {}
-            metaSignals = {}
         else
             -- get meta methods table
             metaMethods = metaData[-1]
@@ -109,69 +106,98 @@ return function(QObject_global
                 8,                      -- revision
                 0,                      -- classname
                 0, 0,                   -- classinfo
-                #metaMethods * 2, 14,   -- methods(count, offset)
+                #metaMethods, 14,   -- methods(count, offset)
                 0, 0,                   -- properties
                 0, 0,                   -- enums/sets
                 0, 0,                   -- constructors
                 0,                      -- flags
-                #metaMethods,           -- signalCount
+                0,                      -- signalCount
                 -- Qt5 meta method data
             }
 
-            local offset = #metaData + (#metaMethods * 5 * 2)
+            local function addSignalSlot(signature, func)
+                if func then
+                    table.insert(metaSlots, func)
+                    table.insert(metaSignals, '__slot' .. signature:match '%b()')
+                else
+                    table.insert(metaSlots, false)
+                    table.insert(metaSignals, false)
+                end
+            end
+
+            local offset = #metaData + (#metaMethods * 5)
             -- build slot methods
 
+            local signalCount = 0
             -- signals: name, argc, parameters, tag, flags
             for _,methodInfo in ipairs(metaMethods) do
-                -- name index
-                table.insert(metaData, methodInfo[-1])
-                -- argc
-                table.insert(metaData, #methodInfo / 2)
-                -- parameters offset
-                table.insert(metaData, offset)
-                -- tag
-                table.insert(metaData, 2)
-                -- flags
-                table.insert(metaData, 0x0A)
-                -- increment data offset
-                offset = (offset + 1 + #methodInfo)
+                local func = methodInfo[-3]
+                if not func then
+                    -- name index
+                    table.insert(metaData, methodInfo[-1])
+                    -- argc
+                    table.insert(metaData, #methodInfo / 2)
+                    -- parameters offset
+                    table.insert(metaData, offset)
+                    -- tag
+                    table.insert(metaData, 2)
+                    -- flags
+                    table.insert(metaData, 0x0A)
+                    -- increment data offset
+                    offset = (offset + 1 + #methodInfo)
+                    signalCount = signalCount + 1
+
+                    addSignalSlot(methodInfo[-2], false)
+                end
             end
+            metaData[14] = signalCount
 
             -- slots: name, argc, parameters, tag, flags
             for _,methodInfo in ipairs(metaMethods) do
-                -- name index
-                table.insert(metaData, methodInfo[-1])
-                -- argc
-                table.insert(metaData, #methodInfo / 2)
-                -- parameters offset
-                table.insert(metaData, offset)
-                -- tag
-                table.insert(metaData, 2)
-                -- flags
-                table.insert(metaData, 0x0A)
-                -- increment data offset
-                offset = (offset + 1 + #methodInfo)
+                local func = methodInfo[-3]
+                if func then
+                    -- name index
+                    table.insert(metaData, methodInfo[-1])
+                    -- argc
+                    table.insert(metaData, #methodInfo / 2)
+                    -- parameters offset
+                    table.insert(metaData, offset)
+                    -- tag
+                    table.insert(metaData, 2)
+                    -- flags
+                    table.insert(metaData, 0x0A)
+                    -- increment data offset
+                    offset = (offset + 1 + #methodInfo)
+
+                    addSignalSlot(methodInfo[-2], func)
+                end
             end
 
             -- signals: parameters
             --  return_type param_types[argc] string_index[args]
             for _,methodInfo in ipairs(metaMethods) do
-                -- return_type always is void
-                table.insert(metaData, MetaVoidType)
-                -- parameters(MetaTypes[n] + NameIndex[n]
-                for _,data in ipairs(methodInfo) do
-                    table.insert(metaData, data)
+                local func = methodInfo[-3]
+                if not func then
+                    -- return_type always is void
+                    table.insert(metaData, MetaVoidType)
+                    -- parameters(MetaTypes[n] + NameIndex[n]
+                    for _,data in ipairs(methodInfo) do
+                        table.insert(metaData, data)
+                    end
                 end
             end
 
             -- slots: parameters
             --  return_type param_types[argc] string_index[args]
             for _,methodInfo in ipairs(metaMethods) do
-                -- return_type always is void
-                table.insert(metaData, MetaVoidType)
-                -- parameters(MetaTypes[n] + NameIndex[n]
-                for _,data in ipairs(methodInfo) do
-                    table.insert(metaData, data)
+                local func = methodInfo[-3]
+                if func then
+                    -- return_type always is void
+                    table.insert(metaData, MetaVoidType)
+                    -- parameters(MetaTypes[n] + NameIndex[n]
+                    for _,data in ipairs(methodInfo) do
+                        table.insert(metaData, data)
+                    end
                 end
             end
             -- eod
@@ -185,6 +211,8 @@ return function(QObject_global
         local methodInfo = {
             -- method name index
             [-1] = metaStringIndex(name),
+            [-2] = signature,
+            [-3] = func,
         }
 
         -- MetaTypes[n]
@@ -201,20 +229,6 @@ return function(QObject_global
 
         -- add new method info
         table.insert(metaMethods, methodInfo)
-
-        if func then
-            table.insert(metaSlots, func)
-            table.insert(metaSlots, func)
-
-            table.insert(metaSignals, '__slot' .. signature:match '%b()')
-            table.insert(metaSignals, '__slot' .. signature:match '%b()')
-        else
-            table.insert(metaSlots, false)
-            table.insert(metaSlots, false)
-
-            table.insert(metaSignals, false)
-            table.insert(metaSignals, false)
-        end
 
         buildMetaData()
 
@@ -233,12 +247,28 @@ return function(QObject_global
         self[LQT_OBJSIGS] = metaSignals
     end
 
+    local function checkMethodName(methodName)
+        local name,args = string.match(methodName, '^(.*)%((.*)%)$')
+        return name ~= nil and args ~= nil
+    end
+
     rawset(QObject_metatable, '__addslot', function(self, name, func)
-        assert(type(func) == 'function')
+        assert(type(func) == 'function'
+            , string.format('__addslot("%s") `func` is not function!', name)
+        )
+
+        if not checkMethodName(name) then
+            error(string.format('Invalid slot name : `%s`', name))
+        end
+
         return hook(self, name, func)
     end)
 
     rawset(QObject_metatable, '__addsignal', function(self, name)
+        if not checkMethodName(name) then
+            error(string.format('Invalid signal name : `%s`', name))
+        end
+
         return hook(self, name)
     end)
 

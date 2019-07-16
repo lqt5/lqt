@@ -216,8 +216,9 @@ else()
 	build_qt_lib_binding(QtGui QtCore)
 # 	build_qt_lib_binding(QtGui QtNetwork QtCore)
 
-	# set(QT_LIBRARIES Qt5::Widgets)
-	# build_qt_lib_binding(QtWidgets QtGui QtCore)
+	# set(REUSE_FILES 1)
+	set(QT_LIBRARIES Qt5::Widgets)
+	build_qt_lib_binding(QtWidgets QtGui QtCore)
 
 # 	build_qt_lib_binding(QtScript QtGui QtNetwork QtCore)
 # 	build_qt_lib_binding(QtOpenGL QtGui QtNetwork QtCore)
