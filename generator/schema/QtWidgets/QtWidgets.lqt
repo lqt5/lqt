@@ -16,148 +16,148 @@
 #include "qabstractslider.lqt"
 // #endif
 // #if QT_CONFIG(spinbox)
-// #include "qabstractspinbox.h"
+#include "qabstractspinbox.lqt"
 // #endif
-// #include "qaccessiblewidget.h"
-// #include "qaction.h"
-// #include "qactiongroup.h"
+#include "qaccessiblewidget.lqt"
+#include "qaction.lqt"
+#include "qactiongroup.lqt"
 #include "qapplication.lqt"
 #include "qboxlayout.lqt"
 // #if QT_CONFIG(buttongroup)
-// #include "qbuttongroup.h"
+#include "qbuttongroup.lqt"
 // #endif
 // #if QT_CONFIG(calendarwidget)
-// #include "qcalendarwidget.h"
+#include "qcalendarwidget.lqt"
 // #endif
 // #if QT_CONFIG(checkbox)
-// #include "qcheckbox.h"
+#include "qcheckbox.lqt"
 // #endif
 // #if QT_CONFIG(colordialog)
-// #include "qcolordialog.h"
+#include "qcolordialog.lqt"
 // #endif
-// #include "qcolormap.h"
+#include "qcolormap.lqt"
 // #if QT_CONFIG(columnview)
-// #include "qcolumnview.h"
+#include "qcolumnview.lqt"
 // #endif
 // #if QT_CONFIG(combobox)
-// #include "qcombobox.h"
+#include "qcombobox.lqt"
 // #endif
 // #if QT_CONFIG(commandlinkbutton)
-// #include "qcommandlinkbutton.h"
+#include "qcommandlinkbutton.lqt"
 // #endif
-// #include "qcommonstyle.h"
+#include "qcommonstyle.lqt"
 // #if QT_CONFIG(completer)
-// #include "qcompleter.h"
+#include "qcompleter.lqt"
 // #endif
 // #if QT_CONFIG(datawidgetmapper)
-// #include "qdatawidgetmapper.h"
+#include "qdatawidgetmapper.lqt"
 // #endif
 // #if QT_CONFIG(datetimeedit)
-// #include "qdatetimeedit.h"
+#include "qdatetimeedit.lqt"
 // #endif
-// #include "qdesktopwidget.h"
+#include "qdesktopwidget.lqt"
 // #if QT_CONFIG(dial)
-// #include "qdial.h"
+#include "qdial.lqt"
 // #endif
 // #if QT_CONFIG(dialog)
-// #include "qdialog.h"
+#include "qdialog.lqt"
 // #endif
 // #if QT_CONFIG(dialogbuttonbox)
-// #include "qdialogbuttonbox.h"
+#include "qdialogbuttonbox.lqt"
 // #endif
 // #if QT_CONFIG(dirmodel)
-// #include "qdirmodel.h"
+#include "qdirmodel.lqt"
 // #endif
 // #if QT_CONFIG(dockwidget)
-// #include "qdockwidget.h"
+#include "qdockwidget.lqt"
 // #endif
-// #include "qdrawutil.h"
+#include "qdrawutil.lqt"
 // #if QT_CONFIG(errormessage)
-// #include "qerrormessage.h"
+#include "qerrormessage.lqt"
 // #endif
 // #if QT_CONFIG(filedialog)
-// #include "qfiledialog.h"
+#include "qfiledialog.lqt"
 // #endif
-// #include "qfileiconprovider.h"
+#include "qfileiconprovider.lqt"
 // #if QT_CONFIG(filesystemmodel)
-// #include "qfilesystemmodel.h"
+#include "qfilesystemmodel.lqt"
 // #endif
-// #include "qfocusframe.h"
+#include "qfocusframe.lqt"
 // #if QT_CONFIG(fontcombobox)
-// #include "qfontcombobox.h"
+#include "qfontcombobox.lqt"
 // #endif
 // #if QT_CONFIG(fontdialog)
-// #include "qfontdialog.h"
+#include "qfontdialog.lqt"
 // #endif
 // #if QT_CONFIG(formlayout)
-// #include "qformlayout.h"
+#include "qformlayout.lqt"
 // #endif
 #include "qframe.lqt"
-// #include "qgesture.h"
-// #include "qgesturerecognizer.h"
+#include "qgesture.lqt"
+#include "qgesturerecognizer.lqt"
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicsanchorlayout.h"
+#include "qgraphicsanchorlayout.lqt"
 // #endif
 // #if QT_CONFIG(graphicseffect)
-// #include "qgraphicseffect.h"
+#include "qgraphicseffect.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicsgridlayout.h"
+#include "qgraphicsgridlayout.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicsitem.h"
+#include "qgraphicsitem.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicsitemanimation.h"
+#include "qgraphicsitemanimation.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicslayout.h"
+#include "qgraphicslayout.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicslayoutitem.h"
+#include "qgraphicslayoutitem.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicslinearlayout.h"
+#include "qgraphicslinearlayout.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicsproxywidget.h"
+#include "qgraphicsproxywidget.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicsscene.h"
+#include "qgraphicsscene.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicssceneevent.h"
+#include "qgraphicssceneevent.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicstransform.h"
+#include "qgraphicstransform.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicsview.h"
+#include "qgraphicsview.lqt"
 // #endif
 // #if QT_CONFIG(graphicsview)
-// #include "qgraphicswidget.h"
+#include "qgraphicswidget.lqt"
 // #endif
 #include "qgridlayout.lqt"
 // #if QT_CONFIG(groupbox)
-// #include "qgroupbox.h"
+#include "qgroupbox.lqt"
 // #endif
 // #if QT_CONFIG(itemviews)
-// #include "qheaderview.h"
+#include "qheaderview.lqt"
 // #endif
 // #if QT_CONFIG(inputdialog)
-// #include "qinputdialog.h"
+#include "qinputdialog.lqt"
 // #endif
 // #if QT_CONFIG(itemviews)
-// #include "qitemdelegate.h"
+#include "qitemdelegate.lqt"
 // #endif
 // #if QT_CONFIG(itemviews)
-// #include "qitemeditorfactory.h"
+#include "qitemeditorfactory.lqt"
 // #endif
 // #if QT_CONFIG(qeventtransition)
-// #include "qkeyeventtransition.h"
+#include "qkeyeventtransition.lqt"
 // #endif
 // #if QT_CONFIG(keysequenceedit)
-// #include "qkeysequenceedit.h"
+#include "qkeysequenceedit.lqt"
 // #endif
 // #if QT_CONFIG(label)
 #include "qlabel.lqt"
@@ -174,147 +174,147 @@
 #include "qlistview.lqt"
 // #endif
 // #if QT_CONFIG(listwidget)
-// #include "qlistwidget.h"
+#include "qlistwidget.lqt"
 // #endif
 // #if QT_CONFIG(mainwindow)
-// #include "qmainwindow.h"
+#include "qmainwindow.lqt"
 // #endif
 // #if QT_CONFIG(mdiarea)
-// #include "qmdiarea.h"
+#include "qmdiarea.lqt"
 // #endif
 // #if QT_CONFIG(mdiarea)
-// #include "qmdisubwindow.h"
+#include "qmdisubwindow.lqt"
 // #endif
 // #if QT_CONFIG(menu)
-// #include "qmenu.h"
+#include "qmenu.lqt"
 // #endif
 // #if QT_CONFIG(menubar)
-// #include "qmenubar.h"
+#include "qmenubar.lqt"
 // #endif
 // #if QT_CONFIG(messagebox)
-// #include "qmessagebox.h"
+#include "qmessagebox.lqt"
 // #endif
 // #if QT_CONFIG(qeventtransition)
-// #include "qmouseeventtransition.h"
+#include "qmouseeventtransition.lqt"
 // #endif
-// #include "qopenglwidget.h"
+#include "qopenglwidget.lqt"
 // #if QT_CONFIG(textedit)
-// #include "qplaintextedit.h"
+#include "qplaintextedit.lqt"
 // #endif
 // #if QT_CONFIG(progressbar)
-// #include "qprogressbar.h"
+#include "qprogressbar.lqt"
 // #endif
 // #if QT_CONFIG(progressdialog)
-// #include "qprogressdialog.h"
+#include "qprogressdialog.lqt"
 // #endif
-// #include "qproxystyle.h"
+#include "qproxystyle.lqt"
 // #if QT_CONFIG(pushbutton)
 #include "qpushbutton.lqt"
 // #endif
 // #if QT_CONFIG(radiobutton)
-// #include "qradiobutton.h"
+#include "qradiobutton.lqt"
 // #endif
 // #if QT_CONFIG(rubberband)
-// #include "qrubberband.h"
+#include "qrubberband.lqt"
 // #endif
 // #if QT_CONFIG(scrollarea)
-// #include "qscrollarea.h"
+#include "qscrollarea.lqt"
 // #endif
 // #if QT_CONFIG(scrollbar)
-// #include "qscrollbar.h"
+#include "qscrollbar.lqt"
 // #endif
 // #if QT_CONFIG(scroller)
-// #include "qscroller.h"
+#include "qscroller.lqt"
 // #endif
 // #if QT_CONFIG(scroller)
-// #include "qscrollerproperties.h"
+#include "qscrollerproperties.lqt"
 // #endif
-// #include "qshortcut.h"
+#include "qshortcut.lqt"
 // #if QT_CONFIG(sizegrip)
-// #include "qsizegrip.h"
+#include "qsizegrip.lqt"
 // #endif
 #include "qsizepolicy.lqt"
 // #if QT_CONFIG(slider)
 #include "qslider.lqt"
 // #endif
 // #if QT_CONFIG(spinbox)
-// #include "qspinbox.h"
+#include "qspinbox.lqt"
 // #endif
 // #if QT_CONFIG(splashscreen)
-// #include "qsplashscreen.h"
+#include "qsplashscreen.lqt"
 // #endif
 // #if QT_CONFIG(splitter)
-// #include "qsplitter.h"
+#include "qsplitter.lqt"
 // #endif
-// #include "qstackedlayout.h"
+#include "qstackedlayout.lqt"
 // #if QT_CONFIG(stackedwidget)
-// #include "qstackedwidget.h"
+#include "qstackedwidget.lqt"
 // #endif
 // #if QT_CONFIG(statusbar)
-// #include "qstatusbar.h"
+#include "qstatusbar.lqt"
 // #endif
-// #include "qstyle.h"
+#include "qstyle.lqt"
 // #if QT_CONFIG(itemviews)
-// #include "qstyleditemdelegate.h"
+#include "qstyleditemdelegate.lqt"
 // #endif
-// #include "qstylefactory.h"
+#include "qstylefactory.lqt"
 #include "qstyleoption.lqt"
-// #include "qstylepainter.h"
-// #include "qstyleplugin.h"
-// #include "qsystemtrayicon.h"
+#include "qstylepainter.lqt"
+#include "qstyleplugin.lqt"
+#include "qsystemtrayicon.lqt"
 // #if QT_CONFIG(tabbar)
-// #include "qtabbar.h"
+#include "qtabbar.lqt"
 // #endif
 // #if QT_CONFIG(tableview)
-// #include "qtableview.h"
+#include "qtableview.lqt"
 // #endif
 // #if QT_CONFIG(tablewidget)
-// #include "qtablewidget.h"
+#include "qtablewidget.lqt"
 // #endif
 // #if QT_CONFIG(tabwidget)
-// #include "qtabwidget.h"
+#include "qtabwidget.lqt"
 // #endif
 // #if QT_CONFIG(textbrowser)
-// #include "qtextbrowser.h"
+#include "qtextbrowser.lqt"
 // #endif
 // #if QT_CONFIG(textedit)
 #include "qtextedit.lqt"
 // #endif
 // #if QT_CONFIG(toolbar)
-// #include "qtoolbar.h"
+#include "qtoolbar.lqt"
 // #endif
 // #if QT_CONFIG(toolbox)
-// #include "qtoolbox.h"
+#include "qtoolbox.lqt"
 // #endif
 // #if QT_CONFIG(toolbutton)
-// #include "qtoolbutton.h"
+#include "qtoolbutton.lqt"
 // #endif
-// #include "qtooltip.h"
+#include "qtooltip.lqt"
 // #if QT_CONFIG(treeview)
-// #include "qtreeview.h"
+#include "qtreeview.lqt"
 // #endif
 // #if QT_CONFIG(treewidget)
-// #include "qtreewidget.h"
+#include "qtreewidget.lqt"
 // #endif
 // #if QT_CONFIG(treewidget)
-// #include "qtreewidgetitemiterator.h"
+#include "qtreewidgetitemiterator.lqt"
 // #endif
 // #if QT_CONFIG(undogroup)
-// #include "qundogroup.h"
+#include "qundogroup.lqt"
 // #endif
 // #if QT_CONFIG(undocommand)
-// #include "qundostack.h"
+#include "qundostack.lqt"
 // #endif
 // #if QT_CONFIG(undoview)
-// #include "qundoview.h"
+#include "qundoview.lqt"
 // #endif
 // #if QT_CONFIG(whatsthis)
-// #include "qwhatsthis.h"
+#include "qwhatsthis.lqt"
 // #endif
 #include "qwidget.lqt"
-// #include "qwidgetaction.h"
+#include "qwidgetaction.lqt"
 // #if QT_CONFIG(wizard)
-// #include "qwizard.h"
+#include "qwizard.lqt"
 // #endif
-// #include "qtwidgetsversion.h"
+#include "qtwidgetsversion.lqt"
 #endif

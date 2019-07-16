@@ -20,6 +20,15 @@
 #define Q_ATTRIBUTE_FORMAT_PRINTF(a)
 #define Q_DECLARE_METATYPE(a)
 #define Q_REVISION(a)
+#define QT_CONFIG(a) 1
+#define Q_PRIVATE_PROPERTY(a)
+#define Q_CLASSINFO(a)
+#define Q_INTERFACES(a)
+#define QDOC_PROPERTY(a)
+#define Q_DECLARE_PRIVATE_D(a)
+#define Q_INLINE_TEMPLATE
+#define Q_OVERRIDE(a)
+#define DESIGNABLE(a)
 
 #define QT_FASTCALL
 #define Q_DECL_CONST_FUNCTION const
@@ -35,7 +44,7 @@
 #define inline
 #define noexcept
 #define constexpr const
-// #define Q_FLAGS(a)
+#define Q_FLAGS(a)
 // #define Q_PRIVATE_SLOT(a, b)
 #define Q_DECLARE_INTERFACE(a,b)
 // #define Q_INTERFACES(a)
