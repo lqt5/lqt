@@ -148,9 +148,9 @@ protected:
 
     void keyPressEvent(QKeyEvent *ev) override;
     void timerEvent(QTimerEvent *) override;
-#if QT_CONFIG(wheelevent)
+// #if QT_CONFIG(wheelevent)
     void wheelEvent(QWheelEvent *e) override;
-#endif
+// #endif
     void changeEvent(QEvent *e) override;
 
 

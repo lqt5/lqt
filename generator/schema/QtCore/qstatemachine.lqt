@@ -177,9 +177,9 @@ private:
     Q_DECLARE_PRIVATE(QStateMachine)
     Q_PRIVATE_SLOT(d_func(), void _q_start())
     Q_PRIVATE_SLOT(d_func(), void _q_process())
-#if QT_CONFIG(animation)
+// #if QT_CONFIG(animation)
     Q_PRIVATE_SLOT(d_func(), void _q_animationFinished())
-#endif
+// #endif
     Q_PRIVATE_SLOT(d_func(), void _q_startDelayedEventTimer(int, int))
     Q_PRIVATE_SLOT(d_func(), void _q_killDelayedEventTimer(int, int))
 };

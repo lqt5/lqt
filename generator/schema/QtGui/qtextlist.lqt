@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,69 +37,52 @@
 **
 ****************************************************************************/
 
-#ifndef QPLUGINLOADER_H
-#define QPLUGINLOADER_H
+#ifndef QTEXTLIST_H
+#define QTEXTLIST_H
 
-#include <QtCore/qglobal.lqt>
-// #if QT_CONFIG(library)
-#include <QtCore/qlibrary.lqt>
-// #endif
-#include <QtCore/qplugin.lqt>
+#include <QtGui/qtguiglobal.lqt>
+#include <QtGui/qtextobject.lqt>
+#include <QtCore/qobject.lqt>
 
 QT_BEGIN_NAMESPACE
 
-// #if QT_CONFIG(library)
 
-class QLibraryPrivate;
-class QJsonObject;
+class QTextListPrivate;
+class QTextCursor;
 
-class Q_CORE_EXPORT QPluginLoader : public QObject
+class Q_GUI_EXPORT QTextList : public QTextBlockGroup
 {
-    LQT_OBJECT
-
     Q_OBJECT
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
-    Q_PROPERTY(QLibrary::LoadHints loadHints READ loadHints WRITE setLoadHints)
 public:
-    explicit QPluginLoader(QObject *parent = nullptr);
-    explicit QPluginLoader(const QString &fileName, QObject *parent = nullptr);
-    ~QPluginLoader();
+    explicit QTextList(QTextDocument *doc);
+    ~QTextList();
 
-    QObject *instance();
-    QJsonObject metaData() const;
+    int count() const;
 
-    static QObjectList staticInstances();
-    static QVector<QStaticPlugin> staticPlugins();
+    inline bool isEmpty() const
+    { return count() == 0; }
 
-    bool load();
-    bool unload();
-    bool isLoaded() const;
+    QTextBlock item(int i) const;
 
-    void setFileName(const QString &fileName);
-    QString fileName() const;
+    int itemNumber(const QTextBlock &) const;
+    QString itemText(const QTextBlock &) const;
 
-    QString errorString() const;
+    void removeItem(int i);
+    void remove(const QTextBlock &);
 
-    void setLoadHints(QLibrary::LoadHints loadHints);
-    QLibrary::LoadHints loadHints() const;
+    void add(const QTextBlock &block);
+
+    inline void setFormat(const QTextListFormat &format);
+    QTextListFormat format() const { return QTextObject::format().toListFormat(); }
 
 private:
-    QLibraryPrivate *d;
-    bool did_load;
-    Q_DISABLE_COPY(QPluginLoader)
+    Q_DISABLE_COPY(QTextList)
+    Q_DECLARE_PRIVATE(QTextList)
 };
 
-// #else
-
-// class Q_CORE_EXPORT QPluginLoader
-// {
-// public:
-//     static QObjectList staticInstances();
-//     static QVector<QStaticPlugin> staticPlugins();
-// };
-
-// #endif // QT_CONFIG(library)
+inline void QTextList::setFormat(const QTextListFormat &aformat)
+{ QTextObject::setFormat(aformat); }
 
 QT_END_NAMESPACE
 
-#endif //QPLUGINLOADER_H
+#endif // QTEXTLIST_H

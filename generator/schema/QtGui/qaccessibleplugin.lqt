@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,69 +37,37 @@
 **
 ****************************************************************************/
 
-#ifndef QPLUGINLOADER_H
-#define QPLUGINLOADER_H
+#ifndef QACCESSIBLEPLUGIN_H
+#define QACCESSIBLEPLUGIN_H
 
-#include <QtCore/qglobal.lqt>
-// #if QT_CONFIG(library)
-#include <QtCore/qlibrary.lqt>
-// #endif
-#include <QtCore/qplugin.lqt>
+#include <QtGui/qtguiglobal.lqt>
+#include <QtGui/qaccessible.lqt>
+#include <QtCore/qfactoryinterface.lqt>
 
 QT_BEGIN_NAMESPACE
 
-// #if QT_CONFIG(library)
 
-class QLibraryPrivate;
-class QJsonObject;
+#ifndef QT_NO_ACCESSIBILITY
 
-class Q_CORE_EXPORT QPluginLoader : public QObject
+class QStringList;
+class QAccessibleInterface;
+
+#define QAccessibleFactoryInterface_iid "org.qt-project.Qt.QAccessibleFactoryInterface"
+
+class QAccessiblePluginPrivate;
+
+class Q_GUI_EXPORT QAccessiblePlugin : public QObject
 {
-    LQT_OBJECT
-
     Q_OBJECT
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
-    Q_PROPERTY(QLibrary::LoadHints loadHints READ loadHints WRITE setLoadHints)
 public:
-    explicit QPluginLoader(QObject *parent = nullptr);
-    explicit QPluginLoader(const QString &fileName, QObject *parent = nullptr);
-    ~QPluginLoader();
+    explicit QAccessiblePlugin(QObject *parent = nullptr);
+    ~QAccessiblePlugin();
 
-    QObject *instance();
-    QJsonObject metaData() const;
-
-    static QObjectList staticInstances();
-    static QVector<QStaticPlugin> staticPlugins();
-
-    bool load();
-    bool unload();
-    bool isLoaded() const;
-
-    void setFileName(const QString &fileName);
-    QString fileName() const;
-
-    QString errorString() const;
-
-    void setLoadHints(QLibrary::LoadHints loadHints);
-    QLibrary::LoadHints loadHints() const;
-
-private:
-    QLibraryPrivate *d;
-    bool did_load;
-    Q_DISABLE_COPY(QPluginLoader)
+    virtual QAccessibleInterface *create(const QString &key, QObject *object) = 0;
 };
 
-// #else
-
-// class Q_CORE_EXPORT QPluginLoader
-// {
-// public:
-//     static QObjectList staticInstances();
-//     static QVector<QStaticPlugin> staticPlugins();
-// };
-
-// #endif // QT_CONFIG(library)
+#endif // QT_NO_ACCESSIBILITY
 
 QT_END_NAMESPACE
 
-#endif //QPLUGINLOADER_H
+#endif // QACCESSIBLEPLUGIN_H

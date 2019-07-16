@@ -110,9 +110,9 @@ public:
     void setAutoExclusive(bool);
     bool autoExclusive() const;
 
-#if QT_CONFIG(buttongroup)
+// #if QT_CONFIG(buttongroup)
     QButtonGroup *group() const;
-#endif
+// #endif
 
 public Q_SLOTS:
     void setIconSize(const QSize &size);

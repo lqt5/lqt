@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,69 +37,64 @@
 **
 ****************************************************************************/
 
-#ifndef QPLUGINLOADER_H
-#define QPLUGINLOADER_H
+#ifndef QACCESSIBLEOBJECT_H
+#define QACCESSIBLEOBJECT_H
 
-#include <QtCore/qglobal.lqt>
-// #if QT_CONFIG(library)
-#include <QtCore/qlibrary.lqt>
-// #endif
-#include <QtCore/qplugin.lqt>
+#include <QtGui/qtguiglobal.lqt>
+#include <QtGui/qaccessible.lqt>
 
 QT_BEGIN_NAMESPACE
 
-// #if QT_CONFIG(library)
 
-class QLibraryPrivate;
-class QJsonObject;
+#ifndef QT_NO_ACCESSIBILITY
 
-class Q_CORE_EXPORT QPluginLoader : public QObject
+class QAccessibleObjectPrivate;
+class QObject;
+
+class Q_GUI_EXPORT QAccessibleObject : public QAccessibleInterface
 {
-    LQT_OBJECT
-
-    Q_OBJECT
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
-    Q_PROPERTY(QLibrary::LoadHints loadHints READ loadHints WRITE setLoadHints)
 public:
-    explicit QPluginLoader(QObject *parent = nullptr);
-    explicit QPluginLoader(const QString &fileName, QObject *parent = nullptr);
-    ~QPluginLoader();
+    explicit QAccessibleObject(QObject *object);
 
-    QObject *instance();
-    QJsonObject metaData() const;
+    bool isValid() const override;
+    QObject *object() const override;
 
-    static QObjectList staticInstances();
-    static QVector<QStaticPlugin> staticPlugins();
+    // properties
+    QRect rect() const override;
+    void setText(QAccessible::Text t, const QString &text) override;
+    QAccessibleInterface *childAt(int x, int y) const override;
 
-    bool load();
-    bool unload();
-    bool isLoaded() const;
-
-    void setFileName(const QString &fileName);
-    QString fileName() const;
-
-    QString errorString() const;
-
-    void setLoadHints(QLibrary::LoadHints loadHints);
-    QLibrary::LoadHints loadHints() const;
+// protected:
+//     virtual ~QAccessibleObject();
 
 private:
-    QLibraryPrivate *d;
-    bool did_load;
-    Q_DISABLE_COPY(QPluginLoader)
+    QAccessibleObjectPrivate *d;
+    Q_DISABLE_COPY(QAccessibleObject)
 };
 
-// #else
+class Q_GUI_EXPORT QAccessibleApplication : public QAccessibleObject
+{
+public:
+    QAccessibleApplication();
 
-// class Q_CORE_EXPORT QPluginLoader
-// {
-// public:
-//     static QObjectList staticInstances();
-//     static QVector<QStaticPlugin> staticPlugins();
-// };
+    QWindow *window() const override;
+    // relations
+    int childCount() const override;
+    int indexOfChild(const QAccessibleInterface*) const override;
+    QAccessibleInterface *focusChild() const override;
 
-// #endif // QT_CONFIG(library)
+    // navigation
+    QAccessibleInterface *parent() const override;
+    QAccessibleInterface *child(int index) const override;
+
+    // properties and state
+    QString text(QAccessible::Text t) const override;
+    QAccessible::Role role() const override;
+    QAccessible::State state() const override;
+};
+
+#endif // QT_NO_ACCESSIBILITY
 
 QT_END_NAMESPACE
 
-#endif //QPLUGINLOADER_H
+#endif // QACCESSIBLEOBJECT_H

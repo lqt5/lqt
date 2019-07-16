@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,69 +37,65 @@
 **
 ****************************************************************************/
 
-#ifndef QPLUGINLOADER_H
-#define QPLUGINLOADER_H
+#ifndef QOFFSCREENSURFACE_H
+#define QOFFSCREENSURFACE_H
 
-#include <QtCore/qglobal.lqt>
-// #if QT_CONFIG(library)
-#include <QtCore/qlibrary.lqt>
-// #endif
-#include <QtCore/qplugin.lqt>
+#include <QtGui/qtguiglobal.lqt>
+#include <QtCore/qobject.lqt>
+#include <QtGui/qsurface.lqt>
 
 QT_BEGIN_NAMESPACE
 
-// #if QT_CONFIG(library)
+class QOffscreenSurfacePrivate;
 
-class QLibraryPrivate;
-class QJsonObject;
+class QScreen;
+class QPlatformOffscreenSurface;
 
-class Q_CORE_EXPORT QPluginLoader : public QObject
+class Q_GUI_EXPORT QOffscreenSurface : public QObject, public QSurface
 {
-    LQT_OBJECT
-
     Q_OBJECT
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
-    Q_PROPERTY(QLibrary::LoadHints loadHints READ loadHints WRITE setLoadHints)
+    Q_DECLARE_PRIVATE(QOffscreenSurface)
+
 public:
-    explicit QPluginLoader(QObject *parent = nullptr);
-    explicit QPluginLoader(const QString &fileName, QObject *parent = nullptr);
-    ~QPluginLoader();
+    // ### Qt 6: merge overloads
+    explicit QOffscreenSurface(QScreen *screen, QObject *parent);
+    explicit QOffscreenSurface(QScreen *screen = nullptr);
+    virtual ~QOffscreenSurface();
 
-    QObject *instance();
-    QJsonObject metaData() const;
+    SurfaceType surfaceType() const override;
 
-    static QObjectList staticInstances();
-    static QVector<QStaticPlugin> staticPlugins();
+    void create();
+    void destroy();
 
-    bool load();
-    bool unload();
-    bool isLoaded() const;
+    bool isValid() const;
 
-    void setFileName(const QString &fileName);
-    QString fileName() const;
+    void setFormat(const QSurfaceFormat &format);
+    QSurfaceFormat format() const override;
+    QSurfaceFormat requestedFormat() const;
 
-    QString errorString() const;
+    QSize size() const override;
 
-    void setLoadHints(QLibrary::LoadHints loadHints);
-    QLibrary::LoadHints loadHints() const;
+    QScreen *screen() const;
+    void setScreen(QScreen *screen);
+
+    QPlatformOffscreenSurface *handle() const;
+
+    void *nativeHandle() const;
+    void setNativeHandle(void *handle);
+
+Q_SIGNALS:
+    void screenChanged(QScreen *screen);
+
+private Q_SLOTS:
+    void screenDestroyed(QObject *screen);
 
 private:
-    QLibraryPrivate *d;
-    bool did_load;
-    Q_DISABLE_COPY(QPluginLoader)
+
+    QPlatformSurface *surfaceHandle() const override;
+
+    Q_DISABLE_COPY(QOffscreenSurface)
 };
-
-// #else
-
-// class Q_CORE_EXPORT QPluginLoader
-// {
-// public:
-//     static QObjectList staticInstances();
-//     static QVector<QStaticPlugin> staticPlugins();
-// };
-
-// #endif // QT_CONFIG(library)
 
 QT_END_NAMESPACE
 
-#endif //QPLUGINLOADER_H
+#endif // QOFFSCREENSURFACE_H

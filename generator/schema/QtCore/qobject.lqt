@@ -67,9 +67,9 @@ class QWidget;
 #ifndef QT_NO_REGEXP
 class QRegExp;
 #endif
-#if QT_CONFIG(regularexpression)
+// #if QT_CONFIG(regularexpression)
 class QRegularExpression;
-#endif
+// #endif
 #ifndef QT_NO_USERDATA
 class QObjectUserData;
 #endif

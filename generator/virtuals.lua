@@ -90,7 +90,8 @@ local function parse_return_type(return_type)
 		['int'] = '-1',
 		['long long'] = '-1',
 	}
-	if not map[return_type] then
+
+	if not map[return_type] and not return_type:find('^Q') then
 		print('return_type', return_type)
 	end
 	return map[return_type] or (return_type .. '()')

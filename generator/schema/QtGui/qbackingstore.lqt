@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,69 +37,55 @@
 **
 ****************************************************************************/
 
-#ifndef QPLUGINLOADER_H
-#define QPLUGINLOADER_H
+#ifndef QBACKINGSTORE_H
+#define QBACKINGSTORE_H
 
-#include <QtCore/qglobal.lqt>
-// #if QT_CONFIG(library)
-#include <QtCore/qlibrary.lqt>
-// #endif
-#include <QtCore/qplugin.lqt>
+#include <QtGui/qtguiglobal.lqt>
+#include <QtCore/qrect.lqt>
+
+#include <QtGui/qwindow.lqt>
+#include <QtGui/qregion.lqt>
 
 QT_BEGIN_NAMESPACE
 
-// #if QT_CONFIG(library)
 
-class QLibraryPrivate;
-class QJsonObject;
+class QRegion;
+class QRect;
+class QPoint;
+class QImage;
+class QBackingStorePrivate;
+class QPlatformBackingStore;
 
-class Q_CORE_EXPORT QPluginLoader : public QObject
+class Q_GUI_EXPORT QBackingStore
 {
-    LQT_OBJECT
-
-    Q_OBJECT
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
-    Q_PROPERTY(QLibrary::LoadHints loadHints READ loadHints WRITE setLoadHints)
 public:
-    explicit QPluginLoader(QObject *parent = nullptr);
-    explicit QPluginLoader(const QString &fileName, QObject *parent = nullptr);
-    ~QPluginLoader();
+    explicit QBackingStore(QWindow *window);
+    ~QBackingStore();
 
-    QObject *instance();
-    QJsonObject metaData() const;
+    QWindow *window() const;
 
-    static QObjectList staticInstances();
-    static QVector<QStaticPlugin> staticPlugins();
+    QPaintDevice *paintDevice();
 
-    bool load();
-    bool unload();
-    bool isLoaded() const;
+    void flush(const QRegion &region, QWindow *window = nullptr, const QPoint &offset = QPoint());
 
-    void setFileName(const QString &fileName);
-    QString fileName() const;
+    void resize(const QSize &size);
+    QSize size() const;
 
-    QString errorString() const;
+    bool scroll(const QRegion &area, int dx, int dy);
 
-    void setLoadHints(QLibrary::LoadHints loadHints);
-    QLibrary::LoadHints loadHints() const;
+    void beginPaint(const QRegion &);
+    void endPaint();
+
+    void setStaticContents(const QRegion &region);
+    QRegion staticContents() const;
+    bool hasStaticContents() const;
+
+    QPlatformBackingStore *handle() const;
 
 private:
-    QLibraryPrivate *d;
-    bool did_load;
-    Q_DISABLE_COPY(QPluginLoader)
+    QScopedPointer<QBackingStorePrivate> d_ptr;
 };
-
-// #else
-
-// class Q_CORE_EXPORT QPluginLoader
-// {
-// public:
-//     static QObjectList staticInstances();
-//     static QVector<QStaticPlugin> staticPlugins();
-// };
-
-// #endif // QT_CONFIG(library)
 
 QT_END_NAMESPACE
 
-#endif //QPLUGINLOADER_H
+#endif // QBACKINGSTORE_H

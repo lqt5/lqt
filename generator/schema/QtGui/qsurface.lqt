@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,69 +37,64 @@
 **
 ****************************************************************************/
 
-#ifndef QPLUGINLOADER_H
-#define QPLUGINLOADER_H
+#ifndef QSURFACE_H
+#define QSURFACE_H
 
-#include <QtCore/qglobal.lqt>
-// #if QT_CONFIG(library)
-#include <QtCore/qlibrary.lqt>
-// #endif
-#include <QtCore/qplugin.lqt>
+#include <QtGui/qtguiglobal.lqt>
+#include <QtCore/qnamespace.lqt>
+#include <QtGui/qsurfaceformat.lqt>
+#include <QtCore/qmetatype.lqt>
+#include <QtCore/qsize.lqt>
 
 QT_BEGIN_NAMESPACE
 
-// #if QT_CONFIG(library)
 
-class QLibraryPrivate;
-class QJsonObject;
+class QPlatformSurface;
 
-class Q_CORE_EXPORT QPluginLoader : public QObject
+class QSurfacePrivate;
+
+class Q_GUI_EXPORT QSurface
 {
-    LQT_OBJECT
-
-    Q_OBJECT
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
-    Q_PROPERTY(QLibrary::LoadHints loadHints READ loadHints WRITE setLoadHints)
+    Q_GADGET
 public:
-    explicit QPluginLoader(QObject *parent = nullptr);
-    explicit QPluginLoader(const QString &fileName, QObject *parent = nullptr);
-    ~QPluginLoader();
+    enum SurfaceClass {
+        Window,
+        Offscreen
+    };
+    Q_ENUM(SurfaceClass)
 
-    QObject *instance();
-    QJsonObject metaData() const;
+    enum SurfaceType {
+        RasterSurface,
+        OpenGLSurface,
+        RasterGLSurface,
+        OpenVGSurface,
+        VulkanSurface,
+        MetalSurface
+    };
+    Q_ENUM(SurfaceType)
 
-    static QObjectList staticInstances();
-    static QVector<QStaticPlugin> staticPlugins();
+    virtual ~QSurface();
 
-    bool load();
-    bool unload();
-    bool isLoaded() const;
+    SurfaceClass surfaceClass() const;
 
-    void setFileName(const QString &fileName);
-    QString fileName() const;
+    virtual QSurfaceFormat format() const = 0;
+    virtual QPlatformSurface *surfaceHandle() const = 0;
 
-    QString errorString() const;
+    virtual SurfaceType surfaceType() const = 0;
+    bool supportsOpenGL() const;
 
-    void setLoadHints(QLibrary::LoadHints loadHints);
-    QLibrary::LoadHints loadHints() const;
+    virtual QSize size() const = 0;
 
-private:
-    QLibraryPrivate *d;
-    bool did_load;
-    Q_DISABLE_COPY(QPluginLoader)
+protected:
+    explicit QSurface(SurfaceClass type);
+
+    SurfaceClass m_type;
+
+    QSurfacePrivate *m_reserved;
 };
-
-// #else
-
-// class Q_CORE_EXPORT QPluginLoader
-// {
-// public:
-//     static QObjectList staticInstances();
-//     static QVector<QStaticPlugin> staticPlugins();
-// };
-
-// #endif // QT_CONFIG(library)
 
 QT_END_NAMESPACE
 
-#endif //QPLUGINLOADER_H
+Q_DECLARE_METATYPE(QSurface*)
+
+#endif //QSURFACE_H

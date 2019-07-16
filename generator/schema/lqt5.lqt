@@ -19,6 +19,7 @@
 #define QT_DEPRECATED_X(a)
 #define Q_ATTRIBUTE_FORMAT_PRINTF(a)
 #define Q_DECLARE_METATYPE(a)
+#define Q_REVISION(a)
 
 #define QT_FASTCALL
 #define Q_DECL_CONST_FUNCTION const
@@ -43,6 +44,7 @@
 // #define Q_OS_OS2
 // #define Q_NO_USING_KEYWORD
 #define Q_DECLARE_PRIVATE(a)
+
 #define Q_DECLARE_TYPEINFO_BODY(TYPE, FLAGS)
 
 // There are symbols in Qt that exist in Debug but

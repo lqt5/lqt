@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,69 +37,52 @@
 **
 ****************************************************************************/
 
-#ifndef QPLUGINLOADER_H
-#define QPLUGINLOADER_H
+#ifndef QBITMAP_H
+#define QBITMAP_H
 
-#include <QtCore/qglobal.lqt>
-// #if QT_CONFIG(library)
-#include <QtCore/qlibrary.lqt>
-// #endif
-#include <QtCore/qplugin.lqt>
+#include <QtGui/qtguiglobal.lqt>
+#include <QtGui/qpixmap.lqt>
 
 QT_BEGIN_NAMESPACE
 
-// #if QT_CONFIG(library)
 
-class QLibraryPrivate;
-class QJsonObject;
+class QVariant;
 
-class Q_CORE_EXPORT QPluginLoader : public QObject
+class Q_GUI_EXPORT QBitmap : public QPixmap
 {
-    LQT_OBJECT
-
-    Q_OBJECT
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
-    Q_PROPERTY(QLibrary::LoadHints loadHints READ loadHints WRITE setLoadHints)
 public:
-    explicit QPluginLoader(QObject *parent = nullptr);
-    explicit QPluginLoader(const QString &fileName, QObject *parent = nullptr);
-    ~QPluginLoader();
+    QBitmap();
+    QBitmap(const QPixmap &);
+    QBitmap(int w, int h);
+    explicit QBitmap(const QSize &);
+    explicit QBitmap(const QString &fileName, const char *format = nullptr);
+    // ### Qt 6: don't inherit QPixmap
+// #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QBitmap(const QBitmap &other) : QPixmap(other) {}
+    // QBitmap(QBitmap &&other) : QPixmap(std::move(other)) {} // QPixmap doesn't, yet, have a move ctor
+    QBitmap &operator=(const QBitmap &other) { QPixmap::operator=(other); return *this; }
+    QBitmap &operator=(QBitmap &&other) Q_DECL_NOTHROW { QPixmap::operator=(std::move(other)); return *this; }
+    ~QBitmap();
+// #endif
 
-    QObject *instance();
-    QJsonObject metaData() const;
+    QBitmap &operator=(const QPixmap &);
+    inline void swap(QBitmap &other) { QPixmap::swap(other); } // prevent QBitmap<->QPixmap swaps
+    operator QVariant() const;
 
-    static QObjectList staticInstances();
-    static QVector<QStaticPlugin> staticPlugins();
+    inline void clear() { fill(Qt::color0); }
 
-    bool load();
-    bool unload();
-    bool isLoaded() const;
+    static QBitmap fromImage(const QImage &image, Qt::ImageConversionFlags flags = Qt::AutoColor);
+    // static QBitmap fromImage(QImage &&image, Qt::ImageConversionFlags flags = Qt::AutoColor);
+    static QBitmap fromData(const QSize &size, const uchar *bits,
+                            QImage::Format monoFormat = QImage::Format_MonoLSB);
 
-    void setFileName(const QString &fileName);
-    QString fileName() const;
+    QBitmap transformed(const QMatrix &) const;
+    QBitmap transformed(const QTransform &matrix) const;
 
-    QString errorString() const;
-
-    void setLoadHints(QLibrary::LoadHints loadHints);
-    QLibrary::LoadHints loadHints() const;
-
-private:
-    QLibraryPrivate *d;
-    bool did_load;
-    Q_DISABLE_COPY(QPluginLoader)
+    typedef QExplicitlySharedDataPointer<QPlatformPixmap> DataPtr;
 };
-
-// #else
-
-// class Q_CORE_EXPORT QPluginLoader
-// {
-// public:
-//     static QObjectList staticInstances();
-//     static QVector<QStaticPlugin> staticPlugins();
-// };
-
-// #endif // QT_CONFIG(library)
+Q_DECLARE_SHARED(QBitmap)
 
 QT_END_NAMESPACE
 
-#endif //QPLUGINLOADER_H
+#endif // QBITMAP_H
