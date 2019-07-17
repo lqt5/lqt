@@ -73,7 +73,6 @@
 
 
 #define LQT_OBJECT \
-    Q_OBJECT \
 public: \
     virtual const QMetaObject *metaObject() const; \
     virtual void *qt_metacast(const char *); \

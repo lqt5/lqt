@@ -53,6 +53,7 @@ find_package (Qt5 REQUIRED
 	Qml
 	Gui
 	Widgets
+	Quick
 )
 
 set(EXTRA_LUA_OPTIONS )
@@ -231,6 +232,12 @@ else()
 	add_definitions(${Qt5Widgets_DEFINITIONS})
 	set(QT_LIBRARIES Qt5::Widgets)
 	build_qt_lib_binding(QtWidgets QtGui QtCore)
+
+	set(REUSE_FILES 1)
+	include_directories(${Qt5Quick_INCLUDE_DIRS})
+	add_definitions(${Qt5Quick_DEFINITIONS})
+	set(QT_LIBRARIES Qt5::Quick)
+	build_qt_lib_binding(QtQuick QtGui QtQml QtCore)
 
 # 	build_qt_lib_binding(QtScript QtGui QtNetwork QtCore)
 # 	build_qt_lib_binding(QtOpenGL QtGui QtNetwork QtCore)
