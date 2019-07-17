@@ -278,6 +278,13 @@ return function(QObject_global
     --  this:__addset()
 
     rawset(QObject_metatable, 'create', function(self, ctor_args, ...)
+        -- call __static_init once
+        --  for class object
+        if self.__static_init ~= nil then
+            self:__static_init()
+            self.__static_init = false
+        end
+
         local obj = self.new(unpack(ctor_args or {}))
 
         local env = debug.getfenv(self)

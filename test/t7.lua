@@ -65,7 +65,9 @@ app.__gc = app.delete -- take ownership of object
 
 widget = new_MyWidget()
 widget:show()
--- collectgarbage()
+print('gc begin')
+collectgarbage()
+print('gc end')
 
 app.exec()
 
