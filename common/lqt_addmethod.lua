@@ -287,12 +287,12 @@ return function(QObject_global
 
         local obj = self.new(unpack(ctor_args or {}))
 
-        local env = debug.getfenv(self)
-        table.foreach(env, function(k,v)
-            obj[k] = v
-        end)
+        local super_env = debug.getfenv(self)
+        -- set object env inherit super(self) env
+        local obj_env = setmetatable({}, { __index = super_env })
+        debug.setfenv(obj, obj_env)
 
-        local __init = rawget(env, '__init')
+        local __init = rawget(super_env, '__init')
         if type(__init) == 'function' then
             __init(obj, ...)
         end

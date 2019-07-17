@@ -233,6 +233,8 @@ if module_name == 'qtcore' then
 			table.insert(bytes, '\n\t')
 		end
 	end)
+	-- eof
+	table.insert(bytes, 0)
 
 	fp = io.open(string.format('%s/../common/lqt_addmethod.h', path), 'wb')
 	fp:write(string.format('static const char add_method_string[] = {\n%s\n};\n'
