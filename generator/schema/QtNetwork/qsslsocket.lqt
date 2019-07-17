@@ -64,7 +64,7 @@ class QSslPreSharedKeyAuthenticator;
 class QSslSocketPrivate;
 class Q_NETWORK_EXPORT QSslSocket : public QTcpSocket
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     enum SslMode {
         UnencryptedMode,

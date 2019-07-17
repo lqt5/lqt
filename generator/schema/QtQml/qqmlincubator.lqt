@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtNetwork module of the Qt Toolkit.
+** This file is part of the QtQml module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,58 +37,88 @@
 **
 ****************************************************************************/
 
-#ifndef QUDPSOCKET_H
-#define QUDPSOCKET_H
+#ifndef QQMLINCUBATOR_H
+#define QQMLINCUBATOR_H
 
-#include <QtNetwork/qtnetworkglobal.lqt>
-#include <QtNetwork/qabstractsocket.lqt>
-#include <QtNetwork/qhostaddress.lqt>
+#include <QtQml/qtqmlglobal.lqt>
+#include <QtQml/qqmlerror.lqt>
 
 QT_BEGIN_NAMESPACE
 
 
-#ifndef QT_NO_UDPSOCKET
+class QQmlEngine;
 
-class QNetworkDatagram;
-class QNetworkInterface;
-class QUdpSocketPrivate;
-
-class Q_NETWORK_EXPORT QUdpSocket : public QAbstractSocket
+class QQmlIncubatorPrivate;
+class Q_QML_EXPORT QQmlIncubator
 {
-    LQT_OBJECT Q_OBJECT
+    Q_DISABLE_COPY(QQmlIncubator)
 public:
-    explicit QUdpSocket(QObject *parent = nullptr);
-    virtual ~QUdpSocket();
+    enum IncubationMode {
+        Asynchronous,
+        AsynchronousIfNested,
+        Synchronous
+    };
+    enum Status {
+        Null,
+        Ready,
+        Loading,
+        Error
+    };
 
-#ifndef QT_NO_NETWORKINTERFACE
-    bool joinMulticastGroup(const QHostAddress &groupAddress);
-    bool joinMulticastGroup(const QHostAddress &groupAddress,
-                            const QNetworkInterface &iface);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress,
-                             const QNetworkInterface &iface);
+    QQmlIncubator(IncubationMode = Asynchronous);
+    virtual ~QQmlIncubator();
 
-    QNetworkInterface multicastInterface() const;
-    void setMulticastInterface(const QNetworkInterface &iface);
-#endif
+    void clear();
+    void forceCompletion();
 
-    bool hasPendingDatagrams() const;
-    qint64 pendingDatagramSize() const;
-    QNetworkDatagram receiveDatagram(qint64 maxSize = -1);
-    qint64 readDatagram(char *data, qint64 maxlen, QHostAddress *host = nullptr, quint16 *port = nullptr);
+    bool isNull() const;
+    bool isReady() const;
+    bool isError() const;
+    bool isLoading() const;
 
-    qint64 writeDatagram(const QNetworkDatagram &datagram);
-    qint64 writeDatagram(const char *data, qint64 len, const QHostAddress &host, quint16 port);
-    inline qint64 writeDatagram(const QByteArray &datagram, const QHostAddress &host, quint16 port)
-        { return writeDatagram(datagram.constData(), datagram.size(), host, port); }
+    QList<QQmlError> errors() const;
+
+    IncubationMode incubationMode() const;
+
+    Status status() const;
+
+    QObject *object() const;
+
+protected:
+    virtual void statusChanged(Status);
+    virtual void setInitialState(QObject *);
 
 private:
-    Q_DISABLE_COPY(QUdpSocket)
-    Q_DECLARE_PRIVATE(QUdpSocket)
+    friend class QQmlComponent;
+    friend class QQmlEnginePrivate;
+    friend class QQmlIncubatorPrivate;
+    QQmlIncubatorPrivate *d;
 };
 
-#endif // QT_NO_UDPSOCKET
+class QQmlEnginePrivate;
+class Q_QML_EXPORT QQmlIncubationController
+{
+    Q_DISABLE_COPY(QQmlIncubationController)
+public:
+    QQmlIncubationController();
+    virtual ~QQmlIncubationController();
+
+    QQmlEngine *engine() const;
+    int incubatingObjectCount() const;
+
+    void incubateFor(int msecs);
+    void incubateWhile(volatile bool *flag, int msecs=0);
+
+protected:
+    virtual void incubatingObjectCountChanged(int);
+
+private:
+    friend class QQmlEngine;
+    friend class QQmlEnginePrivate;
+    friend class QQmlIncubatorPrivate;
+    QQmlEnginePrivate *d;
+};
 
 QT_END_NAMESPACE
 
-#endif // QUDPSOCKET_H
+#endif // QQMLINCUBATOR_H

@@ -47,7 +47,13 @@ set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 # set(QT_USE_QTSQL 1)
 # set(QT_USE_QTXMLPATTERNS 1)
 
-find_package (Qt5 REQUIRED Core Network Gui Widgets)
+find_package (Qt5 REQUIRED
+	Core
+	Network
+	Qml
+	Gui
+	Widgets
+)
 
 set(EXTRA_LUA_OPTIONS )
 option(VERBOSE_BUILD "Create a verbose build which logs every binding call" OFF)
@@ -205,10 +211,16 @@ else()
 	set(QT_LIBRARIES Qt5::Core Qt5::Gui)
 	build_qt_lib_binding(QtCore)
 
-	set(REUSE_FILES 0)
+	set(REUSE_FILES 1)
 	include_directories(${Qt5Network_INCLUDE_DIRS})
 	add_definitions(${Qt5Network_DEFINITIONS})
 	build_qt_lib_binding(QtNetwork QtCore)
+
+	set(REUSE_FILES 1)
+	include_directories(${Qt5Qml_INCLUDE_DIRS})
+	add_definitions(${Qt5Qml_DEFINITIONS})
+	set(QT_LIBRARIES Qt5::Qml)
+	build_qt_lib_binding(QtQml QtNetwork QtCore)
 
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Qt5::Gui)

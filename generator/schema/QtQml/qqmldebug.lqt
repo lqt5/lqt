@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtNetwork module of the Qt Toolkit.
+** This file is part of the QtQml module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,58 +37,50 @@
 **
 ****************************************************************************/
 
-#ifndef QUDPSOCKET_H
-#define QUDPSOCKET_H
+#ifndef QQMLDEBUG_H
+#define QQMLDEBUG_H
 
-#include <QtNetwork/qtnetworkglobal.lqt>
-#include <QtNetwork/qabstractsocket.lqt>
-#include <QtNetwork/qhostaddress.lqt>
+#include <QtQml/qtqmlglobal.lqt>
+#include <QtCore/qstring.lqt>
+#include <QtCore/qvariant.lqt>
 
 QT_BEGIN_NAMESPACE
 
+#if QT_CONFIG(qml_debug)
 
-#ifndef QT_NO_UDPSOCKET
-
-class QNetworkDatagram;
-class QNetworkInterface;
-class QUdpSocketPrivate;
-
-class Q_NETWORK_EXPORT QUdpSocket : public QAbstractSocket
+struct Q_QML_EXPORT QQmlDebuggingEnabler
 {
-    LQT_OBJECT Q_OBJECT
-public:
-    explicit QUdpSocket(QObject *parent = nullptr);
-    virtual ~QUdpSocket();
+    enum StartMode {
+        DoNotWaitForClient,
+        WaitForClient
+    };
 
-#ifndef QT_NO_NETWORKINTERFACE
-    bool joinMulticastGroup(const QHostAddress &groupAddress);
-    bool joinMulticastGroup(const QHostAddress &groupAddress,
-                            const QNetworkInterface &iface);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress,
-                             const QNetworkInterface &iface);
+    QQmlDebuggingEnabler(bool printWarning = true);
 
-    QNetworkInterface multicastInterface() const;
-    void setMulticastInterface(const QNetworkInterface &iface);
-#endif
+    static QStringList debuggerServices();
+    static QStringList inspectorServices();
+    static QStringList profilerServices();
+    static QStringList nativeDebuggerServices();
 
-    bool hasPendingDatagrams() const;
-    qint64 pendingDatagramSize() const;
-    QNetworkDatagram receiveDatagram(qint64 maxSize = -1);
-    qint64 readDatagram(char *data, qint64 maxlen, QHostAddress *host = nullptr, quint16 *port = nullptr);
+    static void setServices(const QStringList &services);
 
-    qint64 writeDatagram(const QNetworkDatagram &datagram);
-    qint64 writeDatagram(const char *data, qint64 len, const QHostAddress &host, quint16 port);
-    inline qint64 writeDatagram(const QByteArray &datagram, const QHostAddress &host, quint16 port)
-        { return writeDatagram(datagram.constData(), datagram.size(), host, port); }
-
-private:
-    Q_DISABLE_COPY(QUdpSocket)
-    Q_DECLARE_PRIVATE(QUdpSocket)
+    static bool startTcpDebugServer(int port, StartMode mode = DoNotWaitForClient,
+                                    const QString &hostName = QString());
+    static bool connectToLocalDebugger(const QString &socketFileName,
+                                       StartMode mode = DoNotWaitForClient);
+    static bool startDebugConnector(const QString &pluginName,
+                                    const QVariantHash &configuration = QVariantHash());
 };
 
-#endif // QT_NO_UDPSOCKET
+// Execute code in constructor before first QQmlEngine is instantiated
+#if defined(QT_QML_DEBUG_NO_WARNING)
+static QQmlDebuggingEnabler qQmlEnableDebuggingHelper(false);
+#elif defined(QT_QML_DEBUG)
+static QQmlDebuggingEnabler qQmlEnableDebuggingHelper(true);
+#endif
+
+#endif
 
 QT_END_NAMESPACE
 
-#endif // QUDPSOCKET_H
+#endif // QQMLDEBUG_H

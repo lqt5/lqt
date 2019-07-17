@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtNetwork module of the Qt Toolkit.
+** This file is part of the QtQml module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,58 +37,42 @@
 **
 ****************************************************************************/
 
-#ifndef QUDPSOCKET_H
-#define QUDPSOCKET_H
+#ifndef QQMLEXTENSIONINTERFACE_H
+#define QQMLEXTENSIONINTERFACE_H
 
-#include <QtNetwork/qtnetworkglobal.lqt>
-#include <QtNetwork/qabstractsocket.lqt>
-#include <QtNetwork/qhostaddress.lqt>
+#include <QtQml/qtqmlglobal.lqt>
+#include <QtCore/qobject.lqt>
 
 QT_BEGIN_NAMESPACE
 
 
-#ifndef QT_NO_UDPSOCKET
+class QQmlEngine;
 
-class QNetworkDatagram;
-class QNetworkInterface;
-class QUdpSocketPrivate;
-
-class Q_NETWORK_EXPORT QUdpSocket : public QAbstractSocket
+class Q_QML_EXPORT QQmlTypesExtensionInterface
 {
-    LQT_OBJECT Q_OBJECT
 public:
-    explicit QUdpSocket(QObject *parent = nullptr);
-    virtual ~QUdpSocket();
-
-#ifndef QT_NO_NETWORKINTERFACE
-    bool joinMulticastGroup(const QHostAddress &groupAddress);
-    bool joinMulticastGroup(const QHostAddress &groupAddress,
-                            const QNetworkInterface &iface);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress,
-                             const QNetworkInterface &iface);
-
-    QNetworkInterface multicastInterface() const;
-    void setMulticastInterface(const QNetworkInterface &iface);
-#endif
-
-    bool hasPendingDatagrams() const;
-    qint64 pendingDatagramSize() const;
-    QNetworkDatagram receiveDatagram(qint64 maxSize = -1);
-    qint64 readDatagram(char *data, qint64 maxlen, QHostAddress *host = nullptr, quint16 *port = nullptr);
-
-    qint64 writeDatagram(const QNetworkDatagram &datagram);
-    qint64 writeDatagram(const char *data, qint64 len, const QHostAddress &host, quint16 port);
-    inline qint64 writeDatagram(const QByteArray &datagram, const QHostAddress &host, quint16 port)
-        { return writeDatagram(datagram.constData(), datagram.size(), host, port); }
-
-private:
-    Q_DISABLE_COPY(QUdpSocket)
-    Q_DECLARE_PRIVATE(QUdpSocket)
+    virtual ~QQmlTypesExtensionInterface() {}
+    virtual void registerTypes(const char *uri) = 0;
 };
 
-#endif // QT_NO_UDPSOCKET
+class Q_QML_EXPORT QQmlExtensionInterface : public QQmlTypesExtensionInterface
+{
+public:
+    ~QQmlExtensionInterface() override {}
+    virtual void initializeEngine(QQmlEngine *engine, const char *uri) = 0;
+};
+
+#define QQmlTypesExtensionInterface_iid "org.qt-project.Qt.QQmlTypesExtensionInterface"
+
+Q_DECLARE_INTERFACE(QQmlTypesExtensionInterface, "org.qt-project.Qt.QQmlTypesExtensionInterface/1.0")
+
+// NOTE: When changing this to a new version and deciding to add backup code to
+// continue to support the previous version, make sure to support both of these iids.
+#define QQmlExtensionInterface_iid "org.qt-project.Qt.QQmlExtensionInterface/1.0"
+#define QQmlExtensionInterface_iid_old "org.qt-project.Qt.QQmlExtensionInterface"
+
+Q_DECLARE_INTERFACE(QQmlExtensionInterface, QQmlExtensionInterface_iid)
 
 QT_END_NAMESPACE
 
-#endif // QUDPSOCKET_H
+#endif // QQMLEXTENSIONINTERFACE_H

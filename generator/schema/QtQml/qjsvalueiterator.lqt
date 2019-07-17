@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtNetwork module of the Qt Toolkit.
+** This file is part of the QtQml module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,58 +37,40 @@
 **
 ****************************************************************************/
 
-#ifndef QUDPSOCKET_H
-#define QUDPSOCKET_H
+#ifndef QJSVALUEITERATOR_H
+#define QJSVALUEITERATOR_H
 
-#include <QtNetwork/qtnetworkglobal.lqt>
-#include <QtNetwork/qabstractsocket.lqt>
-#include <QtNetwork/qhostaddress.lqt>
+#include <QtQml/qjsvalue.lqt>
+#include <QtQml/qtqmlglobal.lqt>
+#include <QtCore/qscopedpointer.lqt>
 
 QT_BEGIN_NAMESPACE
 
 
-#ifndef QT_NO_UDPSOCKET
+class QString;
 
-class QNetworkDatagram;
-class QNetworkInterface;
-class QUdpSocketPrivate;
-
-class Q_NETWORK_EXPORT QUdpSocket : public QAbstractSocket
+class QJSValueIteratorPrivate;
+class Q_QML_EXPORT QJSValueIterator
 {
-    LQT_OBJECT Q_OBJECT
 public:
-    explicit QUdpSocket(QObject *parent = nullptr);
-    virtual ~QUdpSocket();
+    QJSValueIterator(const QJSValue &value);
+    ~QJSValueIterator();
 
-#ifndef QT_NO_NETWORKINTERFACE
-    bool joinMulticastGroup(const QHostAddress &groupAddress);
-    bool joinMulticastGroup(const QHostAddress &groupAddress,
-                            const QNetworkInterface &iface);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress,
-                             const QNetworkInterface &iface);
+    bool hasNext() const;
+    bool next();
 
-    QNetworkInterface multicastInterface() const;
-    void setMulticastInterface(const QNetworkInterface &iface);
-#endif
+    QString name() const;
 
-    bool hasPendingDatagrams() const;
-    qint64 pendingDatagramSize() const;
-    QNetworkDatagram receiveDatagram(qint64 maxSize = -1);
-    qint64 readDatagram(char *data, qint64 maxlen, QHostAddress *host = nullptr, quint16 *port = nullptr);
-
-    qint64 writeDatagram(const QNetworkDatagram &datagram);
-    qint64 writeDatagram(const char *data, qint64 len, const QHostAddress &host, quint16 port);
-    inline qint64 writeDatagram(const QByteArray &datagram, const QHostAddress &host, quint16 port)
-        { return writeDatagram(datagram.constData(), datagram.size(), host, port); }
+    QJSValue value() const;
+    QJSValueIterator& operator=(QJSValue &value);
 
 private:
-    Q_DISABLE_COPY(QUdpSocket)
-    Q_DECLARE_PRIVATE(QUdpSocket)
-};
+    QScopedPointer<QJSValueIteratorPrivate> d_ptr;
 
-#endif // QT_NO_UDPSOCKET
+    Q_DECLARE_PRIVATE(QJSValueIterator)
+    Q_DISABLE_COPY(QJSValueIterator)
+};
 
 QT_END_NAMESPACE
 
-#endif // QUDPSOCKET_H
+#endif // QJSVALUEITERATOR_H

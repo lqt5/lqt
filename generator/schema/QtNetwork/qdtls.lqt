@@ -73,7 +73,7 @@ class QString;
 class QDtlsClientVerifierPrivate;
 class Q_NETWORK_EXPORT QDtlsClientVerifier : public QObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 public:
 
@@ -113,7 +113,7 @@ class QSslError;
 class QDtlsPrivate;
 class Q_NETWORK_EXPORT QDtls : public QObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 public:
 

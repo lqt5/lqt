@@ -52,7 +52,7 @@ class QNetworkCookie;
 class QNetworkCookieJarPrivate;
 class Q_NETWORK_EXPORT QNetworkCookieJar: public QObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     explicit QNetworkCookieJar(QObject *parent = nullptr);
     virtual ~QNetworkCookieJar();

@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2016 BlackBerry Limited. All rights reserved.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtNetwork module of the Qt Toolkit.
+** This file is part of the QtQml module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,58 +37,35 @@
 **
 ****************************************************************************/
 
-#ifndef QUDPSOCKET_H
-#define QUDPSOCKET_H
+#ifndef QQMLFILESELECTOR_H
+#define QQMLFILESELECTOR_H
 
-#include <QtNetwork/qtnetworkglobal.lqt>
-#include <QtNetwork/qabstractsocket.lqt>
-#include <QtNetwork/qhostaddress.lqt>
+#include <QtCore/qobject.lqt>
+#include <QtCore/qurl.lqt>
+#include <QtQml/qqmlengine.lqt>
+#include <QtQml/qtqmlglobal.lqt>
 
 QT_BEGIN_NAMESPACE
 
-
-#ifndef QT_NO_UDPSOCKET
-
-class QNetworkDatagram;
-class QNetworkInterface;
-class QUdpSocketPrivate;
-
-class Q_NETWORK_EXPORT QUdpSocket : public QAbstractSocket
+class QFileSelector;
+class QQmlFileSelectorPrivate;
+class Q_QML_EXPORT QQmlFileSelector : public QObject
 {
     LQT_OBJECT Q_OBJECT
+    Q_DECLARE_PRIVATE(QQmlFileSelector)
 public:
-    explicit QUdpSocket(QObject *parent = nullptr);
-    virtual ~QUdpSocket();
-
-#ifndef QT_NO_NETWORKINTERFACE
-    bool joinMulticastGroup(const QHostAddress &groupAddress);
-    bool joinMulticastGroup(const QHostAddress &groupAddress,
-                            const QNetworkInterface &iface);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress,
-                             const QNetworkInterface &iface);
-
-    QNetworkInterface multicastInterface() const;
-    void setMulticastInterface(const QNetworkInterface &iface);
-#endif
-
-    bool hasPendingDatagrams() const;
-    qint64 pendingDatagramSize() const;
-    QNetworkDatagram receiveDatagram(qint64 maxSize = -1);
-    qint64 readDatagram(char *data, qint64 maxlen, QHostAddress *host = nullptr, quint16 *port = nullptr);
-
-    qint64 writeDatagram(const QNetworkDatagram &datagram);
-    qint64 writeDatagram(const char *data, qint64 len, const QHostAddress &host, quint16 port);
-    inline qint64 writeDatagram(const QByteArray &datagram, const QHostAddress &host, quint16 port)
-        { return writeDatagram(datagram.constData(), datagram.size(), host, port); }
+    explicit QQmlFileSelector(QQmlEngine *engine, QObject *parent = nullptr);
+    ~QQmlFileSelector() override;
+    QFileSelector *selector() const Q_DECL_NOTHROW;
+    void setSelector(QFileSelector *selector);
+    void setExtraSelectors(QStringList &strings); // TODO Qt6: remove
+    void setExtraSelectors(const QStringList &strings);
+    static QQmlFileSelector* get(QQmlEngine*);
 
 private:
-    Q_DISABLE_COPY(QUdpSocket)
-    Q_DECLARE_PRIVATE(QUdpSocket)
+    Q_DISABLE_COPY(QQmlFileSelector)
 };
-
-#endif // QT_NO_UDPSOCKET
 
 QT_END_NAMESPACE
 
-#endif // QUDPSOCKET_H
+#endif

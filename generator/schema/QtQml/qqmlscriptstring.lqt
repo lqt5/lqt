@@ -3,7 +3,7 @@
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
-** This file is part of the QtNetwork module of the Qt Toolkit.
+** This file is part of the QtQml module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** Commercial License Usage
@@ -37,58 +37,58 @@
 **
 ****************************************************************************/
 
-#ifndef QUDPSOCKET_H
-#define QUDPSOCKET_H
+#ifndef QQMLSCRIPTSTRING_H
+#define QQMLSCRIPTSTRING_H
 
-#include <QtNetwork/qtnetworkglobal.lqt>
-#include <QtNetwork/qabstractsocket.lqt>
-#include <QtNetwork/qhostaddress.lqt>
+#include <QtQml/qtqmlglobal.lqt>
+#include <QtCore/qstring.lqt>
+#include <QtCore/qshareddata.lqt>
+#include <QtCore/qmetatype.lqt>
 
 QT_BEGIN_NAMESPACE
 
 
-#ifndef QT_NO_UDPSOCKET
-
-class QNetworkDatagram;
-class QNetworkInterface;
-class QUdpSocketPrivate;
-
-class Q_NETWORK_EXPORT QUdpSocket : public QAbstractSocket
+class QObject;
+class QQmlContext;
+class QQmlScriptStringPrivate;
+class QQmlObjectCreator;
+namespace QV4 {
+    struct QObjectWrapper;
+}
+class Q_QML_EXPORT QQmlScriptString
 {
-    LQT_OBJECT Q_OBJECT
 public:
-    explicit QUdpSocket(QObject *parent = nullptr);
-    virtual ~QUdpSocket();
+    QQmlScriptString();
+    QQmlScriptString(const QQmlScriptString &);
+    ~QQmlScriptString();
 
-#ifndef QT_NO_NETWORKINTERFACE
-    bool joinMulticastGroup(const QHostAddress &groupAddress);
-    bool joinMulticastGroup(const QHostAddress &groupAddress,
-                            const QNetworkInterface &iface);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress);
-    bool leaveMulticastGroup(const QHostAddress &groupAddress,
-                             const QNetworkInterface &iface);
+    QQmlScriptString &operator=(const QQmlScriptString &);
 
-    QNetworkInterface multicastInterface() const;
-    void setMulticastInterface(const QNetworkInterface &iface);
-#endif
+    bool operator==(const QQmlScriptString &) const;
+    bool operator!=(const QQmlScriptString &) const;
 
-    bool hasPendingDatagrams() const;
-    qint64 pendingDatagramSize() const;
-    QNetworkDatagram receiveDatagram(qint64 maxSize = -1);
-    qint64 readDatagram(char *data, qint64 maxlen, QHostAddress *host = nullptr, quint16 *port = nullptr);
+    bool isEmpty() const;
 
-    qint64 writeDatagram(const QNetworkDatagram &datagram);
-    qint64 writeDatagram(const char *data, qint64 len, const QHostAddress &host, quint16 port);
-    inline qint64 writeDatagram(const QByteArray &datagram, const QHostAddress &host, quint16 port)
-        { return writeDatagram(datagram.constData(), datagram.size(), host, port); }
+    bool isUndefinedLiteral() const;
+    bool isNullLiteral() const;
+    QString stringLiteral() const;
+    qreal numberLiteral(bool *ok) const;
+    bool booleanLiteral(bool *ok) const;
 
 private:
-    Q_DISABLE_COPY(QUdpSocket)
-    Q_DECLARE_PRIVATE(QUdpSocket)
-};
+    QQmlScriptString(const QString &script, QQmlContext *context, QObject *scope);
+    QSharedDataPointer<QQmlScriptStringPrivate> d;
 
-#endif // QT_NO_UDPSOCKET
+    friend class QQmlObjectCreator;
+    friend class QQmlScriptStringPrivate;
+    friend class QQmlExpression;
+    friend class QQmlBinding;
+    friend struct QV4::QObjectWrapper;
+};
 
 QT_END_NAMESPACE
 
-#endif // QUDPSOCKET_H
+Q_DECLARE_METATYPE(QQmlScriptString)
+
+#endif // QQMLSCRIPTSTRING_H
+

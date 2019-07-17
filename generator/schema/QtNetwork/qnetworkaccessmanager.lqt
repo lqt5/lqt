@@ -73,7 +73,7 @@ class QNetworkReplyImplPrivate;
 class QNetworkAccessManagerPrivate;
 class Q_NETWORK_EXPORT QNetworkAccessManager: public QObject
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 
 #ifndef QT_NO_BEARERMANAGEMENT
     Q_PROPERTY(NetworkAccessibility networkAccessible READ networkAccessible WRITE setNetworkAccessible NOTIFY networkAccessibleChanged)

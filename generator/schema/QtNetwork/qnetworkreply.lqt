@@ -61,7 +61,7 @@ class QSslPreSharedKeyAuthenticator;
 class QNetworkReplyPrivate;
 class Q_NETWORK_EXPORT QNetworkReply: public QIODevice
 {
-    Q_OBJECT
+    LQT_OBJECT Q_OBJECT
 public:
     enum NetworkError {
         NoError = 0,

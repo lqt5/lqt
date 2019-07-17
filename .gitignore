@@ -4,7 +4,7 @@ common/lqt_addmethod.h
 test/styles/*
 
 generator/schema/**/*.h
-generator/schema/**/Q*
+generator/schema/!TODO/*
 
 examples/Qt-5.12.0/*
 examples/**/*.h
