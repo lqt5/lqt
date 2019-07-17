@@ -1,0 +1,60 @@
+#ifndef QT_QTNETWORK_MODULE_H
+#define QT_QTNETWORK_MODULE_H
+#include <QtNetwork/QtNetworkDepends.lqt>
+#include "qtnetworkglobal.lqt"
+#include "qabstractnetworkcache.lqt"
+#include "qabstractsocket.lqt"
+#include "qauthenticator.lqt"
+#if QT_CONFIG(dnslookup)
+#include "qdnslookup.lqt"
+#endif
+// #if QT_CONFIG(dtls)
+// #include "qdtls.lqt"
+// #endif
+#include "qhostaddress.lqt"
+#include "qhostinfo.lqt"
+#include "qhstspolicy.lqt"
+#if QT_CONFIG(http)
+#include "qhttpmultipart.lqt"
+#endif
+#if QT_CONFIG(localserver)
+#include "qlocalserver.lqt"
+#endif
+#if QT_CONFIG(localserver)
+#include "qlocalsocket.lqt"
+#endif
+#include "qnetworkaccessmanager.lqt"
+#include "qnetworkconfigmanager.lqt"
+#include "qnetworkconfiguration.lqt"
+#include "qnetworkcookie.lqt"
+#include "qnetworkcookiejar.lqt"
+#include "qnetworkdatagram.lqt"
+#if QT_CONFIG(networkdiskcache)
+#include "qnetworkdiskcache.lqt"
+#endif
+#include "qnetworkinterface.lqt"
+#include "qnetworkproxy.lqt"
+#include "qnetworkreply.lqt"
+#include "qnetworkrequest.lqt"
+#include "qnetworksession.lqt"
+#include "qpassworddigestor.lqt"
+#include "qsctpserver.lqt"
+#include "qsctpsocket.lqt"
+#include "qssl.lqt"
+#include "qsslcertificate.lqt"
+#include "qsslcertificateextension.lqt"
+#include "qsslcipher.lqt"
+#include "qsslconfiguration.lqt"
+#include "qssldiffiehellmanparameters.lqt"
+#include "qsslellipticcurve.lqt"
+#include "qsslerror.lqt"
+#include "qsslkey.lqt"
+#if QT_CONFIG(ssl)
+#include "qsslpresharedkeyauthenticator.lqt"
+#endif
+#include "qsslsocket.lqt"
+#include "qtcpserver.lqt"
+#include "qtcpsocket.lqt"
+#include "qudpsocket.lqt"
+#include "qtnetworkversion.lqt"
+#endif

@@ -1,0 +1,54 @@
+{
+	"build_systems":
+	[
+		{
+			"cmd":
+			[
+				"Unsupported platform"
+			],
+			"name": "LuaJIT: run",
+			"osx":
+			{
+				"cmd":
+				[
+					"luajit",
+					"$file"
+				]
+			},
+			"windows":
+			{
+				"cmd":
+				[
+					"D:/Codes/server/bin/win32/lua.exe",
+					"$file"
+				]
+			},
+			"working_dir": "$file_path"
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "."
+		},
+		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtCore.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtNetwork.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtGui.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtWidgets.framework"
+		}
+	],
+	"syntax_override":
+	{
+		"\\.lqt$":
+		[
+			"C++"
+		]
+	}
+}
