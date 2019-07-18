@@ -1,0 +1,16 @@
+#ifndef QT_QTWEBENGINECORE_MODULE_H
+#define QT_QTWEBENGINECORE_MODULE_H
+#include <QtWebEngineCore/QtWebEngineCoreDepends.lqt>
+#include "qtwebenginecoreglobal.lqt"
+#include "qwebenginecallback.lqt"
+#include "qwebenginecookiestore.lqt"
+#include "qwebenginehttprequest.lqt"
+#include "qwebenginequotarequest.lqt"
+#include "qwebengineregisterprotocolhandlerrequest.lqt"
+#include "qwebengineurlrequestinfo.lqt"
+#include "qwebengineurlrequestinterceptor.lqt"
+#include "qwebengineurlrequestjob.lqt"
+#include "qwebengineurlscheme.lqt"
+#include "qwebengineurlschemehandler.lqt"
+#include "qtwebenginecoreversion.lqt"
+#endif

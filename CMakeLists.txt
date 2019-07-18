@@ -50,10 +50,16 @@ set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 find_package (Qt5 REQUIRED
 	Core
 	Network
+	Positioning
 	Qml
+	WebChannel
 	Gui
 	Widgets
+	PrintSupport
+	UiTools
 	Quick
+	WebEngineCore
+	WebEngineWidgets
 )
 
 set(EXTRA_LUA_OPTIONS )
@@ -181,15 +187,18 @@ function(build_qt_lib_binding BINDING_HEADER)
 	endif()
 
 	qt5_wrap_cpp(${COMMON}_MOC ${LQT_GEN_DIR}/${BINDING_NAME}_slot.hpp)
-	
+
 	include_directories(${CMAKE_SOURCE_DIR}/common ${LUA_INCLUDE_DIR} ${QT_INCLUDES})
 
 	add_library(${BINDING_NAME} MODULE ${BINDING_SRC}
 											${${COMMON}_SRC}
 											${${COMMON}_HPP} 
 											${${COMMON}_MOC})
+
+	qt5_use_modules(${BINDING_NAME} ${QT_LIBRARIES})
 											
-	target_link_libraries(${BINDING_NAME} ${QT_LIBRARIES} ${LUA_LIBS_FOR_MODULE})
+	target_link_libraries(${BINDING_NAME} ${LUA_LIBS_FOR_MODULE})
+	# target_link_libraries(${BINDING_NAME} ${QT_LIBRARIES} ${LUA_LIBS_FOR_MODULE})
 	set_target_properties(${BINDING_NAME} PROPERTIES PREFIX "" COMPILE_DEFINITIONS "MODULE_${BINDING_NAME}")
 
 	if(LQT_BUILDIN_CPPTOXML)
@@ -205,39 +214,53 @@ if(noqt)
 	build_qt_lib_binding(noqt)
 else()
 	set(REUSE_FILES 1)
-	include_directories(${Qt5Core_INCLUDE_DIRS})
-	add_definitions(${Qt5Core_DEFINITIONS})
-	include_directories(${Qt5Gui_INCLUDE_DIRS})
-	add_definitions(${Qt5Gui_DEFINITIONS})
-	set(QT_LIBRARIES Qt5::Core Qt5::Gui)
+	set(QT_LIBRARIES Core)
 	build_qt_lib_binding(QtCore)
 
 	set(REUSE_FILES 1)
-	include_directories(${Qt5Network_INCLUDE_DIRS})
-	add_definitions(${Qt5Network_DEFINITIONS})
+	set(QT_LIBRARIES Network Core)
 	build_qt_lib_binding(QtNetwork QtCore)
 
 	set(REUSE_FILES 1)
-	include_directories(${Qt5Qml_INCLUDE_DIRS})
-	add_definitions(${Qt5Qml_DEFINITIONS})
-	set(QT_LIBRARIES Qt5::Qml)
+	set(QT_LIBRARIES Positioning Core)
+	build_qt_lib_binding(QtPositioning QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES Qml Network Core)
 	build_qt_lib_binding(QtQml QtNetwork QtCore)
 
 	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Qt5::Gui)
+	set(QT_LIBRARIES WebChannel Qml Core)
+	build_qt_lib_binding(QtWebChannel QtQml QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES Gui Core)
 	build_qt_lib_binding(QtGui QtCore)
 
 	set(REUSE_FILES 1)
-	include_directories(${Qt5Widgets_INCLUDE_DIRS})
-	add_definitions(${Qt5Widgets_DEFINITIONS})
-	set(QT_LIBRARIES Qt5::Widgets)
+	set(QT_LIBRARIES Widgets Gui Core)
 	build_qt_lib_binding(QtWidgets QtGui QtCore)
 
 	set(REUSE_FILES 1)
-	include_directories(${Qt5Quick_INCLUDE_DIRS})
-	add_definitions(${Qt5Quick_DEFINITIONS})
-	set(QT_LIBRARIES Qt5::Quick)
+	set(QT_LIBRARIES PrintSupport Widgets Gui Core)
+	build_qt_lib_binding(QtPrintSupport QtWidgets QtGui QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES Qt5::UiTools)
+	set(QT_LIBRARIES UiTools Widgets Gui Core)
+	build_qt_lib_binding(QtUiTools QtWidgets QtGui QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES Quick Gui Qml Core)
 	build_qt_lib_binding(QtQuick QtGui QtQml QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES WebEngineCore WebChannel Positioning Quick Qml Gui Core)
+	build_qt_lib_binding(QtWebEngineCore QtWebChannel QtPositioning QtQuick QtQml QtGui QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES WebEngineWidgets PrintSupport Quick Network Widgets WebEngineCore Gui Core)
+	build_qt_lib_binding(QtWebEngineWidgets QtPrintSupport QtQuick QtNetwork QtWidgets QtWebEngineCore QtGui QtCore)
 
 # 	build_qt_lib_binding(QtScript QtGui QtNetwork QtCore)
 # 	build_qt_lib_binding(QtOpenGL QtGui QtNetwork QtCore)

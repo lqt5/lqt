@@ -1,0 +1,18 @@
+#ifndef QT_QTWEBENGINEWIDGETS_MODULE_H
+#define QT_QTWEBENGINEWIDGETS_MODULE_H
+#include <QtWebEngineWidgets/QtWebEngineWidgetsDepends.lqt>
+#include "qtwebenginewidgetsglobal.lqt"
+#include "qwebenginecertificateerror.lqt"
+#include "qwebengineclientcertificateselection.lqt"
+#include "qwebenginecontextmenudata.lqt"
+#include "qwebenginedownloaditem.lqt"
+#include "qwebenginefullscreenrequest.lqt"
+#include "qwebenginehistory.lqt"
+#include "qwebenginepage.lqt"
+#include "qwebengineprofile.lqt"
+#include "qwebenginescript.lqt"
+#include "qwebenginescriptcollection.lqt"
+#include "qwebenginesettings.lqt"
+#include "qwebengineview.lqt"
+#include "qtwebenginewidgetsversion.lqt"
+#endif

@@ -1,0 +1,24 @@
+#ifndef QT_QTPRINTSUPPORT_MODULE_H
+#define QT_QTPRINTSUPPORT_MODULE_H
+#include <QtPrintSupport/QtPrintSupportDepends.lqt>
+#include "qtprintsupportglobal.lqt"
+#if QT_CONFIG(printdialog)
+#include "qabstractprintdialog.lqt"
+#endif
+#if QT_CONFIG(printdialog)
+#include "qpagesetupdialog.lqt"
+#endif
+#if QT_CONFIG(printdialog)
+#include "qprintdialog.lqt"
+#endif
+#include "qprintengine.lqt"
+#include "qprinter.lqt"
+#include "qprinterinfo.lqt"
+#if QT_CONFIG(printpreviewdialog)
+#include "qprintpreviewdialog.lqt"
+#endif
+#if QT_CONFIG(printpreviewwidget)
+#include "qprintpreviewwidget.lqt"
+#endif
+#include "qtprintsupportversion.lqt"
+#endif

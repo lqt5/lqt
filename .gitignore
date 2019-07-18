@@ -1,3 +1,5 @@
+*.sublime-workspace
+
 build/*
 xcode/*
 common/lqt_addmethod.h
