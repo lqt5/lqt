@@ -222,6 +222,8 @@ if module_name == 'qtcore' then
 	local script = fp:read '*all'
 	fp:close()
 
+	-- script = string.dump(loadstring(script)(), false)
+
 	local bytes = {}
 	script:gsub('.', function(c)
 		if #bytes == 0 then
@@ -237,7 +239,7 @@ if module_name == 'qtcore' then
 	table.insert(bytes, 0)
 
 	fp = io.open(string.format('%s/../common/lqt_addmethod.h', path), 'wb')
-	fp:write(string.format('static const char add_method_string[] = {\n%s\n};\n'
+	fp:write(string.format('static const unsigned char add_method_string[] = {\n%s\n};\n'
 		, table.concat(bytes, '')
 	))
 	fp:close()

@@ -38,7 +38,13 @@
 			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtNetwork.framework"
 		},
 		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtPositioning.framework"
+		},
+		{
 			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtQml.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtWebChannel.framework"
 		},
 		{
 			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtGui.framework"
@@ -47,7 +53,16 @@
 			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtWidgets.framework"
 		},
 		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtPrintSupport.framework"
+		},
+		{
 			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtQuick.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtWebEngineCore.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.12.0/clang_64/lib/QtWebEngineWidgets.framework"
 		}
 	],
 	"syntax_override":

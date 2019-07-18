@@ -288,9 +288,17 @@ return function(QObject_global
         local obj = self.new(unpack(ctor_args or {}))
 
         local super_env = debug.getfenv(self)
-        -- set object env inherit super(self) env
-        local obj_env = setmetatable({}, { __index = super_env })
-        debug.setfenv(obj, obj_env)
+        if super_env then
+            -- set object env inherit super(self) env
+            local obj_env = setmetatable({}, { __index = super_env })
+            debug.setfenv(obj, obj_env)
+
+            for k,v in pairs(super_env) do
+                -- trigger lqtAddOverride virtual-bind function
+                obj[k] = v
+                obj[k] = nil
+            end
+        end
 
         local __init = rawget(super_env, '__init')
         if type(__init) == 'function' then
