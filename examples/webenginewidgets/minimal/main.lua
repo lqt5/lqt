@@ -53,6 +53,7 @@ dofile(arg[0]:gsub('examples/.+', 'examples/init.lua'))
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 local QtWidgets = require 'qtwidgets'
+local QtWebEngineCore = require 'qtwebenginecore'
 local QtWebEngineWidgets = require 'qtwebenginewidgets'
 
 local function commandLineUrlArgument()
@@ -75,5 +76,12 @@ local view = QtWebEngineWidgets.QWebEngineView()
 view:setUrl(commandLineUrlArgument())
 view:resize(1024, 750)
 view:show()
+
+local devToolsPage = QtWebEngineWidgets.QWebEngineView()
+devToolsPage:resize(1024, 750)
+devToolsPage:show()
+
+devToolsPage:page():setInspectedPage(view:page())
+-- view:page():setDevToolsPage(devToolsPage:page())
 
 return app.exec()
