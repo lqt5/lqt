@@ -279,7 +279,6 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table) {
 #include <QDateTime>
 #include <QEasingCurve>
 #include <QHash>
-#include <QKeySequence>
 #include <QLine>
 #include <QLineF>
 #include <QList>
@@ -296,6 +295,7 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table) {
 #include <QUrl>
 
 #if defined(MODULE_qtgui) || defined(MODULE_qtwidgets)
+#include <QKeySequence>
 #include <QBitmap>
 #include <QBrush>
 #include <QColor>
@@ -313,7 +313,11 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table) {
 #include <QPolygon>
 #include <QQuaternion>
 #include <QRegion>
+
+#ifdef MODULE_qtwidgets
 #include <QSizePolicy>
+#endif
+
 #include <QTextFormat>
 #include <QTextLength>
 #include <QTransform>
@@ -352,8 +356,6 @@ int lqtL_qvariant_setValue(lua_State *L) {
 		self->setValue(*(QDate*)lqtL_toudata(L, 2, "QDate*"));
 	} else if (lqtL_testudata(L, 2, "QDateTime*")) {
 		self->setValue(*(QDateTime*)lqtL_toudata(L, 2, "QDateTime*"));
-	} else if (lqtL_testudata(L, 2, "QKeySequence*")) {
-		self->setValue(*(QKeySequence*)lqtL_toudata(L, 2, "QKeySequence*"));
 	} else if (lqtL_testudata(L, 2, "QLine*")) {
 		self->setValue(*(QLine*)lqtL_toudata(L, 2, "QLine*"));
 	} else if (lqtL_testudata(L, 2, "QLineF*")) {
@@ -380,10 +382,12 @@ int lqtL_qvariant_setValue(lua_State *L) {
 		self->setValue(*(QTime*)lqtL_toudata(L, 2, "QTime*"));
 	} else if (lqtL_testudata(L, 2, "QUrl*")) {
 		self->setValue(*(QUrl*)lqtL_toudata(L, 2, "QUrl*"));
-	} 
+
 #ifdef MODULE_qtgui	
 	/* QtGui types */
-	else if (lqtL_testudata(L, 2, "QBitmap*")) {
+	} else if (lqtL_testudata(L, 2, "QKeySequence*")) {
+		self->setValue(*(QKeySequence*)lqtL_toudata(L, 2, "QKeySequence*"));
+	} else if (lqtL_testudata(L, 2, "QBitmap*")) {
 		self->setValue(*(QBitmap*)lqtL_toudata(L, 2, "QBitmap*"));
 	} else if (lqtL_testudata(L, 2, "QBrush*")) {
 		self->setValue(*(QBrush*)lqtL_toudata(L, 2, "QBrush*"));
@@ -417,8 +421,6 @@ int lqtL_qvariant_setValue(lua_State *L) {
 		self->setValue(*(QQuaternion*)lqtL_toudata(L, 2, "QQuaternion*"));
 	} else if (lqtL_testudata(L, 2, "QRegion*")) {
 		self->setValue(*(QRegion*)lqtL_toudata(L, 2, "QRegion*"));
-	} else if (lqtL_testudata(L, 2, "QSizePolicy*")) {
-		self->setValue(*(QSizePolicy*)lqtL_toudata(L, 2, "QSizePolicy*"));
 	} else if (lqtL_testudata(L, 2, "QTextFormat*")) {
 		self->setValue(*(QTextFormat*)lqtL_toudata(L, 2, "QTextFormat*"));
 	} else if (lqtL_testudata(L, 2, "QTextLength*")) {
@@ -431,8 +433,14 @@ int lqtL_qvariant_setValue(lua_State *L) {
 		self->setValue(*(QVector3D*)lqtL_toudata(L, 2, "QVector3D*"));
 	} else if (lqtL_testudata(L, 2, "QVector4D*")) {
 		self->setValue(*(QVector4D*)lqtL_toudata(L, 2, "QVector4D*"));
-	}
 #endif
+
+#ifdef MODULE_qtwidgets
+	} else if (lqtL_testudata(L, 2, "QSizePolicy*")) {
+		self->setValue(*(QSizePolicy*)lqtL_toudata(L, 2, "QSizePolicy*"));
+#endif
+
+	}
 	return 0;
 }
 
@@ -470,7 +478,6 @@ int lqtL_qvariant_value(lua_State *L) {
 		case QVariant::Char: lqtL_passudata(L, new QChar(self->value<QChar>()), "QChar*"); return 1;
 		case QVariant::Date: lqtL_passudata(L, new QDate(self->value<QDate>()), "QDate*"); return 1;
 		case QVariant::DateTime: lqtL_passudata(L, new QDateTime(self->value<QDateTime>()), "QDateTime*"); return 1;
-		case QVariant::KeySequence: lqtL_passudata(L, new QKeySequence(self->value<QKeySequence>()), "QKeySequence*"); return 1;
 		case QVariant::Line: lqtL_passudata(L, new QLine(self->value<QLine>()), "QLine*"); return 1;
 		case QVariant::LineF: lqtL_passudata(L, new QLineF(self->value<QLineF>()), "QLineF*"); return 1;
 		case QVariant::List: lqtL_passudata(L, new QList<QVariant>(self->toList()), "QList<QVariant>*"); return 1;
@@ -494,38 +501,11 @@ int lqtL_qvariant_value(lua_State *L) {
         case QVariant::PersistentModelIndex: lqtL_passudata(L, new QPersistentModelIndex(self->value<QPersistentModelIndex>()), "QPersistentModelIndex*"); return 1;
         case QVariant::RegularExpression: lqtL_passudata(L, new QRegularExpression(self->toRegularExpression()), "QRegularExpression*"); return 1;
         case QVariant::LastCoreType: lqtL_passudata(L, new QCborMap(self->value<QCborMap>()), "QCborMap*"); return 1;
-        case QVariant::PolygonF: lqtL_passudata(L, new QPolygonF(self->value<QPolygonF>()), "QPolygonF*"); return 1;
-
-#ifdef MODULE_qtcore
-        // these qtgui types also used in qtcore
-		case QVariant::Font: lqtL_passudata(L, new QFont(self->value<QFont>()), "QFont*"); return 1;
-		case QVariant::Pixmap: lqtL_passudata(L, new QPixmap(self->value<QPixmap>()), "QPixmap*"); return 1;
-		case QVariant::Brush: lqtL_passudata(L, new QBrush(self->value<QBrush>()), "QBrush*"); return 1;
-		case QVariant::Color: lqtL_passudata(L, new QColor(self->value<QColor>()), "QColor*"); return 1;
-		case QVariant::Palette: lqtL_passudata(L, new QPalette(self->value<QPalette>()), "QPalette*"); return 1;
-		case QVariant::Icon: lqtL_passudata(L, new QIcon(self->value<QIcon>()), "QIcon*"); return 1;
-		case QVariant::Image: lqtL_passudata(L, new QImage(self->value<QImage>()), "QImage*"); return 1;
-		case QVariant::Polygon: lqtL_passudata(L, new QPolygon(self->value<QPolygon>()), "QPolygon*"); return 1;
-		case QVariant::Region: lqtL_passudata(L, new QRegion(self->value<QRegion>()), "QRegion*"); return 1;
-		case QVariant::Bitmap: lqtL_passudata(L, new QBitmap(self->value<QBitmap>()), "QBitmap*"); return 1;
-		case QVariant::Cursor: lqtL_passudata(L, new QCursor(self->value<QCursor>()), "QCursor*"); return 1;
-		case QVariant::Pen: lqtL_passudata(L, new QPen(self->value<QPen>()), "QPen*"); return 1;
-		case QVariant::TextFormat: lqtL_passudata(L, new QTextFormat(self->value<QTextFormat>()), "QTextFormat*"); return 1;
-		case QVariant::TextLength: lqtL_passudata(L, new QTextLength(self->value<QTextLength>()), "QTextLength*"); return 1;
-		case QVariant::Matrix: lqtL_passudata(L, new QMatrix(self->value<QMatrix>()), "QMatrix*"); return 1;
-		case QVariant::Transform: lqtL_passudata(L, new QTransform(self->value<QTransform>()), "QTransform*"); return 1;
-		case QVariant::Vector2D: lqtL_passudata(L, new QVector2D(self->value<QVector2D>()), "QVector2D*"); return 1;
-
-		// incomplete type in qtcore
-		case QVariant::Matrix4x4:
-        case QVariant::SizePolicy:
-        case QVariant::Vector3D:
-        case QVariant::Vector4D:
-        case QVariant::Quaternion:
-#endif
 
 #ifdef MODULE_qtgui
 		/* QtGui types */
+        case QVariant::PolygonF: lqtL_passudata(L, new QPolygonF(self->value<QPolygonF>()), "QPolygonF*"); return 1;
+		case QVariant::KeySequence: lqtL_passudata(L, new QKeySequence(self->value<QKeySequence>()), "QKeySequence*"); return 1;
 		case QVariant::Bitmap: lqtL_passudata(L, new QBitmap(self->value<QBitmap>()), "QBitmap*"); return 1;
 		case QVariant::Brush: lqtL_passudata(L, new QBrush(self->value<QBrush>()), "QBrush*"); return 1;
 		case QVariant::Color: lqtL_passudata(L, new QColor(self->value<QColor>()), "QColor*"); return 1;
@@ -541,14 +521,47 @@ int lqtL_qvariant_value(lua_State *L) {
 		case QVariant::Polygon: lqtL_passudata(L, new QPolygon(self->value<QPolygon>()), "QPolygon*"); return 1;
 		case QVariant::Quaternion: lqtL_passudata(L, new QQuaternion(self->value<QQuaternion>()), "QQuaternion*"); return 1;
 		case QVariant::Region: lqtL_passudata(L, new QRegion(self->value<QRegion>()), "QRegion*"); return 1;
-		case QVariant::SizePolicy: lqtL_passudata(L, new QSizePolicy(self->value<QSizePolicy>()), "QSizePolicy*"); return 1;
 		case QVariant::Transform: lqtL_passudata(L, new QTransform(self->value<QTransform>()), "QTransform*"); return 1;
 		case QVariant::TextFormat: lqtL_passudata(L, new QTextFormat(self->value<QTextFormat>()), "QTextFormat*"); return 1;
 		case QVariant::TextLength: lqtL_passudata(L, new QTextLength(self->value<QTextLength>()), "QTextLength*"); return 1;
 		case QVariant::Vector2D: lqtL_passudata(L, new QVector2D(self->value<QVector2D>()), "QVector2D*"); return 1;
 		case QVariant::Vector3D: lqtL_passudata(L, new QVector3D(self->value<QVector3D>()), "QVector3D*"); return 1;
 		case QVariant::Vector4D: lqtL_passudata(L, new QVector4D(self->value<QVector4D>()), "QVector4D*"); return 1;
+#else
+		// [avoid] warning: xxx enumeration values not handled in switch: [xxx] [xxx] [xxx] ...
+        case QVariant::PolygonF:
+		case QVariant::KeySequence:
+		case QVariant::Bitmap:
+		case QVariant::Brush:
+		case QVariant::Color:
+		case QVariant::Cursor:
+		case QVariant::Font:
+		case QVariant::Icon:
+		case QVariant::Image:
+		case QVariant::Matrix:
+		case QVariant::Matrix4x4:
+		case QVariant::Palette:
+		case QVariant::Pen:
+		case QVariant::Pixmap:
+		case QVariant::Polygon:
+		case QVariant::Quaternion:
+		case QVariant::Region:
+		case QVariant::Transform:
+		case QVariant::TextFormat:
+		case QVariant::TextLength:
+		case QVariant::Vector2D:
+		case QVariant::Vector3D:
+		case QVariant::Vector4D:
+			break;
 #endif
+
+#ifdef MODULE_qtwidgets
+		case QVariant::SizePolicy: lqtL_passudata(L, new QSizePolicy(self->value<QSizePolicy>()), "QSizePolicy*"); return 1;
+#else
+		case QVariant::SizePolicy:
+			break;
+#endif
+
         case QVariant::UserType:
         case QVariant::LastType:
         	break;
