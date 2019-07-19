@@ -105,7 +105,7 @@ qt_types['QRectF const&'] = qt_types['QRectF']
 qt_types['QGenericArgument'] = {
 	get = function(i) return 'lqtL_getGenericArgument(L, '..i..')', 1, 'QGenericArgument' end,
 -- 	push = function(i) return 'lqtL_pushStringList(L, '..i..')', 1 end,
-	test = function(i) return 'lqtL_canconvert(L, '..i..', "QVariant*")', 1 end,
+	test = function(i) return 'lqtL_isGenericArgument(L, '..i..')', 1 end,
 	onstack = 'any,',
 }
 

@@ -5,13 +5,18 @@ local QtCore = require 'qtcore'
 
 local qa = QtCore.QCoreApplication.new(1, {'virt_test'})
 
-qa:__addsignal('valueChanged(double,double)')
-qa:__addslot('setValue(double,double)', function(self, arg1, arg2)
-	print('setValue:', self, arg1, arg2)
+qa:__addsignal('valueChanged(double,QString,QObject*)')
+qa:__addslot('setValue(double,QString,QObject*)', function(self, arg1, arg2, arg3)
+	print('setValue:', self, arg1, arg2:toStdString(), arg3)
 end)
 
-QtCore.QObject.connect(qa, '2valueChanged(double,double)', qa, '1setValue(double,double)')
-qa:connect('2valueChanged(double,double)', qa, '1setValue(double,double)')
+QtCore.QObject.connect(qa, '2valueChanged(double,QString,QObject*)'
+	, qa, '1setValue(double,QString,QObject*)'
+)
+
+qa:connect('2valueChanged(double,QString,QObject*)'
+	, qa, '1setValue(double,QString,QObject*)'
+)
 
 qa:connect('2destroyed(QObject*)', function()
 end)
@@ -34,17 +39,18 @@ print(qa['*' .. LQT_OBJMETASTRING])
 qa.setApplicationName('New Application Name')
 
 local meta = qa:metaObject()
-local signalIndex = meta:indexOfMethod('setValue(double,double)')
+local signalIndex = meta:indexOfMethod('setValue(double,QString,QObject*)')
 local signal = meta:method(signalIndex)
 print('signal:', meta, signalIndex, signal)
 
-signal:invoke(qa, 'AutoConnection', 0, 1)
+signal:invoke(qa, 'AutoConnection', 3.14, '7758521', qa)
 
 QtCore.QMetaObject.invokeMethod(qa
 	, 'valueChanged'
 	-- , 'setValue'
 	, 'AutoConnection'
-	, 3.14, 9.28
+	, 3.14, '9.28'
+	, qa
 )
 
-qa:__emit('valueChanged', 1234, 5678)
+-- qa:__emit('valueChanged', 1234, 5678)

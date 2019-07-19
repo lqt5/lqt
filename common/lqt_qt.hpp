@@ -18,6 +18,7 @@ QList<QByteArray> lqtL_getStringList(lua_State *L, int i);
 void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table);
 
 QGenericArgument lqtL_getGenericArgument(lua_State *L, int i);
+bool lqtL_isGenericArgument(lua_State *L, int i);
 
 #endif // __LQT_QT_HPP
 

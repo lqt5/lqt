@@ -113,18 +113,27 @@ int lqtL_qt_metacall (lua_State *L, QObject *self, QObject *acceptor,
 
                 for (int i = 0; i < method.parameterCount(); i++) {
 
+                    void *ptr = args[i + 1];
+
                     QVariant::Type type = (QVariant::Type) method.parameterType(i);
-                    QVariant &v = variants[i];
-                    v = QVariant(type, args[i + 1]);
-                    lqtL_pushudata(L, &v, "QVariant*");
-                    int ret = lqtL_qvariant_value_custom(L, -1, false);
-                    if (ret == 0)
-                        lua_pushnil(L);
-                    else if(ret == 2) {
+                    if ((int) type == QMetaType::QObjectStar) {
+                        if(ptr == nullptr)
+                            lua_pushnil(L);
+                        else
+                            lqtL_pushqobject(L, reinterpret_cast<QObject *>(ptr));
+                    } else {
+                        QVariant &v = variants[i];
+                        v = QVariant(type, ptr);
+                        lqtL_pushudata(L, &v, "QVariant*");
+                        int ret = lqtL_qvariant_value_custom(L, -1, false);
+                        if (ret == 0)
+                            lua_pushnil(L);
+                        else if(ret == 2) {
+                            lua_remove(L, -2);
+                            lua_error(L);
+                        }
                         lua_remove(L, -2);
-                        lua_error(L);
                     }
-                    lua_remove(L, -2);
                 }
                 lua_call(L, method.parameterCount() + 1, 0);
             } else {
@@ -367,8 +376,44 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table) {
     }
 }
 
+bool lqtL_isGenericArgument(lua_State *L, int i) {
+    
+    if(lua_type(L, i) == LUA_TSTRING)
+        return true;
+    else if(lqtL_canconvert(L, i, "QVariant*"))
+        return true;
+    else if(lqtL_isudata(L, i, "QObject*"))
+        return true;
+    // else if(lua_isnil(L, i))
+    //     return true;
+
+    return false;
+}
+
 QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
+
     int oldtop = lua_gettop(L);
+
+    if(lua_type(L, i) == LUA_TSTRING) {
+        size_t sz;
+        const char *s = luaL_checklstring(L, i, &sz);
+        QString qs = QString::fromUtf8(s, sz);
+        lqtL_pushudata(L, &qs, "QString*");
+
+        QVariant const& arg1 = *static_cast<QVariant*>(lqtL_convert(L, -1, "QVariant*"));
+        lua_settop(L, oldtop);
+
+        return QGenericArgument(arg1.typeName(), arg1.constData());
+    }
+    else if(lqtL_isudata(L, i, "QObject*")) {
+
+        QObject* arg = static_cast<QObject*>(lqtL_toudata(L, i, "QObject*"));
+        return QGenericArgument("QObject*", arg);
+    }
+    // else if(lua_isnil(L, i)) {
+    //     return QGenericArgument("QObject*", nullptr);
+    // }
+
     QVariant const& arg1 = *static_cast<QVariant*>(lqtL_convert(L, i, "QVariant*"));
     lua_settop(L, oldtop);
 
