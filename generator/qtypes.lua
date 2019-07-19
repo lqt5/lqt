@@ -102,6 +102,14 @@ qt_types['QRectF const&'] = qt_types['QRectF']
 -- 	onstack = 'table,',
 -- }
 
+qt_types['QGenericArgument'] = {
+	get = function(i) return 'lqtL_getGenericArgument(L, '..i..')', 1, 'QGenericArgument' end,
+-- 	push = function(i) return 'lqtL_pushStringList(L, '..i..')', 1 end,
+	test = function(i) return 'lqtL_canconvert(L, '..i..', "QVariant*")', 1 end,
+	onstack = 'any,',
+}
+
+
 if not getmetatable(qt_types) then
 	setmetatable(qt_types, {
 		__index = function(t, k)

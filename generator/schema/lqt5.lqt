@@ -74,7 +74,6 @@
 
 #define LQT_OBJECT \
 public: \
-    virtual const QMetaObject *metaObject() const; \
     virtual void *qt_metacast(const char *); \
     virtual int qt_metacall(QMetaObject::Call, int, void **); \
     static inline QString tr(const char *s, const char *c = nullptr, int n = -1); \

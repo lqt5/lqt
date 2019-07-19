@@ -62,6 +62,8 @@ find_package (Qt5 REQUIRED
 	WebEngineWidgets
 )
 
+# set(VERBOSE_BUILD 1)
+
 set(EXTRA_LUA_OPTIONS )
 option(VERBOSE_BUILD "Create a verbose build which logs every binding call" OFF)
 if(VERBOSE_BUILD)

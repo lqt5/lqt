@@ -22,39 +22,122 @@ case QMetaObject::CreateInstance: return "CreateInstance";
 }
 #endif
 
+static int lqtL_pushqobject(lua_State *L, QObject * object);
+static int lqtL_qvariant_value_custom(lua_State *L, int index, bool convert_to);
+
 int lqtL_qt_metacall (lua_State *L, QObject *self, QObject *acceptor,
         QMetaObject::Call call, const char *name,
         int index, void **args)
 {
-#ifdef VERBOSE_BUILD
-	printf("[%lx] metacall [%s] %s : %d\n", QThread::currentThreadId(), callTypeToString(call), name, index);
-#endif
-    
+// #ifdef VERBOSE_BUILD
+//     printf("Metacall self:%s, acceptor:%s, call:%s, name:%s, index:%d\n"
+//         , self->metaObject()->className()
+//         , acceptor->metaObject()->className()
+//         , callTypeToString(call)
+//         , name
+//         , index
+//     );
+// #endif
+
     int callindex = 0, oldtop = 0;
     oldtop = lua_gettop(L);
     lqtL_pushudata(L, self, name); // (1)
     lua_getfield(L, -1, LQT_OBJSIGS); // (2)
     if (lua_isnil(L, -1)) {
+        printf("\n");
         // TODO: determine what is wrong
+#ifdef VERBOSE_BUILD
+        qDebug() << "Missing singal/slot" << name << lua_tostring(L,-1)
+            << "on" << acceptor->objectName() << "with index" << callindex
+        ;
+#endif
         lua_settop(L, oldtop);
         QMetaObject::activate(self, self->metaObject(), index, args);
     } else {
         //qDebug() << lua_gettop(L) << luaL_typename(L, -1);
         lua_rawgeti(L, -1, index + 1); // (3)
-        if (!lua_isstring(L, -1)) {
+        if (!lua_istable(L, -1)) {
+#ifdef VERBOSE_BUILD
+            qDebug() << "Found signal" << name << lua_tostring(L,-1)
+                << "on" << acceptor->objectName() << "with index" << callindex
+            ;
+#endif
             lua_settop(L, oldtop);
             QMetaObject::activate(self, self->metaObject(), index, args);
         } else {
-            callindex = acceptor->metaObject()->indexOfSlot(lua_tostring(L, -1));
-            // qDebug() << "Found slot" << name << lua_tostring(L,-1) << "on" << acceptor->objectName() << "with index" << callindex;
+
+            lua_rawgeti(L, -1, 1);
+            QLatin1String self_slot_name(lua_tostring(L, -1));
+            lua_pop(L, 1);
+
+            lua_rawgeti(L, -1, 2);
+            QLatin1String acceptor_slot_name(lua_tostring(L, -1));
+            lua_pop(L, 1);
+
             lua_pop(L, 2); // (1)
-            lua_getfield(L, -1, LQT_OBJSLOTS); // (2)
-            lua_rawgeti(L, -1, index+1); // (3)
-            lua_remove(L, -2); // (2)
-            index = acceptor->qt_metacall(call, callindex, args);
-            lua_settop(L, oldtop);
+
+            callindex = acceptor->metaObject()->indexOfSlot(acceptor_slot_name.data());
+            if (callindex != -1) {
+#ifdef VERBOSE_BUILD
+                qDebug() << "Found acceptor slot" << name << lua_tostring(L,-1)
+                    << "on" << acceptor->metaObject()->className() << ":" << acceptor->objectName()
+                    << "with index" << callindex
+                    << "slot" << acceptor_slot_name
+                ;
+#endif
+                lua_getfield(L, -1, LQT_OBJSLOTS); // (2)
+                lua_rawgeti(L, -1, index+1); // (3)
+                lua_remove(L, -2); // (2)
+                index = acceptor->qt_metacall(call, callindex, args);
+                lua_settop(L, oldtop);
+                return -1;
+            }
+
+            callindex = self->metaObject()->indexOfSlot(self_slot_name.data());
+            if (callindex != -1) {
+#ifdef VERBOSE_BUILD
+                qDebug() << "Found object slot" << name << lua_tostring(L,-1)
+                    << "on" << self->metaObject()->className() << ":" << self->objectName()
+                    << "with index" << callindex
+                    << "slot" << self_slot_name
+                ;
+#endif
+                QMetaMethod method = self->metaObject()->method(callindex);
+
+                lua_getfield(L, -1, LQT_OBJSLOTS); // (2)
+                lua_rawgeti(L, -1, index + 1); // (3)
+                lua_remove(L, -2); // (2)
+
+                lqtL_pushqobject(L, self);
+                static QVariant variants[10];
+
+                for (int i = 0; i < method.parameterCount(); i++) {
+
+                    QVariant::Type type = (QVariant::Type) method.parameterType(i);
+                    QVariant &v = variants[i];
+                    v = QVariant(type, args[i + 1]);
+                    lqtL_pushudata(L, &v, "QVariant*");
+                    int ret = lqtL_qvariant_value_custom(L, -1, false);
+                    if (ret == 0)
+                        lua_pushnil(L);
+                    else if(ret == 2) {
+                        lua_remove(L, -2);
+                        lua_error(L);
+                    }
+                    lua_remove(L, -2);
+                }
+                lua_call(L, method.parameterCount() + 1, 0);
+            } else {
+#ifdef VERBOSE_BUILD
+                qDebug() << "Missing object slot" << name << lua_tostring(L,-1)
+                    << "on" << self->metaObject()->className() << ":" << self->objectName()
+                    << "slot" << self_slot_name
+                ;
+#endif
+            }
         }
     }
+    lua_settop(L, oldtop);
     return -1;
 }
 
@@ -84,7 +167,7 @@ static int lqtL_methods(lua_State *L) {
 		CASE(Constructor);
 		}
 		lua_concat(L, 3);
-		lua_rawseti(L, -2, i+1);
+		lua_rawseti(L, -2, m.methodIndex());
 	}
 	return 1;
 }
@@ -194,6 +277,16 @@ static int lqtL_connect(lua_State *L) {
     return 1;
 }
 
+static int lqtL_metaObject(lua_State *L) {
+
+    QObject* self = static_cast<QObject*>(lqtL_toudata(L, 1, "QObject*"));
+    if (self == NULL)
+        return luaL_argerror(L, 1, "expecting QObject*");
+
+	lqtL_pushudata(L, self->metaObject(), "QMetaObject*");
+	return 1;
+}
+
 static int lqt_metaConvertType(lua_State *L) {
 
     const char *type = luaL_checkstring(L, 1);
@@ -241,6 +334,10 @@ void lqtL_qobject_custom (lua_State *L) {
     lua_pushcfunction(L, lqtL_connect);
     lua_rawset(L, qobject);
 
+    lua_pushstring(L, "metaObject");
+    lua_pushcfunction(L, lqtL_metaObject);
+    lua_rawset(L, qobject);
+
     // also modify the static QObject::connect function
     lua_getfield(L, -2, "QObject");
     lua_pushcfunction(L, lqtL_connect);
@@ -268,6 +365,22 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table) {
         lua_pushstring(L, table[i].data());
         lua_settable(L, -3);
     }
+}
+
+QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
+    int oldtop = lua_gettop(L);
+    QVariant const& arg1 = *static_cast<QVariant*>(lqtL_convert(L, i, "QVariant*"));
+    lua_settop(L, oldtop);
+
+#ifdef VERBOSE_BUILD
+    printf("Convert variable %d to -> type: %s, ptr: %p\n"
+        , i
+        , arg1.typeName()
+        , arg1.constData()
+    );
+#endif
+
+    return QGenericArgument(arg1.typeName(), arg1.constData());
 }
 
 #include <QVariant>
@@ -331,7 +444,7 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table) {
 #endif
 #endif
 
-int lqtL_qvariant_setValue(lua_State *L) {
+static int lqtL_qvariant_setValue(lua_State *L) {
 	QVariant* self = static_cast<QVariant*>(lqtL_toudata(L, 1, "QVariant*"));
 	lqtL_selfcheck(L, self, "QVariant");
 	/* basic types */
@@ -444,11 +557,11 @@ int lqtL_qvariant_setValue(lua_State *L) {
 	return 0;
 }
 
-int lqtL_qvariant_value(lua_State *L) {
-	QVariant* self = static_cast<QVariant*>(lqtL_toudata(L, 1, "QVariant*"));
+static int lqtL_qvariant_value_custom(lua_State *L, int index, bool convert_to) {
+	QVariant* self = static_cast<QVariant*>(lqtL_toudata(L, index, "QVariant*"));
 	lqtL_selfcheck(L, self, "QVariant");
 	QVariant::Type type;
-	if (lua_isnoneornil(L, 2)) {
+	if (!convert_to || lua_isnoneornil(L, 2)) {
 		type = self->type();
 	} else {
 		type = (QVariant::Type)lqtL_toenum(L, 2, "QVariant.Type");
@@ -567,6 +680,10 @@ int lqtL_qvariant_value(lua_State *L) {
         	break;
 	}
 	return 0;
+}
+
+static int lqtL_qvariant_value(lua_State *L) {
+    return lqtL_qvariant_value_custom(L, 1, true);
 }
 
 #ifndef MODULE_qtgui

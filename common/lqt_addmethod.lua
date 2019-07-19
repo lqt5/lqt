@@ -118,7 +118,12 @@ return function(QObject_global
             local function addSignalSlot(signature, func)
                 if func then
                     table.insert(metaSlots, func)
-                    table.insert(metaSignals, '__slot' .. signature:match '%b()')
+                    table.insert(metaSignals, {
+                        -- Object slot name
+                        signature,
+                        -- LqtSlotAcceptor slot name
+                        '__slot' .. signature:match '%b()',
+                    })
                 else
                     table.insert(metaSlots, false)
                     table.insert(metaSignals, false)
@@ -142,7 +147,9 @@ return function(QObject_global
                     -- tag
                     table.insert(metaData, 2)
                     -- flags
-                    table.insert(metaData, 0x0A)
+                    --  2bit { Method, Signal, Slot, Constructor }
+                    --  2bit { Private, Protected, Public }
+                    table.insert(metaData, 6) -- 01 10 Signal Public
                     -- increment data offset
                     offset = (offset + 1 + #methodInfo)
                     signalCount = signalCount + 1
@@ -165,7 +172,9 @@ return function(QObject_global
                     -- tag
                     table.insert(metaData, 2)
                     -- flags
-                    table.insert(metaData, 0x0A)
+                    --  2bit { Method, Signal, Slot, Constructor }
+                    --  2bit { Private, Protected, Public }
+                    table.insert(metaData, 10) -- 10 01 Slot Public
                     -- increment data offset
                     offset = (offset + 1 + #methodInfo)
 
@@ -270,6 +279,11 @@ return function(QObject_global
         end
 
         return hook(self, name)
+    end)
+
+    rawset(QObject_metatable, '__emit', function(self, name, ...)
+        local meta = self:metaObject()
+        meta.invokeMethod(self, name, 'AutoConnection', ...)
     end)
 
     -- TODO:

@@ -231,7 +231,9 @@ static int lqtL_tostring (lua_State *L) {
         lua_pop(L, 1);
         lua_pushfstring(L, "userdata: %p", lua_touserdata(L, 1));
     } else {
-        lua_pushfstring(L, ": %p", lua_touserdata(L, 1));
+        void *ud = lqtL_toudata(L, 1, lua_tostring(L, -1));
+        lua_pushfstring(L, ": %p", ud);
+        // lua_pushfstring(L, ": %p(%p)", lua_touserdata(L, 1), ud);
         lua_concat(L, 2);
     }
     return 1;

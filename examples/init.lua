@@ -1,5 +1,10 @@
-local dlpath = arg[0]:gsub('examples/.+', 'build/lib/?.so;build/lib/?.dll')
+local dlpath = arg[0]
+	:gsub('examples/.+', 'build/lib/?.so;build/lib/?.dll')
+	:gsub('test/.+', 'build/lib/?.so;build/lib/?.dll')
+
 package.cpath = package.cpath .. ';' .. dlpath
+local luapath = arg[0]:gsub('[/\\][^/^\\]*%.lua$', '/?.lua')
+package.path = package.path .. ';' .. luapath
 
 local QtCore = require 'qtcore'
 
@@ -9,6 +14,7 @@ local QtCore = require 'qtcore'
 _G.SIGNAL = function(s) return '2' .. s end
 _G.SLOT = function (s) return '1' .. s end
 _G.tr = assert(QtCore.QObject.tr)
+_G.emit = function(slot, ...) return slot(...) end
 
 --------------------------------------------------------------------------------
 -- for debug purpuse

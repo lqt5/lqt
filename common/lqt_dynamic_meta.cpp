@@ -232,6 +232,7 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
     , QMetaObject& meta_data
     , const QMetaObject& super_data
 ) {
+    int oldtop = lua_gettop(L);
     lqtL_pushudata(L, object, name);
     {
         lua_getfield(L, -1, LQT_OBJMETASTRING);
@@ -242,10 +243,11 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
         lua_getfield(L, -2, LQT_OBJMETADATA);
 
         if(!lqtL_is_meta_dirty(L, lua_objlen(L, -1), lua_objlen(L, -2))) {
+            lua_settop(L, oldtop);
             return meta_data;
         }
 
-        // qDebug() << QString("Copying qmeta object for slots in %1").arg(name);
+        // printf("Copying qmeta object for slots in %s to %p, inherit from %p\n", name, &meta_data, &super_data);
         // printf("Dump qt_meta_stringdata_LqtSlotAcceptor\n");
         // dump((unsigned char *) &qt_meta_stringdata_LqtSlotAcceptor, sizeof(qt_meta_stringdata_LqtSlotAcceptor));
         // printf("Dump qt_meta_data_LqtSlotAcceptor\n");
@@ -275,7 +277,7 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
         lua_setfield(L, -3, LQT_OBJMETASTRING_STORE);
         lua_setfield(L, -2, LQT_OBJMETADATA_STORE);
     }
-    lua_pop(L, 1);
+    lua_settop(L, oldtop);
     //qDebug() << (lua_gettop(L) - oldtop);
     return meta_data;
     // return super_data;
