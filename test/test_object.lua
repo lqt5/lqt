@@ -3,7 +3,7 @@ package.cpath = package.cpath .. ';../build/lib/?.so'
 
 local QtCore = require'qtcore'
 
-local qa = QtCore.QCoreApplication.new(1, {'object_test'})
+local qa = QtCore.QCoreApplication.new(1, {'test_object'})
 
 local Base = QtCore.QObject()
 function Base:__init(hp)
@@ -15,11 +15,14 @@ function Base:test()
 end
 
 function Base:event(event)
+	return false
 end
 
+Base = Base:class()
+
 -- TODO:fix crash
--- local Child = Base:create({ Base }, 20)
-local Child = Base:create({ Base.new() }, 20)
+-- local Child = Base({ Base }, 20)
+local Child = Base({ Base.new() }, 20)
 print(Child)
 
 -- Base:event()

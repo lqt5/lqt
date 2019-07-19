@@ -118,7 +118,7 @@ function AddressBook:__init()
 --! [tooltip 2]
     self.saveButton:setEnabled(false)
 
-    self.dialog = FindDialog:create { self }
+    self.dialog = FindDialog.new { self }
 
     self.connect(self.addButton, SIGNAL 'clicked()', self, SLOT 'addContact()')
     self.connect(self.submitButton, SIGNAL 'clicked()', self, SLOT 'submitContact()')
@@ -471,4 +471,4 @@ function AddressBook:loadFromFile()
 end
 --! [loadFromFile() function part3]
 
-return AddressBook
+return AddressBook:class()

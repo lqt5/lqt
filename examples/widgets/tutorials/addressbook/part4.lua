@@ -358,8 +358,9 @@ function AddressBook:updateInterface(mode)
     end
 end
 --! [update interface() part 2]
+AddressBook = AddressBook:class()
 
-local addressBook = AddressBook:create()
+local addressBook = AddressBook()
 addressBook:show()
 
 gc()

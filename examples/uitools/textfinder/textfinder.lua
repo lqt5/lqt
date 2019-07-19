@@ -148,4 +148,4 @@ function Class:on_findButton_clicked()
     end
 end
 
-return Class
+return Class:class()

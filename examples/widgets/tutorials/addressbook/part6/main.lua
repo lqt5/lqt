@@ -57,7 +57,7 @@ local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
 
 local AddressBook = require 'addressbook'
 
-local addressBook = AddressBook:create()
+local addressBook = AddressBook()
 addressBook:show()
 
 gc()

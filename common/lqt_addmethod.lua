@@ -277,17 +277,9 @@ return function(QObject_global
     --  this:__addenum()
     --  this:__addset()
 
-    rawset(QObject_metatable, 'create', function(self, ctor_args, ...)
-        -- call __static_init once
-        --  for class object
-        if self.__static_init ~= nil then
-            self:__static_init()
-            self.__static_init = false
-        end
+    local function create_object(new, self, super_env, ctor, ctor_args, ...)
+        local obj = ctor(unpack(ctor_args or {}))
 
-        local obj = self.new(unpack(ctor_args or {}))
-
-        local super_env = debug.getfenv(self)
         if super_env then
             -- set object env inherit super(self) env
             local obj_env = setmetatable({}, { __index = super_env })
@@ -298,17 +290,50 @@ return function(QObject_global
                 obj[k] = v
                 obj[k] = nil
             end
+
+            local __init = rawget(super_env, '__init')
+            if type(__init) == 'function' then
+                __init(obj, ...)
+            end
         end
 
-        local __init = rawget(super_env, '__init')
-        if type(__init) == 'function' then
-            __init(obj, ...)
+        if new then
+            obj.__gc = false
         end
 
         obj.__super = self
 
         return obj
+    end
+
+    rawset(QObject_metatable, 'class', function(self)
+        assert(type(self) == 'userdata')
+        -- call __static_init once
+        --  for class object
+        if self.__static_init ~= nil then
+            self:__static_init()
+            self.__static_init = false
+        end
+
+        local ctor = self.new
+
+        local env = debug.getfenv(self)
+        -- if not env then
+        --     env = {}
+        --     debug.setfenv(self, env)
+        -- end
+
+        local mt = getmetatable(self)
+        rawset(mt, 'new', function(ctor_args, ...)
+            return create_object(true, self, env, ctor, ctor_args, ...)
+        end)
+        rawset(mt, '__call', function(_, ctor_args, ...)
+            return create_object(false, self, env, ctor, ctor_args, ...)
+        end)
+
+        return self
     end)
+
     -- also modify the static QObject::create function
     -- QObject_global.create = create
 

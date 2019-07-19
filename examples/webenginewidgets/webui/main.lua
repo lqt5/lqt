@@ -66,7 +66,7 @@ local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
 
 local profile = QtWebEngineWidgets.QWebEngineProfile()
 
-local handler = WebUiHandler:create()
+local handler = WebUiHandler()
 
 profile:installUrlSchemeHandler(WebUiHandler.schemeName, handler)
 

@@ -109,7 +109,7 @@ function AddressBook:__init()
 --! [instantiating findButton]
 
 --! [instantiating FindDialog]
-    self.dialog = FindDialog:create { self }
+    self.dialog = FindDialog.new { self }
 --! [instantiating FindDialog]
 
     self.connect(self.addButton, SIGNAL 'clicked()', self, SLOT 'addContact()')
@@ -384,4 +384,4 @@ function AddressBook:updateInterface(mode)
     end
 end
 
-return AddressBook
+return AddressBook:class()

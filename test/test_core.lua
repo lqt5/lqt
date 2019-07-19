@@ -3,7 +3,7 @@ package.cpath = package.cpath .. ';../build/lib/?.so'
 
 local QtCore = require'qtcore'
 
-qa = QtCore.QCoreApplication.new(1, {'virt_test'})
+qa = QtCore.QCoreApplication.new(1, {'test_core'})
 
 local latin1 = QtCore.QLatin1String('wtf', 1)
 print(latin1:data())

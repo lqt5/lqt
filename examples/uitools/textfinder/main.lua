@@ -59,7 +59,7 @@ local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
 
 local TextFinder = require 'textfinder'
 
-local textFinder = TextFinder:create()
+local textFinder = TextFinder()
 textFinder:show()
 
 gc()

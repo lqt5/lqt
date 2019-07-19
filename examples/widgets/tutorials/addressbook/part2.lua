@@ -183,8 +183,9 @@ function AddressBook:cancel()
     self.cancelButton:hide()
 end
 --! [cancel]
+AddressBook = AddressBook:class()
 
-local addressBook = AddressBook:create()
+local addressBook = AddressBook()
 addressBook:show()
 
 gc()

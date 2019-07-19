@@ -53,11 +53,10 @@ local QtWebEngineCore = require 'qtwebenginecore'
 local Class = QtWebEngineCore.QWebEngineUrlSchemeHandler()
 
 local webUiOrigin = QtCore.QString('webui:about')
-local schemeName = QtCore.QByteArray 'webui'
 
 function Class:__static_init()
 	self.aboutUrl = QtCore.QUrl.fromUserInput(webUiOrigin)
-	self.schemeName = schemeName
+	self.schemeName = QtCore.QByteArray 'webui'
 end
 
 function Class:requestStarted(job) -- QWebEngineUrlRequestJob
@@ -80,8 +79,8 @@ function Class:requestStarted(job) -- QWebEngineUrlRequestJob
 end
 
 -- static
-function Class:registerUrlScheme()
-	local webUiScheme = QtWebEngineCore.QWebEngineUrlScheme(schemeName)
+function Class.registerUrlScheme()
+	local webUiScheme = QtWebEngineCore.QWebEngineUrlScheme(Class.schemeName)
 	webUiScheme:setFlags(QtWebEngineCore.QWebEngineUrlScheme.SecureScheme
 		+ QtWebEngineCore.QWebEngineUrlScheme.LocalScheme
 		+ QtWebEngineCore.QWebEngineUrlScheme.LocalAccessAllowed
@@ -89,4 +88,4 @@ function Class:registerUrlScheme()
 	QtWebEngineCore.QWebEngineUrlScheme.registerScheme(webUiScheme)
 end
 
-return Class
+return Class:class()

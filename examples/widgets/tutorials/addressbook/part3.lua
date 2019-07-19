@@ -241,8 +241,9 @@ function AddressBook:previous()
     self.addressText:setText(info.address)
 end
 --! [previous() function]
+AddressBook = AddressBook:class()
 
-local addressBook = AddressBook:create()
+local addressBook = AddressBook()
 addressBook:show()
 
 gc()

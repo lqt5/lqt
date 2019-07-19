@@ -119,7 +119,7 @@ function AddressBook:__init()
     self.exportButton:setToolTip(tr 'Export as vCard')
     self.exportButton:setEnabled(false)
 
-    self.dialog = FindDialog:create { self }
+    self.dialog = FindDialog.new { self }
 
     self.connect(self.addButton, SIGNAL 'clicked()', self, SLOT 'addContact()')
     self.connect(self.submitButton, SIGNAL 'clicked()', self, SLOT 'submitContact()')
@@ -539,4 +539,4 @@ function AddressBook:exportAsVCard()
 end
 --! [export function part4]
 
-return AddressBook
+return AddressBook:class()
