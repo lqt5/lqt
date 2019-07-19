@@ -2,7 +2,7 @@
 --[[*************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
-** Contact: https:--www.qt.io/licensing/
+** Contact: https://www.qt.io/licensing/
 **
 ** self file is part of the examples of the Qt Toolkit.
 **
@@ -12,8 +12,8 @@
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https:--www.qt.io/terms-conditions. For further
-** information use the contact form at https:--www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** BSD License Usage
 ** Alternatively, you may use self file under the terms of the BSD license

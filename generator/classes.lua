@@ -507,6 +507,8 @@ function fill_wrapper_code(f)
 		if operators.is_operator(f.xarg.name) then
 			line, has_args = operators.call_line(f)
 			if not line then return nil end
+		-- elseif f.xarg.virtual then
+		-- 	line = 'self->'..f.xarg.name..'('
 		else
 			line = 'self->'..f.xarg.fullname..'('
 		end
@@ -650,6 +652,7 @@ function print_wrappers()
 		out = out ..'  '..c.xarg.fullname..' *p = static_cast<'
 			..c.xarg.fullname..'*>(lqtL_toudata(L, 1, "'..lua_name..'*"));\n'
 		if c.public_destr then
+			-- out = out .. string.format('  printf("delete(C++) %s\\n");\n', c.xarg.fullname);
 			out = out .. '  if (p) delete p;\n'
 		end
 		out = out .. '  lqtL_eraseudata(L, 1, "'..lua_name..'*");\n  return 0;\n}\n'
