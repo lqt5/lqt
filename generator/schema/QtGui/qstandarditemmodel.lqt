@@ -36,9 +36,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #ifndef QSTANDARDITEMMODEL_H
 #define QSTANDARDITEMMODEL_H
+
+
 
 #include <QtGui/qtguiglobal.lqt>
 #include <QtCore/qabstractitemmodel.lqt>

@@ -52,12 +52,13 @@ return function(QObject_global
 
         -- add meta string(ignore duplicate string)
         local function addMetaString(str)
-            for _,s in ipairs(metaStrings) do
+            for i,s in ipairs(metaStrings) do
                 if s == str then
-                    return
+                    return i - 1
                 end
             end
             table.insert(metaStrings, str)
+            return #metaStrings - 1
         end
         -- get meta string index from string literal
         local function metaStringIndex(str)
@@ -228,7 +229,12 @@ return function(QObject_global
         for idx,p in ipairs(params) do
             local argName = string.format('arg%d', idx)
             addMetaString(argName)
-            table.insert(methodInfo, MetaConvertType(p))
+            local type = MetaConvertType(p)
+            if type == 0 then
+                local stringIndex = addMetaString(p)
+                type = 0x80000000 + stringIndex
+            end
+            table.insert(methodInfo, type)
         end
         -- NameIndex[n]
         for idx,p in ipairs(params) do

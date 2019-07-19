@@ -23,6 +23,7 @@ return {
 	},
 	qtgui = {
 		['QList<T>'] = {
+			'QList<QStandardItem*>',
 			-- 'QList<QGraphicsItem*>',
 			-- 'QList<int>',
 			-- 'QList<qreal>',

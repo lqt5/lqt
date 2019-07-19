@@ -43,8 +43,8 @@
 #include <QtGui/qtguiglobal.lqt>
 #include <QtCore/qlist.lqt>
 #include <QtCore/qobject.lqt>
-#include <QtCore/qrect.h>
-#include <QtCore/qsize.h>
+#include <QtCore/qrect.lqt>
+#include <QtCore/qsize.lqt>
 // #include <QtCore/QSizeF>
 
 #include <QtGui/qtransform.lqt>

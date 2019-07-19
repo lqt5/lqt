@@ -88,8 +88,8 @@ public:
     static void clear();
 
 // #ifdef Q_TEST_QPIXMAPCACHE
-    static void flushDetachedPixmaps();
-    static int totalUsed();
+    // static void flushDetachedPixmaps();
+    // static int totalUsed();
 // #endif
 };
 Q_DECLARE_SHARED_NOT_MOVABLE_UNTIL_QT6(QPixmapCache::Key)
