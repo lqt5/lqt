@@ -115,12 +115,24 @@ int lqtL_qt_metacall (lua_State *L, QObject *self, QObject *acceptor,
 
                     void *ptr = args[i + 1];
 
+#ifdef VERBOSE_BUILD
+                    printf("Index:%d Type:%d ParamTypeName:%s ParamName:%s Ptr:%p\n"
+                        , i
+                        , method.parameterType(i)
+                        , method.parameterTypes().at(i).constData()
+                        , method.parameterNames().at(i).constData()
+                        , ptr
+                    );
+#endif
+
                     QVariant::Type type = (QVariant::Type) method.parameterType(i);
                     if ((int) type == QMetaType::QObjectStar) {
                         if(ptr == nullptr)
                             lua_pushnil(L);
                         else
                             lqtL_pushqobject(L, reinterpret_cast<QObject *>(ptr));
+                    } else if(type == QVariant::UserType || type == QVariant::Invalid) {
+                        lqtL_pushudata(L, ptr, method.parameterTypes().at(i).constData());
                     } else {
                         QVariant &v = variants[i];
                         v = QVariant(type, ptr);
@@ -312,7 +324,7 @@ void lqtL_qobject_custom (lua_State *L) {
 	    if(!lua_isfunction(L, -1))
     		lua_error(L);
 
-	    lua_getfield(L, -3, "QObject");
+        lua_pushvalue(L, -3);
 	    lua_getfield(L, LUA_REGISTRYINDEX, "QObject*");
         lua_pushstring(L, LQT_OBJMETASTRING);
         lua_pushstring(L, LQT_OBJMETADATA);
@@ -380,12 +392,35 @@ bool lqtL_isGenericArgument(lua_State *L, int i) {
     
     if(lua_type(L, i) == LUA_TSTRING)
         return true;
+    // else if(lqtL_isudata(L, i, "QObject*"))
+    //     return true;
+    else if(lua_isuserdata(L, i) || lua_islightuserdata(L, i)) {
+        lua_getmetatable(L, i);
+        if(lua_istable(L, -1)) {
+            lua_getfield(L, -1, "__type");
+            if(lua_isstring(L, -1)) {
+                lua_pop(L, 2);
+                return true;
+            }
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 1);
+    }
     else if(lqtL_canconvert(L, i, "QVariant*"))
-        return true;
-    else if(lqtL_isudata(L, i, "QObject*"))
         return true;
     // else if(lua_isnil(L, i))
     //     return true;
+
+    lua_getglobal(L, "tostring");
+    lua_pushvalue(L, i);
+    lua_call(L, 1, 1);
+
+    printf("Argument[%d] %s cannot convert to GenericArgumentn!\n"
+        , i
+        , lua_tostring(L, -1)
+    );
+
+    lua_pop(L, 1);
 
     return false;
 }
@@ -410,22 +445,39 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
         QObject* arg = static_cast<QObject*>(lqtL_toudata(L, i, "QObject*"));
         return QGenericArgument("QObject*", arg);
     }
-    // else if(lua_isnil(L, i)) {
-    //     return QGenericArgument("QObject*", nullptr);
-    // }
+    else if(lua_isuserdata(L, i) || lua_islightuserdata(L, i)) {
+        lua_getmetatable(L, i);
+        if(lua_istable(L, -1)) {
+            lua_getfield(L, -1, "__type");
+            if(lua_isstring(L, -1)) {
 
-    QVariant const& arg1 = *static_cast<QVariant*>(lqtL_convert(L, i, "QVariant*"));
-    lua_settop(L, oldtop);
+                const char *type_name = lua_tostring(L, -1);
+                const void *ptr = lqtL_toudata(L, i, type_name);
+                lua_pop(L, 2);
+
+                return QGenericArgument(type_name, ptr);
+            }
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 1);
+    }
+    else if(lqtL_canconvert(L, i, "QVariant*")) {
+        QVariant const& arg1 = *static_cast<QVariant*>(lqtL_convert(L, i, "QVariant*"));
+        lua_settop(L, oldtop);
 
 #ifdef VERBOSE_BUILD
-    printf("Convert variable %d to -> type: %s, ptr: %p\n"
-        , i
-        , arg1.typeName()
-        , arg1.constData()
-    );
+        printf("Convert variable %d to -> type: %s, ptr: %p\n"
+            , i
+            , arg1.typeName()
+            , arg1.constData()
+        );
 #endif
 
-    return QGenericArgument(arg1.typeName(), arg1.constData());
+        return QGenericArgument(arg1.typeName(), arg1.constData());
+    }
+
+    luaL_error(L, "Invalid GenericArgument %d", i);
+    return QGenericArgument("QObject*", nullptr);
 }
 
 #include <QVariant>

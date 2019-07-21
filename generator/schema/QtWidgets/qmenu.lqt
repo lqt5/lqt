@@ -76,6 +76,8 @@ public:
     ~QMenu();
 
     using QWidget::addAction;
+    // TODO:lqt binding bug
+    void addAction(QAction *action);
     QAction *addAction(const QString &text);
     QAction *addAction(const QIcon &icon, const QString &text);
     QAction *addAction(const QString &text, const QObject *receiver, const char* member, const QKeySequence &shortcut = 0);

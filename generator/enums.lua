@@ -4,11 +4,15 @@ local print_enum = fprint(assert(io.open(module_name.._src..module_name..'_enum.
 
 
 local function filter(enum)
-	local n = enum.xarg.name
-	if n~=string.lower(n) and not string.match(n, '_') then
-		return false
+	local c = fullnames[enum.xarg.context]
+	if c.xarg.access == 'private' then
+		return true
 	end
-	return true
+	-- local n = enum.xarg.name
+	-- if n~=string.lower(n) and not string.match(n, '_') then
+		return false
+	-- end
+	-- return true
 end
 
 local enum_list = {}

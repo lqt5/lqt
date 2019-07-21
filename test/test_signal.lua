@@ -53,4 +53,6 @@ QtCore.QMetaObject.invokeMethod(qa
 	, qa
 )
 
+qa:__emit('setValue', 3.1415926, '9.28wtf', qa)
+
 -- qa:__emit('valueChanged', 1234, 5678)

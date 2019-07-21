@@ -154,9 +154,8 @@ function virtual_overload(v)
 		)
 	end
 	ret = proto .. ' {\n'
-	ret = ret .. '  int oldtop = lua_gettop(L);\n'
 	if VERBOSE_BUILD then
-		ret = ret .. '  printf("[%lx; %p] virtual %s :: %s (%d) => %d\\n", ' ..
+		ret = ret .. '  printf("[%p; %p] call virtual %s :: %s (%d) => %d\\n", ' ..
 				'QThread::currentThreadId(), this, ' ..
 				'"'..v.xarg.member_of_class.. '", ' ..
 				'"'..v.xarg.name..'", '..
@@ -164,8 +163,18 @@ function virtual_overload(v)
 				'(int)(bool)hasOverride[VIRTUAL_INDEX]'..
 				');\n'
 	end
+	ret = ret .. '  int oldtop = lua_gettop(L);\n'
 	ret = ret .. '  if (!hasOverride[VIRTUAL_INDEX]) { \n'
 	ret = ret .. '    ' .. fallback .. '\n  }\n'
+	if VERBOSE_BUILD then
+		ret = ret .. '  printf("[%p; %p] lua virtual %s :: %s (%d) => %d\\n", ' ..
+				'QThread::currentThreadId(), this, ' ..
+				'"'..v.xarg.member_of_class.. '", ' ..
+				'"'..v.xarg.name..'", '..
+				'VIRTUAL_INDEX, '..
+				'(int)(bool)hasOverride[VIRTUAL_INDEX]'..
+				');\n'
+	end
 	ret = ret .. [[
   lqtL_pushudata(L, this, "]]..string.gsub(v.xarg.member_of_class, '::', '.')..[[*");
   lqtL_getoverload(L, -1, "]]..v.xarg.name..[[");

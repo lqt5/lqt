@@ -33,7 +33,7 @@
        0        // eod
 ]]
 
-return function(QObject_global
+return function(QtCore
     , QObject_metatable
     , LQT_OBJMETASTRING
     , LQT_OBJMETADATA
@@ -289,7 +289,7 @@ return function(QObject_global
 
     rawset(QObject_metatable, '__emit', function(self, name, ...)
         local meta = self:metaObject()
-        meta.invokeMethod(self, name, 'AutoConnection', ...)
+        meta.invokeMethod(self, name, QtCore.AutoConnection, ...)
     end)
 
     -- TODO:
@@ -326,7 +326,7 @@ return function(QObject_global
         return obj
     end
 
-    rawset(QObject_metatable, 'class', function(self)
+    local function create_class(self)
         assert(type(self) == 'userdata')
         -- call __static_init once
         --  for class object
@@ -338,23 +338,32 @@ return function(QObject_global
         local ctor = self.new
 
         local env = debug.getfenv(self)
-        -- if not env then
-        --     env = {}
-        --     debug.setfenv(self, env)
-        -- end
-
-        local mt = getmetatable(self)
-        rawset(mt, 'new', function(ctor_args, ...)
+        rawset(env, 'new', function(ctor_args, ...)
             return create_object(true, self, env, ctor, ctor_args, ...)
         end)
-        rawset(mt, '__call', function(_, ctor_args, ...)
+        rawset(env, '__call', function(_, ctor_args, ...)
             return create_object(false, self, env, ctor, ctor_args, ...)
         end)
 
+        local mt = getmetatable(self)
+        if not rawget(mt, '__call') then
+            rawset(mt, '__call', function(self, ctor_args, ...)
+                local env = debug.getfenv(self)
+                return env.__call(self, ctor_args, ...)
+            end)
+        end
+
         return self
-    end)
+    end
+
+    -- register create_class function
+    --  QtCore.QObject.class
+    rawset(QObject_metatable, 'class', create_class)
+    --  QtCore.Class
+    rawset(QtCore, 'Class', create_class)
 
     -- also modify the static QObject::create function
+    -- local QObject_global = QtCore['QObject']
     -- QObject_global.create = create
 
     return true

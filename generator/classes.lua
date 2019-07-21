@@ -513,7 +513,7 @@ function fill_wrapper_code(f)
 			line = 'self->'..f.xarg.fullname..'('
 		end
 		if VERBOSE_BUILD then
-			wrap = wrap .. '  printf("[%lx; %p] %s :: %s (%d)\\n", ' ..
+			wrap = wrap .. '  printf("[%p; %p] %s :: %s (%d)\\n", ' ..
 				'QThread::currentThreadId(), self, ' ..
 				'"'..(f.xarg.member_of_class or f.xarg.fullname)..'", ' ..
 				'"'..f.xarg.name..'", '..
@@ -522,7 +522,7 @@ function fill_wrapper_code(f)
 	else
 		line = f.xarg.fullname..'('
 		if VERBOSE_BUILD then
-			wrap = wrap .. '  printf("[%lx; static] %s :: %s (%d)\\n", ' ..
+			wrap = wrap .. '  printf("[%p; static] %s :: %s (%d)\\n", ' ..
 					'QThread::currentThreadId(), ' ..
 					'"'..(f.xarg.member_of_class or f.xarg.fullname)..'", ' ..
 					'"'..f.xarg.name..'", '..
@@ -577,28 +577,37 @@ end
 
 
 function fill_test_code(f)
-	local stackn = 1
-	local test = ''
-	if f.xarg.member_of_class and f.xarg.static~='1' then
-		if not typesystem[f.xarg.member_of_class..'*'] then return nil end -- print(f.xarg.member_of_class) return nil end
-		local stest, sn = typesystem[f.xarg.member_of_class..'*'].test(stackn)
-		test = test .. ' && ' .. stest
-		stackn = stackn + sn
-	end
-	for i, a in ipairs(f.arguments) do
-		if not typesystem[a.xarg.type_name] then return nil end -- print(a.xarg.type_name) return nil end
-		local atest, an = typesystem[a.xarg.type_name].test(stackn)
-		if a.xarg.default=='1' and an>0 then
-			test = test .. ' && (lqtL_missarg(L, ' .. stackn .. ', ' .. an .. ') || '
-			test = test .. atest .. ')'
-		else
-			test = test .. ' && ' .. atest
+	local function test(raw)
+		local stackn = 1
+		local test = ''
+		if f.xarg.member_of_class and f.xarg.static~='1' then
+			if not typesystem[f.xarg.member_of_class..'*'] then return nil end -- print(f.xarg.member_of_class) return nil end
+			local ts = typesystem[f.xarg.member_of_class..'*']
+			local fn = raw and ts.raw_test or ts.test
+			local stest, sn = fn(stackn)
+			test = test .. ' && ' .. stest
+			stackn = stackn + sn
 		end
-		stackn = stackn + an
+		for i, a in ipairs(f.arguments) do
+			if not typesystem[a.xarg.type_name] then return nil end -- print(a.xarg.type_name) return nil end
+			local ts = typesystem[a.xarg.type_name]
+			local fn = raw and ts.raw_test or ts.test
+			local atest, an = fn(stackn)
+			if a.xarg.default=='1' and an>0 then
+				test = test .. ' && (lqtL_missarg(L, ' .. stackn .. ', ' .. an .. ') || '
+				test = test .. atest .. ')'
+			else
+				test = test .. ' && ' .. atest
+			end
+			stackn = stackn + an
+		end
+		-- can't make use of default values if I fix number of args
+		test = '(lua_gettop(L)<' .. stackn .. ')' .. test
+		return test
 	end
-	-- can't make use of default values if I fix number of args
-	test = '(lua_gettop(L)<' .. stackn .. ')' .. test
-	f.test_code = test
+
+	f.raw_test_code = test(true)
+	f.test_code = test(false)
 	return f
 end
 
@@ -652,7 +661,9 @@ function print_wrappers()
 		out = out ..'  '..c.xarg.fullname..' *p = static_cast<'
 			..c.xarg.fullname..'*>(lqtL_toudata(L, 1, "'..lua_name..'*"));\n'
 		if c.public_destr then
-			-- out = out .. string.format('  printf("delete(C++) %s\\n");\n', c.xarg.fullname);
+			if VERBOSE_BUILD then
+				out = out .. string.format('  printf("delete(C++) %s\\n");\n', c.xarg.fullname);
+			end
 			out = out .. '  if (p) delete p;\n'
 		end
 		out = out .. '  lqtL_eraseudata(L, 1, "'..lua_name..'*");\n  return 0;\n}\n'
@@ -712,6 +723,26 @@ local print_metatable = function(c)
 		local name = operators.rename_operator(n)
 		local disp = 'static int lqt_dispatcher_'..name..c.xarg.id..' (lua_State *L) {\n'
 		local testcode = {}
+
+		-- only add raw test code when method overrides > 1
+		local n = 0
+		for _,_ in pairs(l) do
+			n = n + 1
+		end
+
+		if n > 1 then
+			disp = disp .. '  // raw test code (lqtL_isudata)\n'
+			for tc, f in pairs(l) do
+				if f.raw_test_code ~= f.test_code then
+					disp = disp..'  if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+				else
+					-- ignore same test code
+					disp = disp..'  /* if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L); */\n'
+				end
+			end
+			disp = disp .. '  // test code (lqtL_canconvert)\n'
+		end
+
 		for tc, f in pairs(l) do
 			disp = disp..'  if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
 			testcode[#testcode+1] = tc
@@ -825,13 +856,11 @@ function print_single_class(c)
 		print_meta('int '..shellname..'::lqtAddOverride(lua_State *L) {')
 		print_meta('  '..shellname..' *self = static_cast<'..shellname..'*>('..typesystem[c.xarg.fullname..'*'].get(1)..');')
 		print_meta('  const char *name = luaL_checkstring(L, 2);')
-		if VERBOSE_BUILD then
-			print_meta('  printf("Overriding \'%s\' in %s [%p]\\n", name, "'..shellname..'", self);')
-		end
 		for _, v in ipairs(virtual_methods) do
 			print_meta('  if (!strcmp(name, "'..v.xarg.name..'")) {')
 			print_meta('    self->hasOverride.setBit('..v.virtual_index..');')
 			if VERBOSE_BUILD then
+				print_meta('    printf("Add Overriding \'%s\' in %s [%p]\\n", name, "'..shellname..'", self);')
 				print_meta('    printf("-> updated %d to %d\\n", '..v.virtual_index..', (bool)self->hasOverride['..v.virtual_index..']);')
 			end
 			print_meta('    return 0;')
