@@ -1,33 +1,48 @@
-local dlpath = arg[0]
-	:gsub('examples/.+', 'build/lib/?.so;build/lib/?.dll')
-	:gsub('test/.+', 'build/lib/?.so;build/lib/?.dll')
-
+--------------------------------------------------------------------------------
+-- get source path of 'init.lua'
+--------------------------------------------------------------------------------
+local function get_source_path()
+	local info = debug.getinfo(1)
+	return info.source:sub(2)
+end
+--------------------------------------------------------------------------------
+-- setup cpath/luapath
+--------------------------------------------------------------------------------
+local dlpath = get_source_path():gsub('init.lua', '../build/lib/?.so')
 package.cpath = package.cpath .. ';' .. dlpath
-local luapath = arg[0]:gsub('[/\\][^/^\\]*%.lua$', '/?.lua')
+
+local luapath = table.concat({
+	arg[0]:gsub('[/\\][^/^\\]*%.lua$', '/?.lua'),
+	get_source_path():gsub('init.lua', '?.lua'),
+}, ';')
+
 package.path = package.path .. ';' .. luapath
+--------------------------------------------------------------------------------
+-- use strict to avoid undeclared global variables access
+--------------------------------------------------------------------------------
+require 'strict'
 
 local QtCore = require 'qtcore'
-
 --------------------------------------------------------------------------------
 -- Qt useful routines
 --------------------------------------------------------------------------------
-_G.SIGNAL = function(s) return '2' .. s end
-_G.SLOT = function (s) return '1' .. s end
-_G.tr = assert(QtCore.QObject.tr)
-_G.emit = function(slot, ...) return slot(...) end
+rawset(_G, 'SIGNAL', function(s) return '2' .. s end)
+rawset(_G, 'SLOT', function (s) return '1' .. s end)
+rawset(_G, 'tr', assert(QtCore.QObject.tr))
+rawset(_G, 'emit', function(slot, ...) return slot(...) end)
 
 --------------------------------------------------------------------------------
 -- for debug purpuse
 --------------------------------------------------------------------------------
-_G.gc = function()
+rawset(_G, 'gc', function()
 	print('gc start')
 	collectgarbage()
 	print('gc end')
-end
+end)
 --------------------------------------------------------------------------------
 -- qml examples main func
 --------------------------------------------------------------------------------
-_G.qml_main = function(name, ...)
+rawset(_G, 'qml_main', function(name, ...)
 	local QtGui = require 'qtgui'
 	local QtQml = require 'qtqml'
 	local QtQuick = require 'qtquick'
@@ -60,4 +75,4 @@ _G.qml_main = function(name, ...)
 	view:setResizeMode(QtQuick.QQuickView.SizeRootObjectToView)
 	view:show()
 	return app.exec()
-end
+end)

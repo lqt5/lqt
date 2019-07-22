@@ -49,7 +49,7 @@ extern "C" {
 #define LQT_REFS "Registry References"
 #define LQT_ENUMS "Registry Enums"
 #define LQT_PCALL "Registry PCall Pointer"
-#define LQT_SUPER "SUPER"
+#define LQT_SUPER "Registry Super"
 
 // Qt-specific fields
 #define LQT_METACALLER "Registry MetaCaller"
