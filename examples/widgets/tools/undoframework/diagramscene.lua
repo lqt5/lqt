@@ -54,7 +54,7 @@ local QtWidgets = require 'qtwidgets'
 local Class = QtWidgets.QGraphicsScene()
 
 function Class:__static_init()
-    self:__addsignal('itemMoved(QGraphicsPolygonItem*,QPointF*)')
+    self:__addsignal('itemMoved(QGraphicsPolygonItem*,QPointF)')
 end
 
 function Class:__init()

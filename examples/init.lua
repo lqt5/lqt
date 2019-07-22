@@ -29,7 +29,6 @@ local QtCore = require 'qtcore'
 rawset(_G, 'SIGNAL', function(s) return '2' .. s end)
 rawset(_G, 'SLOT', function (s) return '1' .. s end)
 rawset(_G, 'tr', assert(QtCore.QObject.tr))
-rawset(_G, 'emit', function(slot, ...) return slot(...) end)
 
 --------------------------------------------------------------------------------
 -- for debug purpuse

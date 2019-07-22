@@ -96,7 +96,7 @@ function Class:timerHit()
     -- we identify the top left cell
     local topLeft = self:createIndex(0, 0)
     -- emit a signal to make the view reread identified data
-    emit(self.dataChanged, self, topLeft, topLeft)
+    self:__emit('dataChanged', topLeft, topLeft)
 end
 
 return Class:class()

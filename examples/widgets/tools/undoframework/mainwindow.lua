@@ -58,7 +58,7 @@ local DiagramScene = require 'diagramscene'
 local Class = QtWidgets.QMainWindow()
 
 function Class:__static_init()
-    self:__addslot('itemMoved(QGraphicsPolygonItem*,QPointF*)', self.itemMoved)
+    self:__addslot('itemMoved(QGraphicsPolygonItem*,QPointF)', self.itemMoved)
     self:__addslot('deleteItem()', self.deleteItem, 'private')
     self:__addslot('addBox()', self.addBox, 'private')
     self:__addslot('addTriangle()', self.addTriangle, 'private')
@@ -83,8 +83,8 @@ function Class:__init()
     self.diagramScene:setBackgroundBrush(pixmapBrush)
     self.diagramScene:setSceneRect(QtCore.QRect(0, 0, 500, 500))
 
-    self.connect(self.diagramScene, SIGNAL 'itemMoved(QGraphicsPolygonItem*,QPointF*)'
-        , self, SLOT 'itemMoved(QGraphicsPolygonItem*,QPointF*)'
+    self.connect(self.diagramScene, SIGNAL 'itemMoved(QGraphicsPolygonItem*,QPointF)'
+        , self, SLOT 'itemMoved(QGraphicsPolygonItem*,QPointF)'
     )
 
     self:setWindowTitle('Undo Framework')

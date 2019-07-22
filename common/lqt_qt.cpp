@@ -445,6 +445,20 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
         QObject* arg = static_cast<QObject*>(lqtL_toudata(L, i, "QObject*"));
         return QGenericArgument("QObject*", arg);
     }
+    else if(lqtL_canconvert(L, i, "QVariant*")) {
+        QVariant const& arg1 = *static_cast<QVariant*>(lqtL_convert(L, i, "QVariant*"));
+        lua_settop(L, oldtop);
+
+#ifdef VERBOSE_BUILD
+        printf("Convert variable %d to -> type: %s, ptr: %p\n"
+            , i
+            , arg1.typeName()
+            , arg1.constData()
+        );
+#endif
+
+        return QGenericArgument(arg1.typeName(), arg1.constData());
+    }
     else if(lua_isuserdata(L, i) || lua_islightuserdata(L, i)) {
         lua_getmetatable(L, i);
         if(lua_istable(L, -1)) {
@@ -460,20 +474,6 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
             lua_pop(L, 1);
         }
         lua_pop(L, 1);
-    }
-    else if(lqtL_canconvert(L, i, "QVariant*")) {
-        QVariant const& arg1 = *static_cast<QVariant*>(lqtL_convert(L, i, "QVariant*"));
-        lua_settop(L, oldtop);
-
-#ifdef VERBOSE_BUILD
-        printf("Convert variable %d to -> type: %s, ptr: %p\n"
-            , i
-            , arg1.typeName()
-            , arg1.constData()
-        );
-#endif
-
-        return QGenericArgument(arg1.typeName(), arg1.constData());
     }
 
     luaL_error(L, "Invalid GenericArgument %d", i);
