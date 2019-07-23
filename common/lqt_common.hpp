@@ -50,6 +50,7 @@ extern "C" {
 #define LQT_ENUMS "Registry Enums"
 #define LQT_PCALL "Registry PCall Pointer"
 #define LQT_SUPER "Registry Super"
+#define LQT_REF_CLASS "Registry Ref Class"
 
 // Qt-specific fields
 #define LQT_METACALLER "Registry MetaCaller"
@@ -70,8 +71,8 @@ extern "C" {
 
 typedef int (*lqt_PCallPtr) (lua_State *L, int nargs, int nresults, int errfunc);
 
-void lqtL_register(lua_State *, const void *);
-void lqtL_unregister(lua_State *, const void *);
+void lqtL_register(lua_State *, const void *, const char *name);
+void lqtL_unregister(lua_State *, const void *, const char *name);
 
 //int& lqtL_tointref (lua_State *, int);
 

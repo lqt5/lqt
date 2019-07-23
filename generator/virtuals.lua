@@ -244,7 +244,7 @@ function fill_shell_class(c)
 			end
 			cline = cline .. ') : ' .. c.xarg.fullname
 				.. '(' .. argline .. '), L(l), hasOverride(' .. c.nvirtuals .. ') '
-				.. '{\n    lqtL_register(L, this);\n'
+				.. '{\n    lqtL_register(L, this, "' .. c.xarg.fullname .. '*");\n'
 			if c.protected_enums then
 				cline = cline .. '    registerEnums();\n'
 			end
@@ -262,7 +262,7 @@ function fill_shell_class(c)
 			if v.virtual_proto then shell = shell .. '  virtual ' .. v.virtual_proto .. ';\n' end
 		end
 	end
-	shell = shell .. '  ~'..shellname..'() { lqtL_unregister(L, this); }\n'
+	shell = shell .. '  ~'..shellname..'() { lqtL_unregister(L, this, "' .. c.xarg.fullname .. '*"); }\n'
 	if c.shell and c.qobject then
 		shell = shell .. '  static QMetaObject staticMetaObject;\n'
 		shell = shell .. '  virtual const QMetaObject *metaObject() const;\n'

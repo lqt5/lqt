@@ -61,8 +61,8 @@ function print_slots(s)
 	print_slot_h'  Q_OBJECT'
 	print_slot_h'  lua_State *L;'
 	print_slot_h'  public:'
-	print_slot_h('  LqtSlotAcceptor(lua_State *l, QObject *p=NULL) : QObject(p), L(l) { setObjectName("'..module_name..'"); lqtL_register(L, this); }')
-	print_slot_h'  virtual ~LqtSlotAcceptor() { lqtL_unregister(L, this); }'
+	print_slot_h('  LqtSlotAcceptor(lua_State *l, QObject *p=NULL) : QObject(p), L(l) { setObjectName("'..module_name..'"); lqtL_register(L, this, NULL); }')
+	print_slot_h'  virtual ~LqtSlotAcceptor() { lqtL_unregister(L, this, NULL); }'
 	print_slot_h'  public slots:'
 	for p, b in pairs(s) do
 		print_slot_h('  '..p..';')

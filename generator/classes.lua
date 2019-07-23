@@ -666,7 +666,8 @@ function print_wrappers()
 			end
 			out = out .. '  if (p) delete p;\n'
 		end
-		out = out .. '  lqtL_eraseudata(L, 1, "'..lua_name..'*");\n  return 0;\n}\n'
+		out = out .. '  lqtL_eraseudata(L, 1, "'..lua_name..'*");\n'
+		out = out .. '  return 0;\n}\n'
 		--print_meta(out)
 		wrappers = wrappers .. out .. '\n'
 		c.meta = meta
@@ -725,12 +726,12 @@ local print_metatable = function(c)
 		local testcode = {}
 
 		-- only add raw test code when method overrides > 1
-		local n = 0
+		local lcount = 0
 		for _,_ in pairs(l) do
-			n = n + 1
+			lcount = lcount + 1
 		end
 
-		if n > 1 then
+		if lcount > 1 then
 			disp = disp .. '  // raw test code (lqtL_isudata)\n'
 			for tc, f in pairs(l) do
 				if f.raw_test_code ~= f.test_code then

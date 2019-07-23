@@ -67,6 +67,48 @@ static void lqtL_getreftable (lua_State *L) {
     }
 }
 
+static void lqtL_getrefclasstable(lua_State *L) {
+    lua_getfield(L, LUA_REGISTRYINDEX, LQT_REF_CLASS);
+    if (lua_isnil(L, -1)) {
+        lua_pop(L, 1);
+        lua_newtable(L);
+        lua_pushvalue(L, -1);
+        lua_setfield(L, LUA_REGISTRYINDEX, LQT_REF_CLASS);
+    }
+}
+
+static int lqtL_callfunc(lua_State *L, int idx, const char *name, bool once_only) {
+
+    if (!lua_isuserdata(L, idx) || lua_islightuserdata(L, idx)) return 0;
+    lua_pushvalue(L, idx);
+    lua_getfenv(L, -1);
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 2);
+        return 0;
+    }
+    lua_getfield(L, -1, name);
+    lua_remove(L, -2);
+    if (!lua_isfunction(L, -1)) {
+        lua_pop(L, 2);
+        return 0;
+    }
+    lua_insert(L, -2);
+    if (lqtL_pcall(L, 1, 0, 0)) {
+        return lua_error(L);
+    }
+
+    // if call once, remove function from object's env table
+    if (once_only) {
+        // set field as false value
+        lua_getfenv(L, idx);
+        lua_pushboolean(L, 0);
+        lua_setfield(L, -2, name);
+        lua_pop(L, 1);
+    }
+
+    return 0;
+}
+
 void * lqtL_getref (lua_State *L, size_t sz, bool weak) {
     void *ret = NULL;
     lqtL_getreftable(L); // (1)
@@ -240,24 +282,9 @@ static int lqtL_tostring (lua_State *L) {
 }
 
 static int lqtL_gcfunc (lua_State *L) {
-    if (!lua_isuserdata(L, 1) || lua_islightuserdata(L, 1)) return 0;
-    lua_getfenv(L, 1); // (1)
-    if (!lua_istable(L, -1)) {
-        lua_pop(L, 1); // (0)
-        return 0;
-    }
-    lua_getfield(L, -1, "__gc"); // (2)
-    lua_remove(L, -2); // (1)
-    if (!lua_isfunction(L, -1)) {
-        lua_pop(L, 1); // (0)
-        return 0;
-    }
-    lua_pushvalue(L, 1); // (2)
-    if (lqtL_pcall(L, 1, 0, 0)) { // (-2;+1/+0)
-        // (1)
-        return lua_error(L);
-    }
-    return 0; // (+0)
+    lqtL_callfunc(L, 1, "__uninit", true);
+
+    return lqtL_callfunc(L, 1, "__gc", false);
 }
 
 static void dumpStack(const char *msg, lua_State* l) {
@@ -396,6 +423,21 @@ static int lqtL_local_ctor(lua_State*L) {
     lua_call(L, lua_gettop(L)-1, LUA_MULTRET);// (X)
     lua_getfield(L, 1, "delete"); // (X+1)
     lua_setfield(L, 1, "__gc"); // (X)
+
+    // local ctor object, remove ref from LQT_REF_CLASS
+    {
+        lua_getfield(L, 1, "__type");
+        const char *name = lua_tostring(L, -1);
+        lua_pop(L, 1);
+        const void *ptr = lqtL_toudata(L, 1, name);
+
+        lqtL_getrefclasstable(L);
+        lua_pushlightuserdata(L, const_cast<void *>(ptr));
+        lua_pushnil(L);
+        lua_rawset(L, -3);
+        lua_pop(L, 1);
+    }
+
     return lua_gettop(L);
 }
 
@@ -532,12 +574,48 @@ static void lqtL_ensurepointer (lua_State *L, const void *p) { // (+1)
     lua_remove(L, -2); // (1)
 }
 
-void lqtL_register (lua_State *L, const void *p) { // (+0)
+void lqtL_register (lua_State *L, const void *p, const char *name) { // (+0)
     lqtL_ensurepointer(L, p);
     lua_pop(L, 1);
+
+    if (name != NULL) {
+#if VERBOSE_BUILD
+        printf("lqtL_register %p %s\n", p, name);
+#endif
+        lqtL_getrefclasstable(L);
+        lua_pushlightuserdata(L, const_cast<void*>(p));
+        lqtL_pushudata(L, p, name);
+        lua_rawset(L, -3);
+        lua_pop(L, 1);
+    }
 }
 
-void lqtL_unregister (lua_State *L, const void *p) {
+void lqtL_unregister (lua_State *L, const void *p, const char *name) {
+    if (name != NULL) {
+#if VERBOSE_BUILD
+        printf("lqtL_unregister %p %s\n", p, name);
+#endif
+        lqtL_getrefclasstable(L);
+        {
+            lua_pushlightuserdata(L, const_cast<void*>(p));
+            lua_rawget(L, -2);
+            if(lua_islightuserdata(L, -1) || lua_isuserdata(L, -1)) {
+
+                lqtL_callfunc(L, -1, "__uninit", true);
+
+                lua_pushnil(L);
+                lua_setmetatable(L, -2);
+            }
+            lua_pop(L, 1);
+        }
+        {
+            lua_pushlightuserdata(L, const_cast<void*>(p));
+            lua_pushnil(L);
+            lua_rawset(L, -3);
+        }
+        lua_pop(L, 1);
+    }
+
     lqtL_getpointertable(L); // (1)
     lua_pushlightuserdata(L, const_cast<void*>(p)); // (2)
     lua_gettable(L, -2); // (2)
