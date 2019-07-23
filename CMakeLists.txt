@@ -32,7 +32,7 @@ project(lqt5)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin) 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
-set(CMAKE_PREFIX_PATH ~/Qt/5.12.0/clang_64/lib/cmake/)
+set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
 set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 
 # set(QT_USE_QTCORE 1)
@@ -60,6 +60,7 @@ find_package (Qt5 REQUIRED
 	Quick
 	WebEngineCore
 	WebEngineWidgets
+	Test
 )
 
 # set(VERBOSE_BUILD 1)
@@ -265,6 +266,10 @@ else()
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES WebEngineWidgets PrintSupport Quick Network Widgets WebEngineCore Gui Core)
 	build_qt_lib_binding(QtWebEngineWidgets QtPrintSupport QtQuick QtNetwork QtWidgets QtWebEngineCore QtGui QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES Test Widgets Gui Network Core)
+	build_qt_lib_binding(QtTest QtWidgets QtGui QtNetwork QtCore)
 
 # 	build_qt_lib_binding(QtScript QtGui QtNetwork QtCore)
 # 	build_qt_lib_binding(QtOpenGL QtGui QtNetwork QtCore)
