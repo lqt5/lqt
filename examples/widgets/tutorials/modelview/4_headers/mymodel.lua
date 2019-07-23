@@ -80,11 +80,11 @@ function Class:headerData(section, orientation, role)
 	if role == QtCore.DisplayRole then
 		if orientation == 'Horizontal' then
 			if section == 0 then
-				return QtCore.QVariant('first')
+				return QtCore.QVariant(QtCore.QString 'first')
 			elseif section == 1 then
-				return QtCore.QVariant('second')
+				return QtCore.QVariant(QtCore.QString 'second')
 			elseif section == 2 then
-				return QtCore.QVariant('third')
+				return QtCore.QVariant(QtCore.QString 'third')
 			end
 		end
 	end
