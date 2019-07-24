@@ -32,7 +32,16 @@ project(lqt5)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin) 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
-set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
+
+if (APPLE)
+	set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
+elseif (WIN32)
+	set(CMAKE_PREFIX_PATH D:/Qt/Qt5.13.0/5.13.0/msvc2017_64/lib/cmake)
+	set(LUA_INCLUDE_DIR depends/LuaJIT-2.1.0-beta3/src)
+	set(LUA_LIBRARIES ../depends/LuaJIT-2.1.0-beta3/src/lua51)
+	set(CMAKE_PROGRAM_PATH ${LUA_INCLUDE_DIR})
+endif()
+
 set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 
 # set(QT_USE_QTCORE 1)
@@ -78,12 +87,14 @@ if(noqt)
 endif()
 
 find_package(Lua51 REQUIRED)
+
 find_program(LUA_CMD NAMES luajit lua lua5.1 lua51)
+message("-- Lua program is : ${LUA_CMD}")
 
 if(WIN32)
 	if(MSVC)
 		set(CMAKE_SUPPRESS_REGENERATION TRUE)
-		add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -DLUA_BUILD_AS_DLL /bigobj)
+		add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -DLUA_BUILD_AS_DLL -D_XKEYCHECK_H /bigobj)
 		set(CMAKE_DEBUG_POSTFIX)
 	endif()
 	if(MINGW)
@@ -104,7 +115,9 @@ add_subdirectory(cpptoxml)
 
 # # Add compiler flags for building executables (-fPIE)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11")
+if(APPLE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11")
+endif(APPLE)
 
 function(build_qt_lib_binding BINDING_HEADER)
 
