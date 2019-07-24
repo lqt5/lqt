@@ -107,8 +107,8 @@ public:
 
     inline QRectF convertToNormalizedSourceRect(const QRectF &rect) const;
 
-protected:
-    QSGTexture(QSGTexturePrivate &dd);
+//protected:
+//    QSGTexture(QSGTexturePrivate &dd);
 };
 
 QRectF QSGTexture::convertToNormalizedSourceRect(const QRectF &rect) const
