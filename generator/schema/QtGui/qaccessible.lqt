@@ -454,9 +454,8 @@ class QAccessibleTableModelChangeEvent;
 
 class Q_GUI_EXPORT QAccessibleInterface
 {
-// TODO:lqt virtual abstract class binding fix
-// protected:
-//     virtual ~QAccessibleInterface();
+protected:
+    virtual ~QAccessibleInterface();
 
 public:
     // check for valid pointers

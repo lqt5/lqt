@@ -156,7 +156,7 @@ end
 
 function fix_methods_wrappers()
 	for c in pairs(classes) do
-		c.shell = c.public_destr
+		c.shell = c.public_destr or c.protected_destr
 		c.shell = c.shell and (next(c.virtuals)~=nil)
 		for _, constr in ipairs(c.constructors) do
 			if c.shell then
@@ -249,13 +249,13 @@ end
 --- Determines, if a class has a public destructor. It also scans the superclasses.
 -- Sets the 'public_destr' fiield on the class.
 function fill_public_destr()
-	local function destr_is_public(c)
+	local function destr_is(c, access)
 		if c.destructor then
-			return c.destructor.xarg.access=='public'
+			return c.destructor.xarg.access==access
 		else
 			for b in string.gmatch(c.xarg.bases or '', '([^;]+);') do
 				local base = fullnames[b]
-				if base and not destr_is_public(base) then
+				if base and not destr_is(base, access) then
 					return false
 				end
 			end
@@ -263,7 +263,8 @@ function fill_public_destr()
 		end
 	end
 	for c in pairs(classes) do
-		c.public_destr = destr_is_public(c)
+		c.public_destr = destr_is(c, 'public')
+		c.protected_destr = destr_is(c, 'protected')
 	end
 end
 
@@ -489,6 +490,43 @@ function fill_wrapper_code(f)
 		ignore(f.xarg.fullname, 'friend method', f.xarg.member_of_class)
 		return nil
 	end
+
+	local class_prefix
+	if f.xarg.member_of and f.xarg.access == 'protected'
+		-- not an constructor
+		and f.xarg.member_of ~= f.xarg.name
+		and not f.xarg.signal
+	then
+  		local protected_code = string.format([[  %s%s %s({PARAM_DECLS}) %s{
+    return %s::%s({PARAMS});
+  }]]
+  			, f.xarg.static and 'static ' or ''
+  			, f.xarg.type_name
+  			, f.xarg.name
+  			, f.xarg.constant and 'const ' or ''
+  			, f.xarg.member_of
+  			, f.xarg.name
+  		)
+
+  		local param_decls = {}
+  		local params = {}
+		for i, a in ipairs(f.arguments) do
+			local arg_name = a.xarg.name
+			if #arg_name == 0 then
+				arg_name = 'arg' .. i
+			end
+			table.insert(param_decls, string.format('%s %s', a.xarg.type_name, arg_name))
+			table.insert(params, arg_name)
+		end
+		protected_code = protected_code
+			:gsub('{PARAM_DECLS}', table.concat(param_decls, ', '))
+			:gsub('{PARAMS}', table.concat(params, ', '))
+
+		f.protected_code = protected_code
+
+		class_prefix = 'lqt_protected_'
+	end
+
 	if f.xarg.member_of_class and f.xarg.static~='1' then
 		if not typesystem[f.xarg.member_of_class..'*'] then
 			ignore(f.xarg.fullname, 'not a member of wrapped class', f.xarg.member_of_class)
@@ -500,7 +538,17 @@ function fill_wrapper_code(f)
 			defects = defects + 8 -- FIXME: arbitrary
 		end
 		local sget, sn = typesystem[f.xarg.member_of_class..'*'].get(stackn)
-		wrap = wrap .. '  ' .. f.xarg.member_of_class .. '* self = ' .. sget .. ';\n'
+		-- replace class type name to protected access prefix
+		if class_prefix then
+			sget = sget:gsub(
+				string.format('static_cast<%s.>', f.xarg.member_of_class), 
+				string.format('static_cast<%s%s*>', class_prefix, f.xarg.member_of_class:match('[^:]+$'))
+			)
+			wrap = wrap .. '  ' .. class_prefix .. f.xarg.member_of_class:match('[^:]+$') .. '* self = ' .. sget .. ';\n'
+		else
+			wrap = wrap .. '  ' .. f.xarg.member_of_class .. '* self = ' .. sget .. ';\n'
+		end
+
 		stackn = stackn + sn
 		wrap = wrap .. '  lqtL_selfcheck(L, self, "'..f.xarg.member_of_class..'");\n'
 		--print(sget, sn)
@@ -509,6 +557,8 @@ function fill_wrapper_code(f)
 			if not line then return nil end
 		-- elseif f.xarg.virtual then
 		-- 	line = 'self->'..f.xarg.name..'('
+		elseif class_prefix then
+			line = 'self->'..class_prefix..f.xarg.member_of_class:match('[^:]+$')..'::'..f.xarg.name..'('
 		else
 			line = 'self->'..f.xarg.fullname..'('
 		end
@@ -520,7 +570,11 @@ function fill_wrapper_code(f)
 				'oldtop);\n'
 		end
 	else
-		line = f.xarg.fullname..'('
+		if class_prefix then
+			line = class_prefix..f.xarg.fullname..'('
+		else
+			line = f.xarg.fullname..'('
+		end
 		if VERBOSE_BUILD then
 			wrap = wrap .. '  printf("[%p; static] %s :: %s (%d)\\n", ' ..
 					'QThread::currentThreadId(), ' ..
@@ -631,6 +685,7 @@ function print_wrappers()
 	for c in pairs(classes) do
 		local meta = {}
 		local wrappers = ''
+		local protecteds = ''
 		for _, f in ipairs(c.methods) do
 			if f.wrapper_code and not f.ignore then
 				if f.xarg.access~='private' then
@@ -639,6 +694,9 @@ function print_wrappers()
 					--print_meta(out)
 					wrappers = wrappers .. out .. '\n'
 					meta[f] = f.xarg.name
+					if f.protected_code then
+						protecteds = protecteds .. '\n' .. f.protected_code
+					end
 				end
 			end
 		end
@@ -672,6 +730,7 @@ function print_wrappers()
 		wrappers = wrappers .. out .. '\n'
 		c.meta = meta
 		c.wrappers = wrappers
+		c.protecteds = protecteds
 	end
 end
 
@@ -798,7 +857,20 @@ function print_single_class(c)
 		fmeta:write'\n'
 	end
 	print_meta('#include "'..module_name..'_head_'..n..'.hpp'..'"\n\n')
-	
+
+	if #c.protecteds > 0 then
+		local out = string.format([[// used to access protected member function
+class lqt_protected_%s : public %s {
+public:%s
+};
+]]
+			, c.xarg.name
+			, c.xarg.fullname
+			, c.protecteds
+		)
+		print_meta(out)
+	end
+
 	if c.implicit then
 		print_meta(c.implicit.test)
 		print_meta(c.implicit.convert)

@@ -154,6 +154,7 @@ function Class:mousePressEvent(event)
         :IN(offset:x())
         :IN(offset:y())
 
+    -- TODO: dataStream misc types operator >> << binding
     -- dataStream
     --     :IN(pixmap)
     --     :IN(QtCore.QPoint(event:pos() - child:pos()))

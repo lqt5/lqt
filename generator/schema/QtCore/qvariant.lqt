@@ -417,7 +417,7 @@ class Q_CORE_EXPORT QVariant
     inline bool operator>(const QVariant &v) const;
     inline bool operator>=(const QVariant &v) const;
 
-public:
+protected:
     Private d;
     void create(int type, const void *copy);
     bool cmp(const QVariant &other) const;

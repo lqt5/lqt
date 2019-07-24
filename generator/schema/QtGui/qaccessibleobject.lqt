@@ -64,9 +64,8 @@ public:
     void setText(QAccessible::Text t, const QString &text) override;
     QAccessibleInterface *childAt(int x, int y) const override;
 
-// TODO:lqt virtual abstract class binding fix
-// protected:
-//     virtual ~QAccessibleObject();
+protected:
+    virtual ~QAccessibleObject();
 
 private:
     QAccessibleObjectPrivate *d;

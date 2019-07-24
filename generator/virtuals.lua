@@ -309,8 +309,8 @@ function print_shell_classes(classes)
 		end
 		print_head('#ifndef LQT_HEAD_'..n)
 		print_head('#define LQT_HEAD_'..n)
-		print_head('/* ugly ugly ugly, but needed to access protected members from outside */')
-		print_head('#define protected public')
+		-- print_head('/* ugly ugly ugly, but needed to access protected members from outside */')
+		-- print_head('#define protected public')
 		print_head(output_includes)
 		--print_head('#include <'..string.match(c.xarg.fullname, '^[^:]+')..'>')
 		print_head''

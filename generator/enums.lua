@@ -23,13 +23,14 @@ local function copy_enums(index)
 			and not string.match(e.xarg.fullname, '%b<>') then
 			if e.xarg.access=='public' and not filter(e) then
 				enum_list[e.xarg.fullname] = e
-			elseif e.xarg.access == 'protected' then
-				-- register it anyway
-				enum_list[e.xarg.fullname] = e
-				local c = fullnames[e.xarg.context]
-				assert(type(c) == "table" and c.label == "Class", "cannot find parent of enum "..e.xarg.fullname)
-				if not c.protected_enums then c.protected_enums = {} end
-				table.insert(c.protected_enums, e)
+			-- TODO:protected enum access
+			-- elseif e.xarg.access == 'protected' then
+			-- 	-- register it anyway
+			-- 	enum_list[e.xarg.fullname] = e
+			-- 	local c = fullnames[e.xarg.context]
+			-- 	assert(type(c) == "table" and c.label == "Class", "cannot find parent of enum "..e.xarg.fullname)
+			-- 	if not c.protected_enums then c.protected_enums = {} end
+			-- 	table.insert(c.protected_enums, e)
 			end
 		end
 	end
