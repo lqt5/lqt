@@ -528,6 +528,11 @@ public:
 
 QT_END_NAMESPACE
 
+#if !defined(QT_NO_DATASTREAM) || (defined(QT_BOOTSTRAPPED) && !defined(QT_BUILD_QMAKE))
+Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QString &);
+Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QString &);
+#endif
+
 // #if defined(QT_USE_FAST_OPERATOR_PLUS) || defined(QT_USE_QSTRINGBUILDER)
 // #include <QtCore/qstringbuilder.h>
 // #endif

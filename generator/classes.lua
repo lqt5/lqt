@@ -815,18 +815,18 @@ local print_metatable = function(c)
 		if lcount > 1 then
 			disp = disp .. '  // raw test code (lqtL_isudata)\n'
 			for tc, f in pairs(l) do
-				if f.raw_test_code ~= f.test_code then
-					disp = disp..'  if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
-				else
-					-- ignore same test code
-					disp = disp..'  /* if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L); */\n'
-				end
+				disp = disp..'  if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
 			end
 			disp = disp .. '  // test code (lqtL_canconvert)\n'
 		end
 
 		for tc, f in pairs(l) do
-			disp = disp..'  if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+			-- ignore same test code
+			if lcount > 1 and f.raw_test_code == f.test_code then
+				disp = disp..'  // if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+			else
+				disp = disp..'  if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+			end
 			testcode[#testcode+1] = tc
 		end
 		-- disp = disp .. '  lua_settop(L, 0);\n'
@@ -1085,19 +1085,19 @@ function print_global_functions()
 		if lcount > 1 then
 			disp = disp .. '  // raw test code (lqtL_isudata)\n'
 			for tc, f in pairs(l) do
-				if f.raw_test_code ~= f.test_code then
-					disp = disp..'  if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
-				else
-					-- ignore same test code
-					disp = disp..'  // if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
-				end
+				disp = disp..'  if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
 			end
 			disp = disp .. '  // test code (lqtL_canconvert)\n'
 		end
 
 		for tc, f in pairs(l) do
-			disp = disp..'  if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
-			testcode[#testcode+1] = tc
+			-- ignore same test code
+			if f.raw_test_code == f.test_code then
+				disp = disp..'  // if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+			else
+				disp = disp..'  if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+			end
+			testcode[#testcode+1] = f.stack_arguments
 		end
 		-- disp = disp .. '  lua_settop(L, 0);\n'
 		disp = disp .. '  const char * args = lqtL_getarglist(L);\n'
