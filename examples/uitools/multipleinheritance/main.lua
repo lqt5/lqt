@@ -59,7 +59,7 @@ local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
 
 local CalculatorForm = require 'calculatorform'
 
-local calculatorForm = CalculatorForm:create()
+local calculatorForm = CalculatorForm()
 calculatorForm:show()
 
 gc()

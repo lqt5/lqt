@@ -40,3 +40,33 @@ print('collecting')
 collectgarbage("collect")
 
 
+-- local LQT_REF_CLASS = "Registry Ref Class"
+-- local registry = debug.getregistry()
+
+-- print('step1')
+-- table.foreach(registry[LQT_REF_CLASS], print)
+
+
+-- print('step2')
+-- table.foreach(registry[LQT_REF_CLASS], print)
+
+
+-- print('step3')
+-- table.foreach(registry[LQT_REF_CLASS], print)
+
+-- -- DragWidget:delete()
+-- DragWidget = nil
+
+-- -- horizontalLayout = nil
+
+-- -- app:delete()
+-- -- print(app)
+-- app = nil
+
+-- -- mainWidget:delete()
+-- mainWidget = nil
+
+-- gc()
+
+-- print('step4')
+-- table.foreach(registry[LQT_REF_CLASS], print)

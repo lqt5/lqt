@@ -91,4 +91,4 @@ function Class:on_inputSpinBox2_valueChanged(value)
     self.ui_outputWidget:setText(QtCore.QString.number(value + self.ui_inputSpinBox1:value()))
 end
 
-return Class
+return Class:class()
