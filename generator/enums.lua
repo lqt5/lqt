@@ -23,14 +23,13 @@ local function copy_enums(index)
 			and not string.match(e.xarg.fullname, '%b<>') then
 			if e.xarg.access=='public' and not filter(e) then
 				enum_list[e.xarg.fullname] = e
-			-- TODO:protected enum access
-			-- elseif e.xarg.access == 'protected' then
-			-- 	-- register it anyway
-			-- 	enum_list[e.xarg.fullname] = e
-			-- 	local c = fullnames[e.xarg.context]
-			-- 	assert(type(c) == "table" and c.label == "Class", "cannot find parent of enum "..e.xarg.fullname)
-			-- 	if not c.protected_enums then c.protected_enums = {} end
-			-- 	table.insert(c.protected_enums, e)
+			elseif e.xarg.access == 'protected' then
+				-- register it anyway
+				enum_list[e.xarg.fullname] = e
+				local c = fullnames[e.xarg.context]
+				assert(type(c) == "table" and c.label == "Class", "cannot find parent of enum "..e.xarg.fullname)
+				if not c.protected_enums then c.protected_enums = {} end
+				table.insert(c.protected_enums, e)
 			end
 		end
 	end
@@ -67,17 +66,19 @@ function fill_enum_tables()
 end
 
 function fill_typesystem(types)
-	local etype = function(en)
+	local etype = function(e)
+		local en = e.xarg.fullname
+		local lqt_name = string.gsub(en, '::', '.')
 		return {
 			push = function(n)
-				return 'lqtL_pushenum(L, (int) '..n..', "'..string.gsub(en, '::', '.')..'")', 1
+				return 'lqtL_pushenum(L, (int) '..n..', "'..lqt_name..'")', 1
 			end,
-			get = function(n)
-				return 'static_cast<'..en..'>'
-				..'(lqtL_toenum(L, '..n..', "'..string.gsub(en, '::', '.')..'"))', 1
+			get = function(n, type_name)
+				return 'static_cast<'..(type_name or en)..'>'
+				..'(lqtL_toenum(L, '..n..', "'..lqt_name..'"))', 1
 			end,
 			test = function(n)
-				return 'lqtL_isenum(L, '..n..', "'..string.gsub(en, '::', '.')..'")', 1
+				return 'lqtL_isenum(L, '..n..', "'..lqt_name..'")', 1
 			end,
 			onstack = string.gsub(en, '::', '.')..',',
 			defect = 10, -- check these last
@@ -85,7 +86,7 @@ function fill_typesystem(types)
 	end
 	for _,e in pairs(enum_list) do
 		if not types[e.xarg.fullname] then
-			types[e.xarg.fullname] = etype(e.xarg.fullname)
+			types[e.xarg.fullname] = etype(e)
 		else
 			--io.stderr:write(e.xarg.fullname, ': already present\n')
 		end
@@ -95,7 +96,9 @@ end
 
 function print_enum_tables()
 	for _,e in pairs(enum_list) do
-		if e.xarg.access == 'public' then print_enum('static ' .. e.enum_table) end
+		if e.xarg.access == 'public' then
+			print_enum('static ' .. e.enum_table)
+		end
 	end
 	return enums
 end

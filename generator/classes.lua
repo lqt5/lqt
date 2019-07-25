@@ -583,22 +583,44 @@ function fill_wrapper_code(f)
 					'oldtop);\n'
 		end
 	end
+
+	local function protected_typename(type_name)
+		local e = fullnames[type_name]
+		if not e or e.label ~= 'Enum' or not class_prefix then
+			return type_name
+		end
+		if e.xarg.access == 'protected' then
+			local name = string.format('%s%s::%s'
+				, class_prefix
+				, f.xarg.member_of_class:match('[^:]+$')
+				, type_name:match('[^:]+$')
+			)
+			return name
+		end
+		return type_name
+	end
+
 	for i, a in ipairs(f.arguments) do
 		if not typesystem[a.xarg.type_name] then
 			ignore(f.xarg.fullname, 'unkown argument type', a.xarg.type_name)
 			return nil
 		end
-		local aget, an, arg_as = typesystem[a.xarg.type_name].get(stackn)
+		local type_name = protected_typename(a.xarg.type_name)
+		local aget, an, arg_as = typesystem[a.xarg.type_name].get(stackn, type_name)
 		stack_args = stack_args .. typesystem[a.xarg.type_name].onstack
 		if typesystem[a.xarg.type_name].defect then defects = defects + typesystem[a.xarg.type_name].defect end
-		wrap = wrap .. '  ' .. argument_name(arg_as or a.xarg.type_name, 'arg'..argn) .. ' = '
+		if class_prefix then
+			wrap = wrap .. '  ' .. argument_name(type_name, 'arg'..argn) .. ' = '
+		else
+			wrap = wrap .. '  ' .. argument_name(arg_as or type_name, 'arg'..argn) .. ' = '
+		end
 		if a.xarg.default=='1' and an>0 then
 			wrap = wrap .. 'lua_isnoneornil(L, '..stackn..')'
 			for j = stackn+1,stackn+an-1 do
 				wrap = wrap .. ' && lua_isnoneornil(L, '..j..')'
 			end
 			local dv = a.xarg.defaultvalue
-			wrap = wrap .. ' ? static_cast< ' .. a.xarg.type_name .. ' >(' .. dv .. ') : '
+			wrap = wrap .. ' ? static_cast< ' .. (type_name) .. ' >(' .. dv .. ') : '
 		end
 		wrap = wrap .. aget .. ';\n'
 		line = line .. (argn==1 and 'arg' or ', arg') .. argn
@@ -610,7 +632,7 @@ function fill_wrapper_code(f)
 	end
 	-- FIXME: hack follows for constructors
 	if f.calling_line then line = f.calling_line end
-	if f.return_type then line = f.return_type .. ' ret = ' .. line end
+	if f.return_type then line = protected_typename(f.return_type) .. ' ret = ' .. line end
 	wrap = wrap .. '  ' .. line .. ';\n  lua_settop(L, oldtop);\n' -- lua_pop(L, '..stackn..');\n'
 	if f.return_type then
 		if not typesystem[f.return_type] then
@@ -845,6 +867,26 @@ function print_metatables()
 	end
 end
 
+local function get_protected_enums(c)
+	local enums = {}
+
+	-- add base class's protected enums first
+	for b in string.gmatch(c.xarg.bases or '', '([^;]+);') do
+		local base = fullnames[b]
+		if base then
+			for _,e in ipairs(get_protected_enums(base)) do
+				table.insert(enums, e)
+			end
+		end
+	end
+
+	-- add class protected enums
+	for _,e in ipairs(c.protected_enums or {}) do
+		table.insert(enums, e)
+	end
+
+	return enums
+end
 
 function print_single_class(c)
 	local n = c.xarg.cname
@@ -858,15 +900,30 @@ function print_single_class(c)
 	end
 	print_meta('#include "'..module_name..'_head_'..n..'.hpp'..'"\n\n')
 
-	if #c.protecteds > 0 then
+	local class_protected_enums = get_protected_enums(c)
+
+	if #c.protecteds > 0 or #class_protected_enums > 0 then
+		local protecteds = c.protecteds
+		local protected_enums_desc = {}
+		for _,e in ipairs(class_protected_enums or {}) do
+			table.insert(protected_enums_desc, '  using ' .. e.xarg.fullname .. ';')
+		end
+		protecteds = protecteds .. '\n' .. table.concat(protected_enums_desc, '\n')
+
+		local class_name = c.xarg.name
+
 		local out = string.format([[// used to access protected member function
 class lqt_protected_%s : public %s {
 public:%s
+private:
+	// avoid destruct
+	~lqt_protected_%s() {}
 };
 ]]
-			, c.xarg.name
+			, class_name
 			, c.xarg.fullname
-			, c.protecteds
+			, protecteds
+			, class_name
 		)
 		print_meta(out)
 	end
