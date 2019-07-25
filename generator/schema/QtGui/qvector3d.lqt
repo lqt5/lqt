@@ -300,14 +300,14 @@ Q_DECLARE_TYPEINFO(QVector3D, Q_PRIMITIVE_TYPE);
 //     return QPointF(qreal(v[0]), qreal(v[1]));
 // }
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_GUI_EXPORT QDebug operator<<(QDebug dbg, const QVector3D &vector);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_GUI_EXPORT QDebug operator<<(QDebug dbg, const QVector3D &vector);
+#endif
 
-// #ifndef QT_NO_DATASTREAM
-// Q_GUI_EXPORT QDataStream &operator<<(QDataStream &, const QVector3D &);
-// Q_GUI_EXPORT QDataStream &operator>>(QDataStream &, QVector3D &);
-// #endif
+#ifndef QT_NO_DATASTREAM
+Q_GUI_EXPORT QDataStream &operator<<(QDataStream &, const QVector3D &);
+Q_GUI_EXPORT QDataStream &operator>>(QDataStream &, QVector3D &);
+#endif
 
 #endif
 

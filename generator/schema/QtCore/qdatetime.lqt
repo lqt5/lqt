@@ -208,10 +208,10 @@ private:
 
     friend class QDateTime;
     friend class QDateTimePrivate;
-// #ifndef QT_NO_DATASTREAM
-//     friend Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QTime &);
-//     friend Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QTime &);
-// #endif
+#ifndef QT_NO_DATASTREAM
+    friend Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QTime &);
+    friend Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QTime &);
+#endif
 };
 Q_DECLARE_TYPEINFO(QTime, Q_MOVABLE_TYPE);
 
@@ -381,10 +381,10 @@ private:
 
     Data d;
 
-// #ifndef QT_NO_DATASTREAM
-//     friend Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QDateTime &);
-//     friend Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QDateTime &);
-// #endif
+#ifndef QT_NO_DATASTREAM
+    friend Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QDateTime &);
+    friend Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QDateTime &);
+#endif
 
 #if !defined(QT_NO_DEBUG_STREAM) && QT_CONFIG(datestring)
     friend Q_CORE_EXPORT QDebug operator<<(QDebug, const QDateTime &);

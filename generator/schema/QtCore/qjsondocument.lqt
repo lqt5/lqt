@@ -168,9 +168,9 @@ private:
 
 Q_DECLARE_SHARED_NOT_MOVABLE_UNTIL_QT6(QJsonDocument)
 
-// #if !defined(QT_NO_DEBUG_STREAM) && !defined(QT_JSON_READONLY)
-// Q_CORE_EXPORT QDebug operator<<(QDebug, const QJsonDocument &);
-// #endif
+#if !defined(QT_NO_DEBUG_STREAM) && !defined(QT_JSON_READONLY)
+Q_CORE_EXPORT QDebug operator<<(QDebug, const QJsonDocument &);
+#endif
 
 QT_END_NAMESPACE
 

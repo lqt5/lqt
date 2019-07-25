@@ -130,12 +130,12 @@ public:
 
     typedef void (*SaveOperator)(QDataStream &, const void *);
     typedef void (*LoadOperator)(QDataStream &, void *);
-// #ifndef QT_NO_DATASTREAM
+#ifndef QT_NO_DATASTREAM
     static void registerStreamOperators(const char *typeName, SaveOperator saveOp,
                                         LoadOperator loadOp);
     static void registerStreamOperators(int type, SaveOperator saveOp,
                                         LoadOperator loadOp);
-// #endif
+#endif
     static int registerType(const char *typeName, Deleter deleter,
                             Creator creator);
     static int registerType(const char *typeName, Deleter deleter,
@@ -187,10 +187,10 @@ public:
     static void *construct(int type, void *where, const void *copy);
     static void destruct(int type, void *where);
 
-// #ifndef QT_NO_DATASTREAM
+#ifndef QT_NO_DATASTREAM
     static bool save(QDataStream &stream, int type, const void *data);
     static bool load(QDataStream &stream, int type, void *data);
-// #endif
+#endif
 
     explicit QMetaType(const int type); // ### Qt6: drop const
     inline ~QMetaType();

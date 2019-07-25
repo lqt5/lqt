@@ -112,13 +112,13 @@ private:
 
 Q_DECLARE_TYPEINFO(QPoint, Q_MOVABLE_TYPE);
 
-// /*****************************************************************************
-//   QPoint stream functions
-//  *****************************************************************************/
-// #ifndef QT_NO_DATASTREAM
-// Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QPoint &);
-// Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QPoint &);
-// #endif
+/*****************************************************************************
+  QPoint stream functions
+ *****************************************************************************/
+#ifndef QT_NO_DATASTREAM
+Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QPoint &);
+Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QPoint &);
+#endif
 
 // /*****************************************************************************
 //   QPoint inline functions
@@ -215,9 +215,9 @@ Q_DECLARE_TYPEINFO(QPoint, Q_MOVABLE_TYPE);
 //     return QPoint(qRound(p.xp/c), qRound(p.yp/c));
 // }
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_CORE_EXPORT QDebug operator<<(QDebug, const QPoint &);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug, const QPoint &);
+#endif
 
 
 
@@ -277,13 +277,13 @@ private:
 
 Q_DECLARE_TYPEINFO(QPointF, Q_MOVABLE_TYPE);
 
-// /*****************************************************************************
-//   QPointF stream functions
-//  *****************************************************************************/
-// #ifndef QT_NO_DATASTREAM
-// Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QPointF &);
-// Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QPointF &);
-// #endif
+/*****************************************************************************
+  QPointF stream functions
+ *****************************************************************************/
+#ifndef QT_NO_DATASTREAM
+Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QPointF &);
+Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QPointF &);
+#endif
 
 // /*****************************************************************************
 //   QPointF inline functions
@@ -416,9 +416,9 @@ Q_DECLARE_TYPEINFO(QPointF, Q_MOVABLE_TYPE);
 //     return QPoint(qRound(xp), qRound(yp));
 // }
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_CORE_EXPORT QDebug operator<<(QDebug d, const QPointF &p);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug d, const QPointF &p);
+#endif
 
 QT_END_NAMESPACE
 

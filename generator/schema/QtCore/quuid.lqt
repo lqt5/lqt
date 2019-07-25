@@ -234,21 +234,21 @@ public:
 
 Q_DECLARE_TYPEINFO(QUuid, Q_PRIMITIVE_TYPE);
 
-// #ifndef QT_NO_DATASTREAM
-// Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QUuid &);
-// Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QUuid &);
-// #endif
+#ifndef QT_NO_DATASTREAM
+Q_CORE_EXPORT QDataStream &operator<<(QDataStream &, const QUuid &);
+Q_CORE_EXPORT QDataStream &operator>>(QDataStream &, QUuid &);
+#endif
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_CORE_EXPORT QDebug operator<<(QDebug, const QUuid &);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug, const QUuid &);
+#endif
 
-// Q_CORE_EXPORT uint qHash(const QUuid &uuid, uint seed = 0) Q_DECL_NOTHROW;
+Q_CORE_EXPORT uint qHash(const QUuid &uuid, uint seed = 0) Q_DECL_NOTHROW;
 
-// inline bool operator<=(const QUuid &lhs, const QUuid &rhs) Q_DECL_NOTHROW
-// { return !(rhs < lhs); }
-// inline bool operator>=(const QUuid &lhs, const QUuid &rhs) Q_DECL_NOTHROW
-// { return !(lhs < rhs); }
+inline bool operator<=(const QUuid &lhs, const QUuid &rhs) Q_DECL_NOTHROW
+{ return !(rhs < lhs); }
+inline bool operator>=(const QUuid &lhs, const QUuid &rhs) Q_DECL_NOTHROW
+{ return !(lhs < rhs); }
 
 QT_END_NAMESPACE
 

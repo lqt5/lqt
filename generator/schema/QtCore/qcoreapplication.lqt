@@ -260,10 +260,10 @@ private:
 //     Q_CONSTRUCTOR_FUNCTION(AFUNC ## _ctor_function)
 
 // #ifndef QT_NO_QOBJECT
-// #if defined(Q_OS_WIN) && !defined(QT_NO_DEBUG_STREAM)
+#if defined(Q_OS_WIN) && !defined(QT_NO_DEBUG_STREAM)
 // Q_CORE_EXPORT QString decodeMSG(const MSG &);
-// Q_CORE_EXPORT QDebug operator<<(QDebug, const MSG &);
-// #endif
+Q_CORE_EXPORT QDebug operator<<(QDebug, const MSG &);
+#endif
 // #endif
 
 QT_END_NAMESPACE

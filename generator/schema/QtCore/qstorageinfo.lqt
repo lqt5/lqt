@@ -117,9 +117,9 @@ public:
 
 Q_DECLARE_SHARED(QStorageInfo)
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_CORE_EXPORT QDebug operator<<(QDebug debug, const QStorageInfo &);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug debug, const QStorageInfo &);
+#endif
 
 QT_END_NAMESPACE
 

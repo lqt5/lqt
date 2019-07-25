@@ -50,13 +50,13 @@
 
 QT_BEGIN_NAMESPACE
 
-// class QVersionNumber;
-// Q_CORE_EXPORT uint qHash(const QVersionNumber &key, uint seed = 0);
+class QVersionNumber;
+Q_CORE_EXPORT uint qHash(const QVersionNumber &key, uint seed = 0);
 
-// #ifndef QT_NO_DATASTREAM
-// Q_CORE_EXPORT QDataStream& operator<<(QDataStream &out, const QVersionNumber &version);
-// Q_CORE_EXPORT QDataStream& operator>>(QDataStream &in, QVersionNumber &version);
-// #endif
+#ifndef QT_NO_DATASTREAM
+Q_CORE_EXPORT QDataStream& operator<<(QDataStream &out, const QVersionNumber &version);
+Q_CORE_EXPORT QDataStream& operator>>(QDataStream &in, QVersionNumber &version);
+#endif
 
 class QVersionNumber
 {
@@ -286,36 +286,36 @@ public:
     Q_REQUIRED_RESULT Q_CORE_EXPORT static Q_DECL_PURE_FUNCTION QVersionNumber fromString(QLatin1String string, int *suffixIndex = nullptr);
     Q_REQUIRED_RESULT Q_CORE_EXPORT static Q_DECL_PURE_FUNCTION QVersionNumber fromString(QStringView string, int *suffixIndex = nullptr);
 
-// private:
-// #ifndef QT_NO_DATASTREAM
-//     friend Q_CORE_EXPORT QDataStream& operator>>(QDataStream &in, QVersionNumber &version);
-// #endif
-//     friend Q_CORE_EXPORT uint qHash(const QVersionNumber &key, uint seed);
+private:
+#ifndef QT_NO_DATASTREAM
+    friend Q_CORE_EXPORT QDataStream& operator>>(QDataStream &in, QVersionNumber &version);
+#endif
+    friend Q_CORE_EXPORT uint qHash(const QVersionNumber &key, uint seed);
 };
 
 Q_DECLARE_TYPEINFO(QVersionNumber, Q_MOVABLE_TYPE);
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_CORE_EXPORT QDebug operator<<(QDebug, const QVersionNumber &version);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug, const QVersionNumber &version);
+#endif
 
-// Q_REQUIRED_RESULT inline bool operator> (const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
-// { return QVersionNumber::compare(lhs, rhs) > 0; }
+Q_REQUIRED_RESULT inline bool operator> (const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
+{ return QVersionNumber::compare(lhs, rhs) > 0; }
 
-// Q_REQUIRED_RESULT inline bool operator>=(const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
-// { return QVersionNumber::compare(lhs, rhs) >= 0; }
+Q_REQUIRED_RESULT inline bool operator>=(const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
+{ return QVersionNumber::compare(lhs, rhs) >= 0; }
 
-// Q_REQUIRED_RESULT inline bool operator< (const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
-// { return QVersionNumber::compare(lhs, rhs) < 0; }
+Q_REQUIRED_RESULT inline bool operator< (const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
+{ return QVersionNumber::compare(lhs, rhs) < 0; }
 
-// Q_REQUIRED_RESULT inline bool operator<=(const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
-// { return QVersionNumber::compare(lhs, rhs) <= 0; }
+Q_REQUIRED_RESULT inline bool operator<=(const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
+{ return QVersionNumber::compare(lhs, rhs) <= 0; }
 
-// Q_REQUIRED_RESULT inline bool operator==(const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
-// { return QVersionNumber::compare(lhs, rhs) == 0; }
+Q_REQUIRED_RESULT inline bool operator==(const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
+{ return QVersionNumber::compare(lhs, rhs) == 0; }
 
-// Q_REQUIRED_RESULT inline bool operator!=(const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
-// { return QVersionNumber::compare(lhs, rhs) != 0; }
+Q_REQUIRED_RESULT inline bool operator!=(const QVersionNumber &lhs, const QVersionNumber &rhs) Q_DECL_NOTHROW
+{ return QVersionNumber::compare(lhs, rhs) != 0; }
 
 QT_END_NAMESPACE
 

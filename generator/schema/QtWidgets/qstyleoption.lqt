@@ -756,10 +756,10 @@ public:
 //     return nullptr;
 // }
 
-// #if !defined(QT_NO_DEBUG_STREAM)
-// Q_WIDGETS_EXPORT QDebug operator<<(QDebug debug, const QStyleOption::OptionType &optionType);
-// Q_WIDGETS_EXPORT QDebug operator<<(QDebug debug, const QStyleOption &option);
-// #endif
+#if !defined(QT_NO_DEBUG_STREAM)
+Q_WIDGETS_EXPORT QDebug operator<<(QDebug debug, const QStyleOption::OptionType &optionType);
+Q_WIDGETS_EXPORT QDebug operator<<(QDebug debug, const QStyleOption &option);
+#endif
 
 QT_END_NAMESPACE
 

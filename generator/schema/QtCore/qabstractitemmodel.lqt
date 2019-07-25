@@ -132,9 +132,9 @@ Q_DECLARE_SHARED(QPersistentModelIndex)
 // { return qHash(index.d, seed); }
 
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_CORE_EXPORT QDebug operator<<(QDebug, const QPersistentModelIndex &);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug, const QPersistentModelIndex &);
+#endif
 
 template<typename T> class QList;
 typedef QList<QModelIndex> QModelIndexList;

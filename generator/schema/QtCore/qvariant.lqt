@@ -430,6 +430,12 @@ public:
     inline const DataPtr &data_ptr() const { return d; }
 };
 
+
+#ifndef QT_NO_DEBUG_STREAM
+Q_CORE_EXPORT QDebug operator<<(QDebug, const QVariant &);
+Q_CORE_EXPORT QDebug operator<<(QDebug, const QVariant::Type);
+#endif
+
 QT_END_NAMESPACE
 
 #endif // QVARIANT_H

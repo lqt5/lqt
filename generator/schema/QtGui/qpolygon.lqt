@@ -105,17 +105,17 @@ Q_DECLARE_SHARED_NOT_MOVABLE_UNTIL_QT6(QPolygon)
 
 // inline QPolygon::QPolygon(int asize) : QVector<QPoint>(asize) {}
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_GUI_EXPORT QDebug operator<<(QDebug, const QPolygon &);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_GUI_EXPORT QDebug operator<<(QDebug, const QPolygon &);
+#endif
 
-// /*****************************************************************************
-//   QPolygon stream functions
-//  *****************************************************************************/
-// #ifndef QT_NO_DATASTREAM
-// Q_GUI_EXPORT QDataStream &operator<<(QDataStream &stream, const QPolygon &polygon);
-// Q_GUI_EXPORT QDataStream &operator>>(QDataStream &stream, QPolygon &polygon);
-// #endif
+/*****************************************************************************
+  QPolygon stream functions
+ *****************************************************************************/
+#ifndef QT_NO_DATASTREAM
+Q_GUI_EXPORT QDataStream &operator<<(QDataStream &stream, const QPolygon &polygon);
+Q_GUI_EXPORT QDataStream &operator>>(QDataStream &stream, QPolygon &polygon);
+#endif
 
 // /*****************************************************************************
 //   Misc. QPolygon functions
@@ -184,23 +184,23 @@ Q_DECLARE_SHARED_NOT_MOVABLE_UNTIL_QT6(QPolygonF)
 
 // inline QPolygonF::QPolygonF(int asize) : QVector<QPointF>(asize) {}
 
-// #ifndef QT_NO_DEBUG_STREAM
-// Q_GUI_EXPORT QDebug operator<<(QDebug, const QPolygonF &);
-// #endif
+#ifndef QT_NO_DEBUG_STREAM
+Q_GUI_EXPORT QDebug operator<<(QDebug, const QPolygonF &);
+#endif
 
-// /*****************************************************************************
-//   QPolygonF stream functions
-//  *****************************************************************************/
-// #ifndef QT_NO_DATASTREAM
-// Q_GUI_EXPORT QDataStream &operator<<(QDataStream &stream, const QPolygonF &array);
-// Q_GUI_EXPORT QDataStream &operator>>(QDataStream &stream, QPolygonF &array);
-// #endif
+/*****************************************************************************
+  QPolygonF stream functions
+ *****************************************************************************/
+#ifndef QT_NO_DATASTREAM
+Q_GUI_EXPORT QDataStream &operator<<(QDataStream &stream, const QPolygonF &array);
+Q_GUI_EXPORT QDataStream &operator>>(QDataStream &stream, QPolygonF &array);
+#endif
 
-// inline void QPolygonF::translate(qreal dx, qreal dy)
-// { translate(QPointF(dx, dy)); }
+inline void QPolygonF::translate(qreal dx, qreal dy)
+{ translate(QPointF(dx, dy)); }
 
-// inline QPolygonF QPolygonF::translated(qreal dx, qreal dy) const
-// { return translated(QPointF(dx, dy)); }
+inline QPolygonF QPolygonF::translated(qreal dx, qreal dy) const
+{ return translated(QPointF(dx, dy)); }
 
 QT_END_NAMESPACE
 
