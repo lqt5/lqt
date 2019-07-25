@@ -75,3 +75,35 @@ rawset(_G, 'qml_main', function(name, ...)
 	view:show()
 	return app.exec()
 end)
+--------------------------------------------------------------------------------
+-- qt test main func
+--------------------------------------------------------------------------------
+rawset(_G, 'test_main', function(type, Class)
+	local QtTest = require 'qttest'
+
+	QtTest.QCOMPARE = function(actual, expected)
+		local info = debug.getinfo(2)
+		QtTest.qCompare(actual, expected, 'actual', 'excepted', info.short_src, info.currentline)
+	end
+
+	local Application
+	if type == 'console' then
+		Application = QtCore.QCoreApplication
+	elseif type == 'gui' then
+		local QtGui = require 'qtgui'
+		Application = QtGui.QGuiApplication
+	elseif type == 'widgets' then
+		local QtWidgets = require 'qtwidgets'
+		Application = QtWidgets.QApplication
+	else
+		error('invalid type ' .. tostring(type))
+	end
+
+	local app = Application.new(1, { 'qt test' })
+	app.setAttribute(QtCore.AA_Use96Dpi, true)
+
+	QtTest.setMainSourcePath(debug.getinfo(2).short_src)
+
+	return QtTest.qExec(Class(), 1, { 'qt test' })
+end)
+
