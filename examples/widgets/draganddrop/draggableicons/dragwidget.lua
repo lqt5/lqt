@@ -109,14 +109,15 @@ function Class:dropEvent(event)
     -- print('function Class:dropEvent(event)')
     if event:mimeData():hasFormat('application/x-dnditemdata') then
         local mimeData = event:mimeData()
-        -- local itemData = mimeData:data('application/x-dnditemdata')
-        -- QDataStream dataStream(&itemData, QIODevice:ReadOnly)
+        local itemData = mimeData:data('application/x-dnditemdata')
+        local dataStream = QtCore.QDataStream(itemData, QtCore.QIODevice.ReadOnly)
 
-        -- QPixmap pixmap
-        -- QPoint offset
+        local pixmap = QtGui.QPixmap()
+        local offset = QtCore.QPoint()
+
         -- dataStream >> pixmap >> offset
-        local pixmap = mimeData.pixmap
-        local offset = mimeData.offset
+        QtGui.OUT(dataStream, pixmap)
+        QtCore.OUT(dataStream, offset)
 
         local newIcon = QtWidgets.QLabel(self)
         newIcon:setPixmap(pixmap)
@@ -136,7 +137,6 @@ function Class:dropEvent(event)
 end
 
 function Class:mousePressEvent(event)
-    -- print('function Class:mousePressEvent(event)')
     local child = self:childAt(event:pos())
     if not child then
         return
@@ -145,23 +145,14 @@ function Class:mousePressEvent(event)
     local pixmap = QtGui.QPixmap(child:pixmap())
 
     local mimeData = QtCore.QMimeData.new()
-
     local itemData = QtCore.QByteArray()
     local dataStream = QtCore.QDataStream(itemData, QtCore.QIODevice.WriteOnly)
 
-    local offset = QtCore.QPoint(event:pos() - child:pos())
-    dataStream
-        :IN(offset:x())
-        :IN(offset:y())
-
-    -- TODO: dataStream misc types operator >> << binding
-    -- dataStream
-    --     :IN(pixmap)
-    --     :IN(QtCore.QPoint(event:pos() - child:pos()))
     -- dataStream << pixmap << QPoint(event:pos() - child:pos())
-
-    mimeData.pixmap = pixmap
-    mimeData.offset = event:pos() - child:pos()
+    QtGui.IN(dataStream, pixmap)
+    QtCore.IN(dataStream
+        , QtCore.QPoint(event:pos() - child:pos())
+    )
 
     mimeData:setData('application/x-dnditemdata', itemData)
 
