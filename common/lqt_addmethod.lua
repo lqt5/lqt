@@ -42,7 +42,7 @@ return function(QtCore
     , MetaVoidType
     , MetaConvertType
 )
-    local function hook(self, signature, func)
+    local function hook(self, signature, func, access)
         local metaName = 'LuaObject('.. tostring(self) .. ')'
         local metaStrings = self[LQT_OBJMETASTRING]
         local metaData = self[LQT_OBJMETADATA]
@@ -139,6 +139,7 @@ return function(QtCore
             for _,methodInfo in ipairs(metaMethods) do
                 local func = methodInfo[-3]
                 if not func then
+                    local access = methodInfo[-4]
                     -- name index
                     table.insert(metaData, methodInfo[-1])
                     -- argc
@@ -150,7 +151,13 @@ return function(QtCore
                     -- flags
                     --  2bit { Method, Signal, Slot, Constructor }
                     --  2bit { Private, Protected, Public }
-                    table.insert(metaData, 6) -- 01 10 Signal Public
+                    if access == 'private' then
+                        table.insert(metaData, 4) -- 0100 Signal Private
+                    elseif access == 'protected' then
+                        table.insert(metaData, 5) -- 0101 Signal Protected
+                    else -- access == 'public' then
+                        table.insert(metaData, 6) -- 0110 Signal Public
+                    end
                     -- increment data offset
                     offset = (offset + 1 + #methodInfo)
                     signalCount = signalCount + 1
@@ -164,6 +171,7 @@ return function(QtCore
             for _,methodInfo in ipairs(metaMethods) do
                 local func = methodInfo[-3]
                 if func then
+                    local access = methodInfo[-4]
                     -- name index
                     table.insert(metaData, methodInfo[-1])
                     -- argc
@@ -175,7 +183,13 @@ return function(QtCore
                     -- flags
                     --  2bit { Method, Signal, Slot, Constructor }
                     --  2bit { Private, Protected, Public }
-                    table.insert(metaData, 10) -- 10 01 Slot Public
+                    if access == 'private' then
+                        table.insert(metaData, 8)  -- 1000 Slot Private
+                    elseif access == 'protected' then
+                        table.insert(metaData, 9)  -- 1001 Slot Protected
+                    else -- access == 'public' then
+                        table.insert(metaData, 10) -- 1010 Slot Public
+                    end
                     -- increment data offset
                     offset = (offset + 1 + #methodInfo)
 
@@ -223,6 +237,7 @@ return function(QtCore
             [-1] = metaStringIndex(name),
             [-2] = signature,
             [-3] = func,
+            [-4] = access,
         }
 
         -- MetaTypes[n]
@@ -267,7 +282,7 @@ return function(QtCore
         return name ~= nil and args ~= nil
     end
 
-    rawset(QObject_metatable, '__addslot', function(self, name, func)
+    rawset(QObject_metatable, '__addslot', function(self, name, func, access)
         assert(type(func) == 'function'
             , string.format('__addslot("%s") `func` is not function!', name)
         )
@@ -276,15 +291,15 @@ return function(QtCore
             error(string.format('Invalid slot name : `%s`', name))
         end
 
-        return hook(self, name, func)
+        return hook(self, name, func, access or 'public')
     end)
 
-    rawset(QObject_metatable, '__addsignal', function(self, name)
+    rawset(QObject_metatable, '__addsignal', function(self, name, access)
         if not checkMethodName(name) then
             error(string.format('Invalid signal name : `%s`', name))
         end
 
-        return hook(self, name)
+        return hook(self, name, nil, access or 'public')
     end)
 
     rawset(QObject_metatable, '__emit', function(self, name, ...)
