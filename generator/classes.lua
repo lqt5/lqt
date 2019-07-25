@@ -1092,7 +1092,7 @@ function print_global_functions()
 
 		for tc, f in pairs(l) do
 			-- ignore same test code
-			if f.raw_test_code == f.test_code then
+			if lcount > 1 and f.raw_test_code == f.test_code then
 				disp = disp..'  // if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
 			else
 				disp = disp..'  if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
