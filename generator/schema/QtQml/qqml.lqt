@@ -607,19 +607,20 @@ QObject *qmlAttachedPropertiesObject(const QObject *obj, bool create = true)
 
 Q_QML_EXPORT void qmlRegisterBaseTypes(const char *uri, int versionMajor, int versionMinor);
 
-inline int qmlRegisterSingletonType(const char *uri, int versionMajor, int versionMinor, const char *typeName,
-                                QJSValue (*callback)(QQmlEngine *, QJSEngine *))
-{
-    QQmlPrivate::RegisterSingletonType api = {
-        0,
+// TODO:lqt js binding fix
+// inline int qmlRegisterSingletonType(const char *uri, int versionMajor, int versionMinor, const char *typeName,
+//                                 QJSValue (*callback)(QQmlEngine *, QJSEngine *))
+// {
+//     QQmlPrivate::RegisterSingletonType api = {
+//         0,
 
-        uri, versionMajor, versionMinor, typeName,
+//         uri, versionMajor, versionMinor, typeName,
 
-        callback, nullptr, nullptr, 0, 0
-    };
+//         callback, nullptr, nullptr, 0, 0
+//     };
 
-    return QQmlPrivate::qmlregister(QQmlPrivate::SingletonRegistration, &api);
-}
+//     return QQmlPrivate::qmlregister(QQmlPrivate::SingletonRegistration, &api);
+// }
 
 enum { QmlCurrentSingletonTypeRegistrationVersion = 2 };
 template <typename T>

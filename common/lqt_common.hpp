@@ -128,6 +128,7 @@ typedef struct {
 
 int lqtL_createenum (lua_State *L, lqt_Enum e[], const char *n);
 int lqtL_createenumlist (lua_State *, lqt_Enumlist[]);
+int lqtL_createglobals (lua_State *, luaL_Reg[]);
 
 typedef struct {
     const char *basename;

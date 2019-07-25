@@ -116,7 +116,7 @@ add_subdirectory(cpptoxml)
 # # Add compiler flags for building executables (-fPIE)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
 if(APPLE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Ofast -std=c++11 -Wno-deprecated-declarations")
 endif(APPLE)
 
 function(build_qt_lib_binding BINDING_HEADER)
@@ -188,6 +188,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 
 	set(${BINDING_NAME}_GENERATED ${LQT_GEN_DIR}/${BINDING_NAME}_enum.cpp
 									${LQT_GEN_DIR}/${BINDING_NAME}_meta.cpp
+									${LQT_GEN_DIR}/${BINDING_NAME}_globals.cpp
 									${LQT_GEN_DIR}/${BINDING_NAME}_slot.cpp)
 	set_source_files_properties(${${BINDING_NAME}_GENERATED} PROPERTIES GENERATED TRUE)
 

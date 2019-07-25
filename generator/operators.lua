@@ -17,6 +17,28 @@ local operatorTrans = {
 	['=='] = '__eq',
 }
 
+local operatorGlobalTrans = {
+	['<<'] = 'IN',
+	['>>'] = 'OUT',
+	['+='] = 'ADD',
+	['-='] = 'SUB',
+	['*='] = 'MUL',
+	['/='] = 'DIV',
+	['++'] = 'INC',
+	['--'] = 'DEC',
+	['+'] = 'ADD',
+	['-'] = 'SUB',
+	['_'] = 'UNM',
+	['*'] = 'MUL',
+	['/'] = 'DIV',
+	['=='] = 'EQ',
+	['!='] = 'NE',
+	['>='] = 'GE',
+	['<='] = 'LE',
+	['<'] = 'LESS',
+	['>'] = 'GREAT',
+}
+
 local function is_helper_function(name)
 	local s1 = name:sub(1,1)
 	local s2 = name:sub(2,2)
@@ -84,4 +106,9 @@ function rename_operator(name)
 		return trans
 	end
 	return name
+end
+
+function rename_global_operator(name)
+	local trans = operatorGlobalTrans[get_operator(name)]
+	return trans or name
 end

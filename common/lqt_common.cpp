@@ -253,6 +253,18 @@ int lqtL_createenumlist (lua_State *L, lqt_Enumlist list[]) {
     return 0;
 }
 
+int lqtL_createglobals (lua_State *L, luaL_Reg libs[]) {
+    for(;;) {
+        luaL_Reg *r = libs;
+        if(r->name == NULL)
+            break;
+        lua_pushcfunction(L, r->func);
+        lua_setfield(L, -2, r->name);
+        libs++;
+    }
+    return 0;
+}
+
 static int lqtL_tostring (lua_State *L) {
     if (!lua_isuserdata(L, 1) || lua_islightuserdata(L, 1)) {
         lua_pushfstring(L, "%s: %p"
@@ -713,6 +725,14 @@ void lqtL_eraseudata (lua_State *L, int index, const char *name) {
 
 bool lqtL_testudata (lua_State *L, int index, const char *name) {
     if (!lua_isuserdata(L, index) || lua_islightuserdata(L, index)) return false;
+
+    lua_getmetatable(L, index);
+    if(!lua_istable(L, -1)) {
+        lua_pop(L, 1);
+        return false;
+    }
+    lua_pop(L, 1);
+
     lua_getfield(L, index, name);
     if (lua_isnil(L, -1)) {
         lua_pop(L, 1);

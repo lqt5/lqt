@@ -648,9 +648,9 @@ function fill_wrapper_code(f)
 	f.wrapper_code = wrap
 	f.stack_arguments = stack_args
 	f.defects = defects
+
 	return f
 end
-
 
 function fill_test_code(f)
 	local function test(raw)
@@ -1028,6 +1028,103 @@ int lqt_shell_]]..n..[[::qt_metacall(QMetaObject::Call call, int index, void **a
 	fmeta:close()
 end
 
+function print_global_functions()
+	local fglobal = assert(io.open(module_name.._src..module_name..'_globals.cpp', 'w'))
+	local print_global = function(...)
+		fglobal:write(...)
+		fglobal:write'\n'
+	end
+
+	print_global('#include "lqt_common.hpp"')
+	print_global('#include "'..module_name..'_slot.hpp'..'"\n\n')
+
+	local methods = {}
+
+	local function print_func(f)
+		if f.wrapper_code
+			and not f.ignore
+			and f.xarg.access ~= 'private'
+			-- ignore template function
+			and not f.xarg.member_template_parameters
+		then
+			local name = f.xarg.name
+			if not methods[name] then
+				methods[name] = {}
+			end
+			table.insert(methods[name], f)
+
+			local out = 'static int lqt_bind'..f.xarg.id
+				..' (lua_State *L) {\n'.. f.wrapper_code .. '}\n'
+			print_global(out)
+		end
+	end
+
+	for f in pairs(functions) do
+		local scope = fullnames[f.xarg.scope]
+		-- only print global or namespace function
+		if not scope then
+			-- print(f.xarg.fullname)
+		elseif scope.label == 'File' then
+			print_func(f)
+		elseif scope.label == 'Namespace' and not scope.xarg.name:find('Private') then
+			print_func(f)
+		end
+	end
+
+	for n, l in pairs(methods) do
+		local name = operators.rename_global_operator(n):gsub('[<>*%s]', '_')
+		local disp = 'static int lqt_dispatcher_'..name..' (lua_State *L) {\n'
+		local testcode = {}
+
+		-- only add raw test code when method overrides > 1
+		local lcount = 0
+		for _,_ in pairs(l) do
+			lcount = lcount + 1
+		end
+
+		if lcount > 1 then
+			disp = disp .. '  // raw test code (lqtL_isudata)\n'
+			for tc, f in pairs(l) do
+				if f.raw_test_code ~= f.test_code then
+					disp = disp..'  if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+				else
+					-- ignore same test code
+					disp = disp..'  // if ('..f.raw_test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+				end
+			end
+			disp = disp .. '  // test code (lqtL_canconvert)\n'
+		end
+
+		for tc, f in pairs(l) do
+			disp = disp..'  if ('..f.test_code..') return lqt_bind'..f.xarg.id..'(L);\n'
+			testcode[#testcode+1] = tc
+		end
+		-- disp = disp .. '  lua_settop(L, 0);\n'
+		disp = disp .. '  const char * args = lqtL_getarglist(L);\n'
+		disp = disp .. '  lua_pushfstring(L, "%s(%s): incorrect or extra arguments, expecting: %s.", "' ..
+			module_name..'::'..n..'", args, '..string.format("%q", table.concat(testcode, ' or ')) .. ');\n'
+		disp = disp .. '  return lua_error(L);\n}\n'
+		--print_meta(disp)
+		print_global(disp)
+	end
+
+	local globals = 'static luaL_Reg lqt_globals_'..module_name..'[] = {\n'
+	for n, l in pairs(methods) do
+		local nn = operators.rename_global_operator(n):gsub('[<>*%s]', '_')
+		globals = globals .. '  { "'..nn..'", lqt_dispatcher_'..nn..' },\n'
+	end
+	globals = globals .. '  { 0, 0 },\n};\n'
+	print_global(globals)
+
+	print_global(string.format([[void lqt_create_globals_%s (lua_State *L) {
+  lqtL_createglobals(L, lqt_globals_%s);  return;
+}
+]], module_name, module_name
+	))
+
+	fglobal:close()
+end
+
 function print_merged_build()
 	local path = module_name.._src
 	local mergename = module_name..'_merged_build'
@@ -1054,6 +1151,7 @@ function print_merged_build()
 	print_pro('          '..module_name..'_enum.cpp \\')
 	print_pro('          '..module_name..'_meta.cpp \\')
 	print_pro('          '..module_name..'_slot.cpp \\')
+	print_pro('          '..module_name..'_globals.cpp \\')
 	print_pro('          '..mergename..'.cpp')
 end
 
@@ -1085,6 +1183,7 @@ end
 	type_list_f:write('return types\n')
 	type_list_f:close()
 
+	print_global_functions()
 	print_merged_build()
 	local fmeta = assert(io.open(module_name.._src..module_name..'_meta.cpp', 'w'))
 	local print_meta = function(...)
@@ -1098,6 +1197,7 @@ end
 		print_meta('extern "C" LQT_EXPORT int luaopen_'..p..' (lua_State *);')
 	end
 	print_meta('void lqt_create_enums_'..module_name..' (lua_State *);')
+	print_meta('void lqt_create_globals_'..module_name..' (lua_State *);')
 	print_meta('extern "C" LQT_EXPORT int luaopen_'..module_name..' (lua_State *L) {')
 	print_meta('\tlua_newtable(L);')
 	for _, p in ipairs(big_picture) do
@@ -1105,6 +1205,7 @@ end
 		print_meta('\tlua_setfield(L, -2, "'..p..'");')
 	end
 	print_meta('\tlqt_create_enums_'..module_name..'(L);')
+	print_meta('\tlqt_create_globals_'..module_name..'(L);')
 	print_meta('\tint top = lua_gettop(L);');
 	if qobject_present then
 		print_meta('\tlqtL_qobject_custom(L);')
