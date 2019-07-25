@@ -63,7 +63,7 @@ function fix_operators(index)
 					f.ignore = true
 				end
 			elseif is_helper_function(f.xarg.name) then
-				f.ignore = true
+				-- f.ignore = true
 			end
 		end
 	end
