@@ -1,0 +1,3 @@
+[submodule "depends/lrdb"]
+	path = depends/lrdb
+	url = https://github.com/satoren/LRDB
