@@ -164,11 +164,10 @@ function AddCommand:redo()
     self.myGraphicsScene:update()
 end
 
-function AddCommand:__gc()
-    -- TODO:gc??
-    print('AddCommand:__gc()')
-    -- if (!myDiagramItem->scene())
-    --     delete myDiagramItem;
+function AddCommand:__uninit()
+    if not self.myDiagramItem:scene() then
+        self.myDiagramItem:delete()
+    end
 end
 
 return {
