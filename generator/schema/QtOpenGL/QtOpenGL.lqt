@@ -1,0 +1,13 @@
+#ifndef QT_QTOPENGL_MODULE_H
+#define QT_QTOPENGL_MODULE_H
+#include <QtOpenGL/QtOpenGLDepends.lqt>
+#include "qtopenglglobal.lqt"
+#include "qgl.lqt"
+#include "qglbuffer.lqt"
+#include "qglcolormap.lqt"
+#include "qglframebufferobject.lqt"
+#include "qglfunctions.lqt"
+#include "qglpixelbuffer.lqt"
+#include "qglshaderprogram.lqt"
+#include "qtopenglversion.lqt"
+#endif

@@ -64,6 +64,7 @@ find_package (Qt5 REQUIRED
 	WebChannel
 	Gui
 	Widgets
+	OpenGL
 	PrintSupport
 	UiTools
 	Quick
@@ -259,6 +260,10 @@ else()
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Widgets Gui Core)
 	build_qt_lib_binding(QtWidgets QtGui QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES OpenGL Widgets Gui Core)
+	build_qt_lib_binding(QtOpenGL QtWidgets QtGui QtCore)
 
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES PrintSupport Widgets Gui Core)
