@@ -200,8 +200,10 @@ QString XMLVisitor::visit(CodeModelItem i) {
 		ret += ATTR_STR("classname", a->className());
 		if (!a->className().isEmpty())
 			ret += ATTR_STR("fullname", current_context.join("::")+"::"+a->className()+"::"+i->qualifiedName().join("::"));
-		else
+		else if(!current_context.isEmpty())
 			ret += ATTR_STR("fullname", current_context.join("::")+"::"+i->qualifiedName().join("::"));
+		else
+			ret += ATTR_STR("fullname", i->qualifiedName().join("::"));
 	} else {
 		ret += ATTR_STR("fullname", i->qualifiedName().join("::"));
 	}
