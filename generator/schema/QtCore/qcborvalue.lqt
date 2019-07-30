@@ -161,7 +161,7 @@ public:
     ~QCborValue() { if (container) dispose(); }
 
     // make sure const char* doesn't go call the bool constructor
-    QCborValue(const void *) = delete;
+    // QCborValue(const void *) = delete;
 
     QCborValue(const QCborValue &other);
     QCborValue(QCborValue &&other) noexcept

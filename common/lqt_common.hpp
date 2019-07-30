@@ -115,6 +115,10 @@ bool lqtL_missarg (lua_State *, int, int);
 //int lqtL_index (lua_State *);
 //int lqtL_newindex (lua_State *);
 
+bool lqtL_ispointer(lua_State *, int);
+void *lqtL_topointer(lua_State *, int);
+void lqtL_pushpointer(lua_State *, void *);
+
 typedef struct {
     const char *name;
     bool class_enum;

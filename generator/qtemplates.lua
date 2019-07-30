@@ -19,6 +19,8 @@ return {
 		},
 		['QVector<T>'] = {
 			'QVector<int>',
+			'QVector<float>',
+			'QVector<double>',
 			'QVector<qreal>',
 			'QVector<QPoint>',
 			'QVector<QPointF>',

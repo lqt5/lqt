@@ -390,7 +390,11 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table) {
 
 bool lqtL_isGenericArgument(lua_State *L, int i) {
     
-    if(lua_type(L, i) == LUA_TSTRING)
+    // GenericArgument tuple
+    //  { type, value }
+    if(lua_istable(L, i) && lua_objlen(L, i) == 2)
+        return true;
+    else if(lua_type(L, i) == LUA_TSTRING)
         return true;
     // else if(lqtL_isudata(L, i, "QObject*"))
     //     return true;
@@ -429,7 +433,31 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
 
     int oldtop = lua_gettop(L);
 
-    if(lua_type(L, i) == LUA_TSTRING) {
+    // GenericArgument tuple
+    //  { type, value }
+    if(lua_istable(L, i) && lua_objlen(L, i) == 2) {
+
+        lua_rawgeti(L, i, 1);
+        const char *tuple_type = luaL_checkstring(L, -1);
+        lua_pop(L, 1);
+
+        lua_rawgeti(L, i, 2);
+        if(strcmp(tuple_type, "int") == 0 && lua_isnumber(L, -1)) {
+            // TODO:out of bounds check?
+            static int tuple_ints[16];
+            int& tuple_val = tuple_ints[i];
+
+            tuple_val = lua_tointeger(L, -1);
+            lua_pop(L, 1);
+            return QGenericArgument("int", &tuple_val);            
+        }
+
+        QGenericArgument arg = lqtL_getGenericArgument(L, -1);
+        lua_pop(L, 1);
+
+        return arg;
+    }
+    else if(lua_type(L, i) == LUA_TSTRING) {
         size_t sz;
         const char *s = luaL_checklstring(L, i, &sz);
         QString qs = QString::fromUtf8(s, sz);

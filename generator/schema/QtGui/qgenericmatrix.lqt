@@ -47,74 +47,194 @@
 
 QT_BEGIN_NAMESPACE
 
+#define DECLARE_GENERIC_MATRIX(NAME, TRANSPOSED_NAME)\
+    class NAME \
+    { \
+    public: \
+        NAME(); \
+        explicit NAME(Qt::Initialization) {} \
+        explicit NAME(const float *values); \
+        \
+        const float& operator()(int row, int column) const; \
+        float& operator()(int row, int column); \
+        \
+        bool isIdentity() const; \
+        void setToIdentity(); \
+        \
+        void fill(float value); \
+        \
+        Q_REQUIRED_RESULT TRANSPOSED_NAME transposed() const; \
+        \
+        NAME& operator+=(const NAME& other); \
+        NAME& operator-=(const NAME& other); \
+        NAME& operator*=(float factor); \
+        NAME& operator/=(float divisor); \
+        bool operator==(const NAME& other) const; \
+        bool operator!=(const NAME& other) const; \
+        \
+        void copyDataTo(float *values) const; \
+        \
+        float *data(); \
+        const float *data() const; \
+        const float *constData() const; \
+        \
+        friend NAME operator+(const NAME& m1, const NAME& m2); \
+        friend NAME operator-(const NAME& m1, const NAME& m2); \
+        friend NAME operator-(const NAME& matrix); \
+        friend NAME operator*(float factor, const NAME& matrix); \
+        friend NAME operator*(const NAME& matrix, float factor); \
+        friend NAME operator/(const NAME& matrix, float divisor); \
+    }; \
+    \
+    NAME operator+(const NAME& m1, const NAME& m2); \
+    NAME operator-(const NAME& m1, const NAME& m2); \
+    NAME operator-(const NAME& matrix); \
+    NAME operator*(float factor, const NAME& matrix); \
+    NAME operator*(const NAME& matrix, float factor); \
+    NAME operator/(const NAME& matrix, float divisor); \
+    \
+    Q_GUI_EXPORT QDebug operator<<(QDebug dbg, const NAME &m); \
+    \
+    Q_GUI_EXPORT QDataStream &operator<<(QDataStream &, const NAME &); \
+    Q_GUI_EXPORT QDataStream &operator>>(QDataStream &, NAME &);
 
-template <int N, int M, typename T>
-class QGenericMatrix
-{
-public:
-    QGenericMatrix();
-    explicit QGenericMatrix(Qt::Initialization) {}
-    explicit QGenericMatrix(const T *values);
+DECLARE_GENERIC_MATRIX(QMatrix2x3, QMatrix3x2)
+DECLARE_GENERIC_MATRIX(QMatrix2x4, QMatrix4x2)
+DECLARE_GENERIC_MATRIX(QMatrix3x2, QMatrix2x3)
+DECLARE_GENERIC_MATRIX(QMatrix3x3, QMatrix3x3)
+DECLARE_GENERIC_MATRIX(QMatrix3x4, QMatrix4x3)
+DECLARE_GENERIC_MATRIX(QMatrix4x2, QMatrix2x4)
+DECLARE_GENERIC_MATRIX(QMatrix4x3, QMatrix3x4)
 
-    const T& operator()(int row, int column) const;
-    T& operator()(int row, int column);
+#undef DECLARE_GENERIC_MATRIX
+// class QMatrix3x3
+// {
+// public:
+//     QMatrix3x3();
+//     explicit QMatrix3x3(Qt::Initialization) {}
+//     explicit QMatrix3x3(const float *values);
 
-    bool isIdentity() const;
-    void setToIdentity();
+//     const float& operator()(int row, int column) const;
+//     float& operator()(int row, int column);
 
-    void fill(T value);
+//     bool isIdentity() const;
+//     void setToIdentity();
 
-    Q_REQUIRED_RESULT QGenericMatrix<M, N, T> transposed() const;
+//     void fill(float value);
 
-    QGenericMatrix<N, M, T>& operator+=(const QGenericMatrix<N, M, T>& other);
-    QGenericMatrix<N, M, T>& operator-=(const QGenericMatrix<N, M, T>& other);
-    QGenericMatrix<N, M, T>& operator*=(T factor);
-    QGenericMatrix<N, M, T>& operator/=(T divisor);
-    bool operator==(const QGenericMatrix<N, M, T>& other) const;
-    bool operator!=(const QGenericMatrix<N, M, T>& other) const;
+//     Q_REQUIRED_RESULT QMatrix3x3 transposed() const;
 
-    void copyDataTo(T *values) const;
+//     QMatrix3x3& operator+=(const QMatrix3x3& other);
+//     QMatrix3x3& operator-=(const QMatrix3x3& other);
+//     QMatrix3x3& operator*=(float factor);
+//     QMatrix3x3& operator/=(float divisor);
+//     bool operator==(const QMatrix3x3& other) const;
+//     bool operator!=(const QMatrix3x3& other) const;
 
-    T *data() { return *m; }
-    const T *data() const { return *m; }
-    const T *constData() const { return *m; }
+//     void copyDataTo(float *values) const;
 
-#if !defined(Q_NO_TEMPLATE_FRIENDS)
-    template<int NN, int MM, typename TT>
-    friend QGenericMatrix<NN, MM, TT> operator+(const QGenericMatrix<NN, MM, TT>& m1, const QGenericMatrix<NN, MM, TT>& m2);
-    template<int NN, int MM, typename TT>
-    friend QGenericMatrix<NN, MM, TT> operator-(const QGenericMatrix<NN, MM, TT>& m1, const QGenericMatrix<NN, MM, TT>& m2);
-    template<int NN, int M1, int M2, typename TT>
-    friend QGenericMatrix<M1, M2, TT> operator*(const QGenericMatrix<NN, M2, TT>& m1, const QGenericMatrix<M1, NN, TT>& m2);
-    template<int NN, int MM, typename TT>
-    friend QGenericMatrix<NN, MM, TT> operator-(const QGenericMatrix<NN, MM, TT>& matrix);
-    template<int NN, int MM, typename TT>
-    friend QGenericMatrix<NN, MM, TT> operator*(TT factor, const QGenericMatrix<NN, MM, TT>& matrix);
-    template<int NN, int MM, typename TT>
-    friend QGenericMatrix<NN, MM, TT> operator*(const QGenericMatrix<NN, MM, TT>& matrix, TT factor);
-    template<int NN, int MM, typename TT>
-    friend QGenericMatrix<NN, MM, TT> operator/(const QGenericMatrix<NN, MM, TT>& matrix, TT divisor);
+//     float *data();
+//     const float *data() const;
+//     const float *constData() const;
 
-private:
-#endif
-    T m[N][M];    // Column-major order to match OpenGL.
+//     friend QMatrix3x3 operator+(const QMatrix3x3& m1, const QMatrix3x3& m2);
+//     friend QMatrix3x3 operator-(const QMatrix3x3& m1, const QMatrix3x3& m2);
+//     // template<int NN, int M1, int M2, typename TT>
+//     // friend QGenericMatrix<M1, M2, TT> operator*(const QGenericMatrix<NN, M2, TT>& m1, const QGenericMatrix<M1, NN, TT>& m2);
+//     friend QMatrix3x3 operator-(const QMatrix3x3& matrix);
+//     friend QMatrix3x3 operator*(float factor, const QMatrix3x3& matrix);
+//     friend QMatrix3x3 operator*(const QMatrix3x3& matrix, float factor);
+//     friend QMatrix3x3 operator/(const QMatrix3x3& matrix, float divisor);
+// };
 
-#if !defined(Q_NO_TEMPLATE_FRIENDS)
-    template <int NN, int MM, typename TT>
-    friend class QGenericMatrix;
-#endif
-};
-template <int N, int M, typename T>
-class QTypeInfo<QGenericMatrix<N, M, T> >
-    : public QTypeInfoMerger<QGenericMatrix<N, M, T>, T>
-{
-#if QT_VERSION < QT_VERSION_CHECK(6,0,0)
-public:
-    enum {
-        isStatic = true,
-    }; // at least Q_RELOCATABLE_TYPE, for BC during Qt 5
-#endif
-};
+// QMatrix3x3 operator+(const QMatrix3x3& m1, const QMatrix3x3& m2);
+// QMatrix3x3 operator-(const QMatrix3x3& m1, const QMatrix3x3& m2);
+// QMatrix3x3 operator-(const QMatrix3x3& matrix);
+// QMatrix3x3 operator*(float factor, const QMatrix3x3& matrix);
+// QMatrix3x3 operator*(const QMatrix3x3& matrix, float factor);
+// QMatrix3x3 operator/(const QMatrix3x3& matrix, float divisor);
+
+// Q_GUI_EXPORT QDebug operator<<(QDebug dbg, const QMatrix3x3 &m);
+
+// Q_GUI_EXPORT QDataStream &operator<<(QDataStream &, const QMatrix3x3 &);
+// Q_GUI_EXPORT QDataStream &operator>>(QDataStream &, QMatrix3x3 &);
+
+// typedef QGenericMatrix<2, 3, float> QMatrix2x3;
+// typedef QGenericMatrix<2, 4, float> QMatrix2x4;
+// typedef QGenericMatrix<3, 2, float> QMatrix3x2;
+// typedef QGenericMatrix<3, 3, float> QMatrix3x3;
+// typedef QGenericMatrix<3, 4, float> QMatrix3x4;
+// typedef QGenericMatrix<4, 2, float> QMatrix4x2;
+// typedef QGenericMatrix<4, 3, float> QMatrix4x3;
+
+
+// template <int N, int M, typename T>
+// class QGenericMatrix
+// {
+// public:
+//     QGenericMatrix();
+//     explicit QGenericMatrix(Qt::Initialization) {}
+//     explicit QGenericMatrix(const T *values);
+
+//     const T& operator()(int row, int column) const;
+//     T& operator()(int row, int column);
+
+//     bool isIdentity() const;
+//     void setToIdentity();
+
+//     void fill(T value);
+
+//     Q_REQUIRED_RESULT QGenericMatrix<M, N, T> transposed() const;
+
+//     QGenericMatrix<N, M, T>& operator+=(const QGenericMatrix<N, M, T>& other);
+//     QGenericMatrix<N, M, T>& operator-=(const QGenericMatrix<N, M, T>& other);
+//     QGenericMatrix<N, M, T>& operator*=(T factor);
+//     QGenericMatrix<N, M, T>& operator/=(T divisor);
+//     bool operator==(const QGenericMatrix<N, M, T>& other) const;
+//     bool operator!=(const QGenericMatrix<N, M, T>& other) const;
+
+//     void copyDataTo(T *values) const;
+
+//     T *data() { return *m; }
+//     const T *data() const { return *m; }
+//     const T *constData() const { return *m; }
+
+// #if !defined(Q_NO_TEMPLATE_FRIENDS)
+//     template<int NN, int MM, typename TT>
+//     friend QGenericMatrix<NN, MM, TT> operator+(const QGenericMatrix<NN, MM, TT>& m1, const QGenericMatrix<NN, MM, TT>& m2);
+//     template<int NN, int MM, typename TT>
+//     friend QGenericMatrix<NN, MM, TT> operator-(const QGenericMatrix<NN, MM, TT>& m1, const QGenericMatrix<NN, MM, TT>& m2);
+//     template<int NN, int M1, int M2, typename TT>
+//     friend QGenericMatrix<M1, M2, TT> operator*(const QGenericMatrix<NN, M2, TT>& m1, const QGenericMatrix<M1, NN, TT>& m2);
+//     template<int NN, int MM, typename TT>
+//     friend QGenericMatrix<NN, MM, TT> operator-(const QGenericMatrix<NN, MM, TT>& matrix);
+//     template<int NN, int MM, typename TT>
+//     friend QGenericMatrix<NN, MM, TT> operator*(TT factor, const QGenericMatrix<NN, MM, TT>& matrix);
+//     template<int NN, int MM, typename TT>
+//     friend QGenericMatrix<NN, MM, TT> operator*(const QGenericMatrix<NN, MM, TT>& matrix, TT factor);
+//     template<int NN, int MM, typename TT>
+//     friend QGenericMatrix<NN, MM, TT> operator/(const QGenericMatrix<NN, MM, TT>& matrix, TT divisor);
+
+// private:
+// #endif
+//     T m[N][M];    // Column-major order to match OpenGL.
+
+// #if !defined(Q_NO_TEMPLATE_FRIENDS)
+//     template <int NN, int MM, typename TT>
+//     friend class QGenericMatrix;
+// #endif
+// };
+// template <int N, int M, typename T>
+// class QTypeInfo<QGenericMatrix<N, M, T> >
+//     : public QTypeInfoMerger<QGenericMatrix<N, M, T>, T>
+// {
+// #if QT_VERSION < QT_VERSION_CHECK(6,0,0)
+// public:
+//     enum {
+//         isStatic = true,
+//     }; // at least Q_RELOCATABLE_TYPE, for BC during Qt 5
+// #endif
+// };
 
 // template <int N, int M, typename T>
 // Q_INLINE_TEMPLATE QGenericMatrix<N, M, T>::QGenericMatrix()
@@ -333,71 +453,71 @@ public:
 //             values[row * N + col] = T(m[col][row]);
 // }
 
-// Define aliases for the useful variants of QGenericMatrix.
-typedef QGenericMatrix<2, 2, float> QMatrix2x2;
-typedef QGenericMatrix<2, 3, float> QMatrix2x3;
-typedef QGenericMatrix<2, 4, float> QMatrix2x4;
-typedef QGenericMatrix<3, 2, float> QMatrix3x2;
-typedef QGenericMatrix<3, 3, float> QMatrix3x3;
-typedef QGenericMatrix<3, 4, float> QMatrix3x4;
-typedef QGenericMatrix<4, 2, float> QMatrix4x2;
-typedef QGenericMatrix<4, 3, float> QMatrix4x3;
+// // Define aliases for the useful variants of QGenericMatrix.
+// typedef QGenericMatrix<2, 2, float> QMatrix2x2;
+// typedef QGenericMatrix<2, 3, float> QMatrix2x3;
+// typedef QGenericMatrix<2, 4, float> QMatrix2x4;
+// typedef QGenericMatrix<3, 2, float> QMatrix3x2;
+// typedef QGenericMatrix<3, 3, float> QMatrix3x3;
+// typedef QGenericMatrix<3, 4, float> QMatrix3x4;
+// typedef QGenericMatrix<4, 2, float> QMatrix4x2;
+// typedef QGenericMatrix<4, 3, float> QMatrix4x3;
 
-#ifndef QT_NO_DEBUG_STREAM
+// #ifndef QT_NO_DEBUG_STREAM
 
-template <int N, int M, typename T>
-QDebug operator<<(QDebug dbg, const QGenericMatrix<N, M, T> &m)
-{
-    QDebugStateSaver saver(dbg);
-    dbg.nospace() << "QGenericMatrix<" << N << ", " << M
-        << ", " << QTypeInfo<T>::name()
-        << ">(" << endl << qSetFieldWidth(10);
-    for (int row = 0; row < M; ++row) {
-        for (int col = 0; col < N; ++col)
-            dbg << m(row, col);
-        dbg << endl;
-    }
-    dbg << qSetFieldWidth(0) << ')';
-    return dbg;
-}
+// template <int N, int M, typename T>
+// QDebug operator<<(QDebug dbg, const QGenericMatrix<N, M, T> &m)
+// {
+//     QDebugStateSaver saver(dbg);
+//     dbg.nospace() << "QGenericMatrix<" << N << ", " << M
+//         << ", " << QTypeInfo<T>::name()
+//         << ">(" << endl << qSetFieldWidth(10);
+//     for (int row = 0; row < M; ++row) {
+//         for (int col = 0; col < N; ++col)
+//             dbg << m(row, col);
+//         dbg << endl;
+//     }
+//     dbg << qSetFieldWidth(0) << ')';
+//     return dbg;
+// }
 
-#endif
+// #endif
 
-#ifndef QT_NO_DATASTREAM
+// #ifndef QT_NO_DATASTREAM
 
-template <int N, int M, typename T>
-QDataStream &operator<<(QDataStream &stream, const QGenericMatrix<N, M, T> &matrix)
-{
-    for (int row = 0; row < M; ++row)
-        for (int col = 0; col < N; ++col)
-            stream << double(matrix(row, col));
-    return stream;
-}
+// template <int N, int M, typename T>
+// QDataStream &operator<<(QDataStream &stream, const QGenericMatrix<N, M, T> &matrix)
+// {
+//     for (int row = 0; row < M; ++row)
+//         for (int col = 0; col < N; ++col)
+//             stream << double(matrix(row, col));
+//     return stream;
+// }
 
-template <int N, int M, typename T>
-QDataStream &operator>>(QDataStream &stream, QGenericMatrix<N, M, T> &matrix)
-{
-    double x;
-    for (int row = 0; row < M; ++row) {
-        for (int col = 0; col < N; ++col) {
-            stream >> x;
-            matrix(row, col) = T(x);
-        }
-    }
-    return stream;
-}
+// template <int N, int M, typename T>
+// QDataStream &operator>>(QDataStream &stream, QGenericMatrix<N, M, T> &matrix)
+// {
+//     double x;
+//     for (int row = 0; row < M; ++row) {
+//         for (int col = 0; col < N; ++col) {
+//             stream >> x;
+//             matrix(row, col) = T(x);
+//         }
+//     }
+//     return stream;
+// }
 
-#endif
+// #endif
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QMatrix2x2)
-Q_DECLARE_METATYPE(QMatrix2x3)
-Q_DECLARE_METATYPE(QMatrix2x4)
-Q_DECLARE_METATYPE(QMatrix3x2)
-Q_DECLARE_METATYPE(QMatrix3x3)
-Q_DECLARE_METATYPE(QMatrix3x4)
-Q_DECLARE_METATYPE(QMatrix4x2)
-Q_DECLARE_METATYPE(QMatrix4x3)
+// Q_DECLARE_METATYPE(QMatrix2x2)
+// Q_DECLARE_METATYPE(QMatrix2x3)
+// Q_DECLARE_METATYPE(QMatrix2x4)
+// Q_DECLARE_METATYPE(QMatrix3x2)
+// Q_DECLARE_METATYPE(QMatrix3x3)
+// Q_DECLARE_METATYPE(QMatrix3x4)
+// Q_DECLARE_METATYPE(QMatrix4x2)
+// Q_DECLARE_METATYPE(QMatrix4x3)
 
 #endif

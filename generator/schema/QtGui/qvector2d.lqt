@@ -207,58 +207,58 @@ Q_DECLARE_TYPEINFO(QVector2D, Q_PRIMITIVE_TYPE);
 // QT_WARNING_PUSH
 // QT_WARNING_DISABLE_CLANG("-Wfloat-equal")
 // QT_WARNING_DISABLE_GCC("-Wfloat-equal")
-// Q_DECL_CONSTEXPR inline bool operator==(const QVector2D &v1, const QVector2D &v2)
+Q_DECL_CONSTEXPR inline bool operator==(const QVector2D &v1, const QVector2D &v2);
 // {
 //     return v1.v[0] == v2.v[0] && v1.v[1] == v2.v[1];
 // }
 
-// Q_DECL_CONSTEXPR inline bool operator!=(const QVector2D &v1, const QVector2D &v2)
+Q_DECL_CONSTEXPR inline bool operator!=(const QVector2D &v1, const QVector2D &v2);
 // {
 //     return v1.v[0] != v2.v[0] || v1.v[1] != v2.v[1];
 // }
 // QT_WARNING_POP
 
-// Q_DECL_CONSTEXPR inline const QVector2D operator+(const QVector2D &v1, const QVector2D &v2)
+Q_DECL_CONSTEXPR inline const QVector2D operator+(const QVector2D &v1, const QVector2D &v2);
 // {
 //     return QVector2D(v1.v[0] + v2.v[0], v1.v[1] + v2.v[1]);
 // }
 
-// Q_DECL_CONSTEXPR inline const QVector2D operator-(const QVector2D &v1, const QVector2D &v2)
+Q_DECL_CONSTEXPR inline const QVector2D operator-(const QVector2D &v1, const QVector2D &v2);
 // {
 //     return QVector2D(v1.v[0] - v2.v[0], v1.v[1] - v2.v[1]);
 // }
 
-// Q_DECL_CONSTEXPR inline const QVector2D operator*(float factor, const QVector2D &vector)
+Q_DECL_CONSTEXPR inline const QVector2D operator*(float factor, const QVector2D &vector);
 // {
 //     return QVector2D(vector.v[0] * factor, vector.v[1] * factor);
 // }
 
-// Q_DECL_CONSTEXPR inline const QVector2D operator*(const QVector2D &vector, float factor)
+Q_DECL_CONSTEXPR inline const QVector2D operator*(const QVector2D &vector, float factor);
 // {
 //     return QVector2D(vector.v[0] * factor, vector.v[1] * factor);
 // }
 
-// Q_DECL_CONSTEXPR inline const QVector2D operator*(const QVector2D &v1, const QVector2D &v2)
+Q_DECL_CONSTEXPR inline const QVector2D operator*(const QVector2D &v1, const QVector2D &v2);
 // {
 //     return QVector2D(v1.v[0] * v2.v[0], v1.v[1] * v2.v[1]);
 // }
 
-// Q_DECL_CONSTEXPR inline const QVector2D operator-(const QVector2D &vector)
+Q_DECL_CONSTEXPR inline const QVector2D operator-(const QVector2D &vector);
 // {
 //     return QVector2D(-vector.v[0], -vector.v[1]);
 // }
 
-// Q_DECL_CONSTEXPR inline const QVector2D operator/(const QVector2D &vector, float divisor)
+Q_DECL_CONSTEXPR inline const QVector2D operator/(const QVector2D &vector, float divisor);
 // {
 //     return QVector2D(vector.v[0] / divisor, vector.v[1] / divisor);
 // }
 
-// Q_DECL_CONSTEXPR inline const QVector2D operator/(const QVector2D &vector, const QVector2D &divisor)
+Q_DECL_CONSTEXPR inline const QVector2D operator/(const QVector2D &vector, const QVector2D &divisor);
 // {
 //     return QVector2D(vector.v[0] / divisor.v[0], vector.v[1] / divisor.v[1]);
 // }
 
-// Q_DECL_CONSTEXPR inline bool qFuzzyCompare(const QVector2D& v1, const QVector2D& v2)
+Q_DECL_CONSTEXPR inline bool qFuzzyCompare(const QVector2D& v1, const QVector2D& v2);
 // {
 //     return qFuzzyCompare(v1.v[0], v2.v[0]) && qFuzzyCompare(v1.v[1], v2.v[1]);
 // }

@@ -109,7 +109,6 @@ qt_types['QGenericArgument'] = {
 	onstack = 'any,',
 }
 
-
 if not getmetatable(qt_types) then
 	setmetatable(qt_types, {
 		__index = function(t, k)

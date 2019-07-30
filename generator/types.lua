@@ -106,6 +106,9 @@ base_types['double'] = number_type(0)
 base_types['double const&'] = number_type(1)
 base_types['bool'] = bool_type()
 
+base_types['int const&'] = base_types['int']
+base_types['float const&'] = base_types['float']
+
 ---[[
 base_types['bool*'] = {
 	get = function(j)
@@ -131,6 +134,7 @@ base_types['int&'] = {
 	end,
 	onstack = 'integer,',
 }
+
 base_types['int*'] = {
 	get = function(j)
 		return 'lqtL_tointref(L, '..j..')', 1
@@ -170,5 +174,24 @@ base_types['std::string const&'] = {
 }
 base_types['std::string'] = base_types['std::string const&']
 
+local function pointer_type(type)
+	return {
+		get = function(j)
+			return 'lqtL_ispointer(L, '..tostring(j)..') ? NULL : static_cast<' .. type .. ' *>( lqtL_topointer(L, '..tostring(j)..' ))', 1
+		end,
+		push = function(j) -- must handle arguments (e.g. in virtual callbacks) and return values
+			return 'lqtL_pushpointer(L, const_cast<' .. type .. ' *>('..tostring(j)..'))', 1
+		end,
+		test = function(j) -- must handle arguments (e.g. in virtual callbacks) and return values
+			return 'lqtL_ispointer(L, '..tostring(j)..')', 1
+		end,
+		onstack = 'userdata,',
+	}
+end
+
+base_types['void const*'] = pointer_type('void')
+base_types['float const*'] = pointer_type('float')
+base_types['double const*'] = pointer_type('double')
+base_types['qreal const*'] = base_types['double const*']
 
 return base_types

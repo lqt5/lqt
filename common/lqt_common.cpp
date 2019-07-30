@@ -988,3 +988,26 @@ void lqtL_selfcheck(lua_State *L, void *self, const char *name) {
     lua_error(L);
   }
 }
+
+bool lqtL_ispointer(lua_State *L, int idx) {
+    return lua_isnil(L, idx)
+        || lua_islightuserdata(L, idx)
+        // || lua_isuserdata(L, idx)
+        // luajit cdata
+        || lua_type(L, idx) == 10;
+}
+
+void *lqtL_topointer(lua_State *L, int idx) {
+    // luajit cdata
+    if(lua_type(L, idx) == 10)
+        return const_cast<void *> (lua_topointer(L, idx));
+    else
+        return lua_touserdata(L, idx);
+}
+
+void lqtL_pushpointer(lua_State *L, void *ptr) {
+    if(ptr == NULL)
+        lua_pushnil(L);
+    else
+        lua_pushlightuserdata(L, ptr);
+}
