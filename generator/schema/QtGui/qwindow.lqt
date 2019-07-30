@@ -159,7 +159,7 @@ public:
 
     QWindow *parent(AncestorMode mode) const;
     QWindow *parent() const; // ### Qt6: Merge with above
-    void setParent(QWindow *parent);
+    void setParent(QWindow *parent = nullptr);
 
     bool isTopLevel() const;
 

@@ -532,8 +532,8 @@ public:
     void setLayout(QLayout *);
     void updateGeometry();
 
-    void setParent(QWidget *parent);
-    void setParent(QWidget *parent, Qt::WindowFlags f);
+    void setParent(QWidget *parent = nullptr);
+    void setParent(QWidget *parent = nullptr, Qt::WindowFlags f);
 
     void scroll(int dx, int dy);
     void scroll(int dx, int dy, const QRect&);

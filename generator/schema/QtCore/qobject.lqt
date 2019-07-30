@@ -188,7 +188,7 @@ public:
 
     inline const QObjectList &children() const { return d_ptr->children; }
 
-    void setParent(QObject *parent);
+    void setParent(QObject *parent = nullptr);
     void installEventFilter(QObject *filterObj);
     void removeEventFilter(QObject *obj);
 

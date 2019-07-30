@@ -46,7 +46,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct QGLFunctionsPrivate;
+// struct QGLFunctionsPrivate;
 
 class Q_OPENGL_EXPORT QGLFunctions
 {
@@ -177,17 +177,17 @@ public:
     void glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* ptr);
 
 private:
-    QGLFunctionsPrivate *d_ptr;
+    // QGLFunctionsPrivate *d_ptr;
     static bool isInitialized(const QGLFunctionsPrivate *d) { return d != nullptr; }
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGLFunctions::OpenGLFeatures)
 
-struct QGLFunctionsPrivate
-{
-    QGLFunctionsPrivate(const QGLContext *context = nullptr);
-    QOpenGLFunctions *funcs;
-};
+// struct QGLFunctionsPrivate
+// {
+//     QGLFunctionsPrivate(const QGLContext *context = nullptr);
+//     QOpenGLFunctions *funcs;
+// };
 
 inline void QGLFunctions::glActiveTexture(GLenum texture)
 {
