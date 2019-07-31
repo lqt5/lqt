@@ -108,7 +108,7 @@ function Class:__init()
     self.m_lastPos = QtCore.QPoint()
     self.m_logo = Logo()
     self.m_vao = QtGui.QOpenGLVertexArrayObject()
-    self.m_logoVbo = QtGui.QOpenGLBuffer.new()
+    self.m_logoVbo = QtGui.QOpenGLBuffer()
     self.m_program = false
     self.m_projMatrixLoc = 0
     self.m_mvMatrixLoc = 0
@@ -120,8 +120,9 @@ function Class:__init()
 end
 
 function Class:__uninit()
-    self:cleanup()
-    self.m_logoVbo:delete()
+    if self:cleanup(true) then
+        self.m_logoVbo:delete()
+    end
 end
 
 local function qNormalizeAngle(angle)
@@ -161,15 +162,18 @@ function Class:setZRotation(angle)
     end
 end
 
-function Class:cleanup()
+function Class:cleanup(gc)
     if not self.m_program then
-        return
+        return false
     end
     self:makeCurrent()
-    self.m_logoVbo:destroy()
+    if not gc then
+        self.m_logoVbo:destroy()
+    end
     self.m_program:delete()
     self.m_program = false
     self:doneCurrent()
+    return true
 end
 
 local vertexShaderSourceCore = [[#version 150
