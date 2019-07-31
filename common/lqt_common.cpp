@@ -111,7 +111,10 @@ static int lqtL_callfunc(lua_State *L, int idx, const char *name, bool once_only
 
     lua_insert(L, -2); // [func, object]
     if (lqtL_pcall(L, 1, 0, 0)) { // []
-        return lua_error(L); // [errstr]
+        lua_getglobal(L, "print");
+        lua_insert(L, -2);
+        lua_call(L, 1, 0);
+        // return lua_error(L); // [errstr]
     }
 
     return 0;
