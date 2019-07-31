@@ -231,7 +231,7 @@ function fill_shell_class(c)
 	local shellname = 'lqt_shell_'..c.xarg.cname
 	local shell = 'class LQT_EXPORT ' .. shellname .. ' : public ' .. c.xarg.fullname .. ' {\n'
 	shell = shell .. '  lua_State *L;\n'
-	shell = shell .. '  QBitArray hasOverride;\n'
+	shell = shell .. '  ::QBitArray hasOverride;\n'
 	shell = shell .. 'public:\n'
 	shell = shell .. '  static int lqtAddOverride(lua_State *L);\n'
 	for _, constr in ipairs(c.constructors) do

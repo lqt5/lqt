@@ -80,30 +80,38 @@ static void lqtL_getrefclasstable(lua_State *L) {
 static int lqtL_callfunc(lua_State *L, int idx, const char *name, bool once_only) {
 
     if (!lua_isuserdata(L, idx) || lua_islightuserdata(L, idx)) return 0;
-    lua_pushvalue(L, idx);
-    lua_getfenv(L, -1);
+    const void *ptr = lua_touserdata(L, idx);
+    lua_pushvalue(L, idx); // [object]
+    lua_getfenv(L, -1); // [object, env]
     if (!lua_istable(L, -1)) {
-        lua_pop(L, 2);
+        lua_pop(L, 2); // []
         return 0;
     }
-    lua_getfield(L, -1, name);
-    lua_remove(L, -2);
+    lua_getfield(L, -1, name); // [object, env, func]
     if (!lua_isfunction(L, -1)) {
-        lua_pop(L, 2);
+        lua_pop(L, 3); // []
         return 0;
-    }
-    lua_insert(L, -2);
-    if (lqtL_pcall(L, 1, 0, 0)) {
-        return lua_error(L);
     }
 
     // if call once, remove function from object's env table
     if (once_only) {
         // set field as false value
-        lua_getfenv(L, idx);
-        lua_pushboolean(L, 0);
-        lua_setfield(L, -2, name);
-        lua_pop(L, 1);
+        lua_pushboolean(L, 0); // [object, env, func, false]
+        lua_setfield(L, -4, name); // [object, env, func]
+    }
+    lua_remove(L, -2); // [object, func]
+
+#if VERBOSE_BUILD
+    printf("lqtL_callfunc %p %s %s\n"
+        , ptr
+        , name
+        , once_only ? "[ONCE]" : ""
+    );
+#endif
+
+    lua_insert(L, -2); // [func, object]
+    if (lqtL_pcall(L, 1, 0, 0)) { // []
+        return lua_error(L); // [errstr]
     }
 
     return 0;
