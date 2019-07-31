@@ -177,7 +177,7 @@ base_types['std::string'] = base_types['std::string const&']
 local function pointer_type(type)
 	return {
 		get = function(j)
-			return 'lqtL_ispointer(L, '..tostring(j)..') ? NULL : static_cast<' .. type .. ' *>( lqtL_topointer(L, '..tostring(j)..' ))', 1
+			return '!lqtL_ispointer(L, '..tostring(j)..') ? NULL : static_cast<' .. type .. ' *>( lqtL_topointer(L, '..tostring(j)..' ))', 1
 		end,
 		push = function(j) -- must handle arguments (e.g. in virtual callbacks) and return values
 			return 'lqtL_pushpointer(L, const_cast<' .. type .. ' *>('..tostring(j)..'))', 1

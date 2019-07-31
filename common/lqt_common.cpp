@@ -999,8 +999,12 @@ bool lqtL_ispointer(lua_State *L, int idx) {
 
 void *lqtL_topointer(lua_State *L, int idx) {
     // luajit cdata
-    if(lua_type(L, idx) == 10)
-        return const_cast<void *> (lua_topointer(L, idx));
+    if(lua_type(L, idx) == 10) {
+        void **ptr = const_cast<void **> ((const void **) lua_topointer(L, idx));
+        return *ptr;
+    }
+    else if(lua_isnil(L, idx))
+        return NULL;
     else
         return lua_touserdata(L, idx);
 }
