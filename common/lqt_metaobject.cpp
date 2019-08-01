@@ -29,60 +29,6 @@
 #define LQT_OBJMETADATA_STORE ("*" LQT_OBJMETADATA)
 #define LQT_OBJMETASTRING_STORE ("*" LQT_OBJMETASTRING)
 
-// static const uint qt_meta_data_LqtSlotAcceptor[] = {
-//  // content:
-//        8,       // revision
-//        0,       // classname
-//        0,    0, // classinfo
-//        6,   14, // methods
-//        0,    0, // properties
-//        0,    0, // enums/sets
-//        0,    0, // constructors
-//        0,       // flags
-//        0,       // signalCount
-//  // slots: name, argc, parameters, tag, flags
-//              1,    1,   44,    2, 0x0a /* Public */,
-//              1,    0,   47,    2, 0x0a /* Public */,
-//              1,    1,   48,    2, 0x0a /* Public */,
-//              1,    2,   51,    2, 0x0a /* Public */,
-//              1,    1,   56,    2, 0x0a /* Public */,
-//              1,    1,   59,    2, 0x0a /* Public */,
-//  // slots: parameters
-//  // return_type      param_types[argc] string_index[args]
-//     QMetaType::Void, QMetaType::QObjectStar,    3,
-//     QMetaType::Void,
-//     QMetaType::Void, QMetaType::LongLong,    3,
-//     QMetaType::Void, QMetaType::Int, QMetaType::LongLong,    3,    4,
-//     QMetaType::Void, QMetaType::QString,    3,
-//     QMetaType::Void, QMetaType::Int,    3,
-//        0        // eod
-// };        
-
-// #define QT_MOC_LITERAL(idx, ofs, len) \
-//     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-//     qptrdiff(offsetof(qt_meta_stringdata_LqtSlotAcceptor_t, stringdata0) + ofs \
-//         - idx * sizeof(QByteArrayData)) \
-//     )
-
-// struct qt_meta_stringdata_LqtSlotAcceptor_t {
-//  QByteArrayData data[5];
-//  char stringdata0[34];
-// };
-
-// static struct qt_meta_stringdata_LqtSlotAcceptor_t qt_meta_stringdata_LqtSlotAcceptor = {
-//     {
-//                // idx, ofs, len
-//      QT_MOC_LITERAL(0, 0, 15), // "LqtSlotAcceptor"
-//      QT_MOC_LITERAL(1, 16, 6), // "__slot"
-//      QT_MOC_LITERAL(2, 23, 0), // ""
-//      QT_MOC_LITERAL(3, 24, 4), // "arg1"
-//      QT_MOC_LITERAL(4, 29, 4) // "arg2"
-//     },
-//     "LqtSlotAcceptor\0__slot\0\0arg1\0arg2"
-// };
-
-// #undef QT_MOC_LITERAL
-
 template<typename T, int column = 16>
 void dump(T *data, size_t len) {
 
@@ -121,11 +67,6 @@ static unsigned int * lqtL_touintarray (lua_State *L, int idx) {
 }
 
 static QByteArrayData* lqlL_tostringdata (lua_State *L, int idx) {
-
-    // struct qt_meta_stringdata {
-    //     QByteArrayData data[5];
-    //     char stringdata0[34];
-    // };
 
     size_t n = lua_objlen(L, idx);
 
@@ -177,12 +118,16 @@ static QByteArrayData* lqlL_tostringdata (lua_State *L, int idx) {
         stringdata0[sz] = '\0';
         stringdata0 += (sz + 1);
 
-        // printf("StringData is : %s\n", (const char *) array->data());
-        // printf("Array: %ld %d %ld %d\n", n - 1, array->size, array->offset, offset);
+#ifdef VERBOSE_BUILD
+        printf("StringData is : %s\n", (const char *) array->data());
+        printf("Array: %ld %d %ld %d\n", n - 1, array->size, array->offset, offset);
+#endif
     }
 
-    // printf("Dump stringdata\n");
-    // dump((unsigned char *)p, data_size + stringdata0_len);
+#ifdef VERBOSE_BUILD
+    printf("Dump stringdata\n");
+    dump((unsigned char *)p, data_size + stringdata0_len);
+#endif
 
     return data;
 }
@@ -242,23 +187,15 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
         }
         lua_getfield(L, -2, LQT_OBJMETADATA);
 
-        // printf("Copying qmeta object for slots in %s to %p, inherit from %p\n", name, &meta_data, &super_data);
-        // printf("Dump qt_meta_stringdata_LqtSlotAcceptor\n");
-        // dump((unsigned char *) &qt_meta_stringdata_LqtSlotAcceptor, sizeof(qt_meta_stringdata_LqtSlotAcceptor));
-        // printf("Dump qt_meta_data_LqtSlotAcceptor\n");
-        // dump((unsigned char *)qt_meta_data_LqtSlotAcceptor
-        //     , sizeof(qt_meta_data_LqtSlotAcceptor) / sizeof(qt_meta_data_LqtSlotAcceptor[0])
-        // );
-
-        // struct { // private data
-        //     const QMetaObject *superdata;
-        //     const QByteArrayData *stringdata;
-        //     const uint *data;
-        //     typedef void (*StaticMetacallFunction)(QObject *, QMetaObject::Call, int, void **);
-        //     StaticMetacallFunction static_metacall;
-        //     const QMetaObject * const *relatedMetaObjects;
-        //     void *extradata; //reserved for future use
-        // } d;
+#ifdef VERBOSE_BUILD
+        printf("Copying qmeta object for slots in %s to %p, inherit from %p\n", name, &meta_data, &super_data);
+        printf("Dump qt_meta_stringdata_LqtSlotAcceptor\n");
+        dump((unsigned char *) &qt_meta_stringdata_LqtSlotAcceptor, sizeof(qt_meta_stringdata_LqtSlotAcceptor));
+        printf("Dump qt_meta_data_LqtSlotAcceptor\n");
+        dump((unsigned char *)qt_meta_data_LqtSlotAcceptor
+            , sizeof(qt_meta_data_LqtSlotAcceptor) / sizeof(qt_meta_data_LqtSlotAcceptor[0])
+        );
+#endif
 
         meta_data.d.superdata = &super_data;
         if(!lqtL_is_meta_dirty(L, lua_objlen(L, -1), lua_objlen(L, -2))) {
@@ -297,5 +234,4 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
     lua_settop(L, oldtop);
     //qDebug() << (lua_gettop(L) - oldtop);
     return meta_data;
-    // return super_data;
 }

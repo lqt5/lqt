@@ -16,6 +16,7 @@ return {
 			'QList<QUrl>',
 			'QList<QSize>',
 			-- 'QList<QSizeF>',
+			'QList<QObject*>',
 		},
 		['QVector<T>'] = {
 			'QVector<int>',

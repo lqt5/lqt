@@ -20,6 +20,11 @@ void lqtL_pushStringList(lua_State *L, const QList<QByteArray> &table);
 QGenericArgument lqtL_getGenericArgument(lua_State *L, int i);
 bool lqtL_isGenericArgument(lua_State *L, int i);
 
+
+// internal use
+int lqtL_pushqobject(lua_State *L, QObject * object);
+int lqtL_qvariant_value_custom(lua_State *L, int index, bool convert_to);
+
 #endif // __LQT_QT_HPP
 
 
