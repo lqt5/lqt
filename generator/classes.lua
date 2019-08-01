@@ -1008,7 +1008,7 @@ private:
 QMetaObject lqt_shell_]]..n..[[::staticMetaObject;
 
 const QMetaObject *lqt_shell_]]..n..[[::metaObject() const {
-        const QMetaObject& meta = lqlL_getMetaObject(L
+        const QMetaObject& meta = lqtL_qt_metaobject(L
             , "]]..c.xarg.fullname..[[*"
             , this
             , lqt_shell_]]..n..[[::staticMetaObject

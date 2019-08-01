@@ -171,7 +171,7 @@ static bool lqtL_is_meta_dirty(lua_State *L
     return false;
 }
 
-const QMetaObject& lqlL_getMetaObject (lua_State *L
+const QMetaObject& lqtL_qt_metaobject (lua_State *L
     , const char *name
     , const QObject *object
     , QMetaObject& meta_data

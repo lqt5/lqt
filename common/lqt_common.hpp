@@ -159,7 +159,7 @@ int lqtL_getflags (lua_State *, int, const char *);
 void lqtL_pushflags (lua_State *, int, const char *);
 #define lqtL_isflags(L, i) (lua_istable((L), (i)) || lqtL_isinteger((L), (i)))
 
-const QMetaObject& lqlL_getMetaObject (lua_State *L
+const QMetaObject& lqtL_qt_metaobject (lua_State *L
     , const char *name
     , const QObject *object
     , QMetaObject& meta_data
