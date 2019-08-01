@@ -1,8 +1,8 @@
 Overview
 ========
 
-lqt is a [Lua](http://www.lua.org) binding to the [Qt framework](http://qt.nokia.com).
-It is an automated binding generated from the Qt headers, and covers almost
+lqt is a [Lua/luajit](http://www.lua.org) binding to the [Qt5 framework](https://www.qt.io/).
+It is an automated binding generated from the modified version of [Qt headers](https://github.com/lqt5/lqt/tree/qt5/generator/schema), and covers almost
 all classes and methods from supported Qt modules.
 
 For more info, check the documentation, [mailing list](http://groups.google.com/group/lqt-bindings) or contact the authors:
@@ -10,12 +10,28 @@ For more info, check the documentation, [mailing list](http://groups.google.com/
  * Michal Kottman michal.kottman@gmail.com
  * Mauro Iazzi mauro.iazzi@gmail.com
  * Peter Kümmel syntheticpp@gmx.net
+ * Saniko 116453813@qq.com
 
 Features
 --------
 
-* automatically generated from Qt headers - remains up-to-date even with as Qt progresses
-* supported modules: QtCore, QtGui, QtNetwork, QtXml, QtXmlPatterns, QtWebKit, QtOpenGL, QtSql, QtSvg, QtUiTools
+* automatically generated from modified version of Qt headers
+* supported modules:
+  * QtCore
+  * QtNetwork
+  * QtPositioning
+  * QtQml
+  * QtWebChannel
+  * QtGui
+  * QtWidgets
+  * QtOpenGL
+  * QtPrintSupport
+  * QtUiTools
+  * QtQuick
+  * QtWebEngineCore
+  * QtWebEngineWidgets
+  * QtTest
+
 * high API coverage - only a minimum of methods are not available
 * C++/Qt features available:
   * method overloads
@@ -39,22 +55,43 @@ History
 Building lqt
 ------------
 
-Pre-compiled Windows binaries of lqt compiled against Qt 4.7 compatible
-with Lua for Windows [are available](https://github.com/mkottman/lqt/downloads),
-on other systems you need:
+To compile lqt, you need:
 
-* Lua 5.1
+* Luajit 2.0
 * [CMake](http://www.cmake.org/cmake/resources/software.html)
-* Qt and headers, on Ubuntu you need to install the `libqt4-dev` package
+* Qt and headers, download from [Qt offical site](https://www.qt.io/download)
 
-You can get the latest source of lqt from https://github.com/mkottman/lqt .
+You can get the latest source of lqt from https://github.com/lqt5/lqt .
 When you have the sources, create an out-of-source build directory
-(where the binaries will be built, I often use `build` or `/dev/shm`).
+(where the binaries will be built, I often use `build`).
+
+Then, modify `CMakeList.txt`, change Qt/luajit path for compile.
+
+On mac os system:
+
+1. change path to you Qt5 install path:
+
+```cmake
+    set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
+```
+
+On Windows sytem (use msvc 2017):
+
+1. download and extract [luajit2.1.0-beta3](http://luajit.org/download.html) to `/depentds/LuaJIT-2.1.0-beta3` folder.
+2. compile luajit use msvc toolchain(run `src/msvcbuild.bat`)
+3. change `CMakeList.txt`, modify path:
+
+```cmake
+    set(CMAKE_PREFIX_PATH D:/Qt/Qt5.13.0/5.13.0/msvc2017_64/lib/cmake)
+```
+
 Then, use CMake to generate the Makefile and run `make` as usual:
 
+```sh
     mkdir build; cd build
     cmake ..
     make -j4 # use parallel build with your number of cores/processors
+```
 
 The generated Lua binding libraries are created in the `lib` directory,
 you can copy them to your `LUA_CPATH`.
@@ -64,12 +101,14 @@ Usage
 
 A quick example of "Hello World!" button with signal/slot handling:
 
-    require 'qtcore'
-    require 'qtgui'
+```lua
+    local QtCore = require 'qtcore'
+    local QtGui = require 'qtgui'
+    local QtWidgets = require 'qtwidgets'
 
-    app = QApplication.new(select('#',...) + 1, {'lua', ...})
+    local app = QtWidgets.QApplication.new(select('#',...) + 1, {'lua', ...})
 
-    btn = QPushButton.new("Hello World!")
+    local btn = QtWidgets.QPushButton.new("Hello World!")
     btn:connect('2pressed()', function(self)
         print("I'm about to close...")
         self:close()
@@ -79,8 +118,9 @@ A quick example of "Hello World!" button with signal/slot handling:
     btn:show()
 
     app.exec()
+```
 
-For more examples, check out the `test` folder and the `doc`
+For more examples, check out the `test` or `examples` folder and the `doc`
 folder for documentation on detailed usage - memory management,
 signal/slot handling, virtual method overloading, etc. Also, have
 a look at the [examples](https://github.com/mkottman/lqt/wiki/Examples)
@@ -92,6 +132,7 @@ License
 Copyright (c) 2007-2009 Mauro Iazzi
 Copyright (c) 2008-2009 Peter Kümmel
 Copyright (c) 2010-2011 Michal Kottman
+Copyright (c) 2019-2019 Saniko
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation

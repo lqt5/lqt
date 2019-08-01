@@ -8,7 +8,9 @@ Loading the library
 
 The libraries are distributed as separate modules, that can be loaded by the `require` function. They are named by lowercasing the module name, i.e. `qtcore`, `qtgui`, `qtxml`, etc.:
 
-    require 'qtcore'
+```lua
+    local QtCore = require 'qtcore'
+```
 
 Classes and creating instances
 ------------------------------
@@ -17,8 +19,11 @@ Classes are named the same as in Qt (i.e. `QPushButton`), and are registered in 
 
 You can simply pass the arguments as parameters.
 
-    a = QPushButton.new("Button A")
-    b = QPushButton("Button B")
+```lua
+    local QtWidgets = require 'qtwidgets'
+    a = QtWidgets.QPushButton.new("Button A")
+    b = QtWidgets.QPushButton("Button B")
+```
 
 Calling methods
 ---------------
@@ -78,8 +83,10 @@ Additional Lua fields
 
 The userdata objects can also serve as traditional Lua tables (these are stored in the userdata's environment table):
 
+```lua
     local obj = QObject.new()
     obj.message = "Hello from Lua!"
+```
 
 lqt keeps references to objects keyed by their pointer (in a weak table). When you have a userdata and you keep a reference to it, and a method returns the same pointer as return value, or it is passed to your callback function, you get back the same userdata (along with it's Lua fields).
 
@@ -88,11 +95,13 @@ Virtual methods
 
 You can override a virtual method and implement abstract methods in Lua. To do that, you need to save them as an object field. Easier to show on code:
 
-    wnd = QMainWindow()
+```lua
+    wnd = QtWidgets.QMainWindow()
     function wnd:resizeEvent(e)
         print("I'm being resized!")
     end
     wnd:show()
+```
 
 Signal/slot mechanism
 ---------------------
@@ -101,23 +110,29 @@ To see the signals and slots an object responds to, you can retrieve a list of t
 
 To connect signals and slots, use the standard `connect()` method, you just have to prepend '2' to the signal signature, and '1' to the slot signature. If you really want, you can use the following functions:
 
+```lua
     function SIGNAL(sig) return '2'..sig end
     function SLOT(sig) return '1'..sig end
+```
 
-To implement custom slots, you need to use the `__addmethod(obj, sig, func)` method to add a custom slot. You can implement it on any object you want, but it usually makes sense to implement it directly on the provider of the signal. It is used as follows:
+To implement custom slots, you need to use the `__addslot(obj, sig, func)` method to add a custom slot. You can implement it on any object you want, but it usually makes sense to implement it directly on the provider of the signal. It is used as follows:
 
-    local btn = QCheckButton("Press me!")
-    btn:__addmethod("mySlot(bool)", function(self, state)
+```lua
+    local btn = QtWidgets.QCheckButton("Press me!")
+    btn:__addslot("mySlot(bool)", function(self, state)
         print("My state is", state)
     end)
     btn:connect('2toggled(bool)', btn, '1mySlot(bool)')
+```
 
 You can also use a function directly as the slot handler (which does the above automatically):
 
-    local btn2 = QCheckButton("Press me again!")
+```lua
+    local btn2 = QtWidgets.QCheckButton("Press me again!")
     btn2:connect('2toggled(bool)', function(self, state)
         print("My state is", state)
     end)
+```
 
 You have to be careful about the signature (Qt is picky, you have to be precise). Always check `__methods()` to see the correct signature: `table.foreachi(obj:__methods(), print)`. Also, lqt can only implement slots of known signature - they are compiled from the list of all signals, therefore you can create a slot for any signal signature present in Qt, but you cannot create new slots/signals (use pure Lua workarounds for that).
 
