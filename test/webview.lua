@@ -3,9 +3,11 @@ package.cpath = package.cpath .. ';../build/lib/?.so'
 
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
-local QtWebKit = require 'qtwebkit'
+local QtWidgets = require 'qtwidgets'
+local QtWebEngineCore = require 'qtwebenginecore'
+local QtWebEngineWidgets = require 'qtwebenginewidgets'
 
-local app = QtGui.QApplication(1 + select('#', ...), {arg[0], ...})
+local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
 
 local address = tostring(arg[1])
 
@@ -13,16 +15,13 @@ if address == 'nil' then
 	address = 'www.lua.org'
 end
 
-print('Loading site  '..address..' ...')
+print('Loading site  ' .. address .. ' ...')
 
-local webView = QtWebKit.QWebView()
+local webView = QtWebEngineWidgets.QWebEngineView()
 webView:connect('2loadFinished(bool)', function()
-	print('Loaded', webView:url():toEncoded())
+	print('Loaded', webView:url():toEncoded():toStdString())
 end)
 webView:setUrl(QtCore.QUrl("http://" .. address))
 webView:show()
 
 app.exec()
-
-
-

@@ -156,17 +156,17 @@ public:
         FullyDecoded = FullyEncoded | DecodeReserved | 0x4000000
     };
     Q_DECLARE_FLAGS(ComponentFormattingOptions, ComponentFormattingOption)
-#ifdef Q_QDOC
-private:
-    // We need to let qdoc think that FormattingOptions is a normal QFlags, but
-    // it needs to be a QUrlTwoFlags for compiling default arguments of somme functions.
-    template<typename T> struct QFlags : QUrlTwoFlags<T, ComponentFormattingOption>
-    { using QUrlTwoFlags<T, ComponentFormattingOption>::QUrlTwoFlags; };
-public:
+// #ifdef Q_QDOC
+// private:
+//     // We need to let qdoc think that FormattingOptions is a normal QFlags, but
+//     // it needs to be a QUrlTwoFlags for compiling default arguments of somme functions.
+//     template<typename T> struct QFlags : QUrlTwoFlags<T, ComponentFormattingOption>
+//     { using QUrlTwoFlags<T, ComponentFormattingOption>::QUrlTwoFlags; };
+// public:
     Q_DECLARE_FLAGS(FormattingOptions, UrlFormattingOption)
-#else
-    typedef QUrlTwoFlags<UrlFormattingOption, ComponentFormattingOption> FormattingOptions;
-#endif
+// #else
+//     typedef QUrlTwoFlags<UrlFormattingOption, ComponentFormattingOption> FormattingOptions;
+// #endif
 
     QUrl();
     QUrl(const QUrl &copy);
