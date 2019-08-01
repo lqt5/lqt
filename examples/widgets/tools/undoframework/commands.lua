@@ -165,8 +165,9 @@ function AddCommand:redo()
 end
 
 function AddCommand:__uninit()
-    if not self.myDiagramItem:scene() then
+    if self.myDiagramItem and not self.myDiagramItem:scene() then
         self.myDiagramItem:delete()
+        self.myDiagramItem = false
     end
 end
 

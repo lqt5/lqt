@@ -26,6 +26,7 @@
 # TODO:
 #	[ ] C++ rref parse (Type&& value)
 #	[ ] verbose print support
+#	[ ] shell class template constructor support
 
 cmake_minimum_required(VERSION 3.1.0)
 

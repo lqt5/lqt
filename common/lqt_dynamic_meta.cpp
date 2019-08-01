@@ -242,11 +242,6 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
         }
         lua_getfield(L, -2, LQT_OBJMETADATA);
 
-        if(!lqtL_is_meta_dirty(L, lua_objlen(L, -1), lua_objlen(L, -2))) {
-            lua_settop(L, oldtop);
-            return meta_data;
-        }
-
         // printf("Copying qmeta object for slots in %s to %p, inherit from %p\n", name, &meta_data, &super_data);
         // printf("Dump qt_meta_stringdata_LqtSlotAcceptor\n");
         // dump((unsigned char *) &qt_meta_stringdata_LqtSlotAcceptor, sizeof(qt_meta_stringdata_LqtSlotAcceptor));
@@ -264,18 +259,40 @@ const QMetaObject& lqlL_getMetaObject (lua_State *L
         //     const QMetaObject * const *relatedMetaObjects;
         //     void *extradata; //reserved for future use
         // } d;
+
         meta_data.d.superdata = &super_data;
-        meta_data.d.data = lqtL_touintarray(L, -1);
-        meta_data.d.stringdata = lqlL_tostringdata(L, -2);
+        if(!lqtL_is_meta_dirty(L, lua_objlen(L, -1), lua_objlen(L, -2))) {
+            lua_pop(L, 2);
+
+            // get stored previous generated data
+            lua_getfield(L, -1, LQT_OBJMETASTRING_STORE);
+            lua_getfield(L, -2, LQT_OBJMETADATA_STORE);
+
+            // use previous generated metadata
+            //  skip length(uint32)
+            unsigned int *ptr = (unsigned int *) lua_touserdata(L, -1);
+            meta_data.d.data = ptr + 1;
+
+            // use previous generated stringdata
+            //  skip length(uint32)
+            ptr = (unsigned int *) lua_touserdata(L, -2);
+            meta_data.d.stringdata = (QByteArrayData *) (ptr + 1);
+
+            // pop stored data
+            lua_pop(L, 2);
+        } else {
+            // generatoe new metadata/stringdata
+            meta_data.d.data = lqtL_touintarray(L, -1);
+            meta_data.d.stringdata = lqlL_tostringdata(L, -2);
+            // store converted userdata/arraydata to object's env table
+            lua_setfield(L, -3, LQT_OBJMETASTRING_STORE);
+            lua_setfield(L, -2, LQT_OBJMETADATA_STORE);
+        }
         meta_data.d.static_metacall = nullptr;
         meta_data.d.relatedMetaObjects = nullptr;
         meta_data.d.extradata = nullptr;
 
         // printf("%p %p\n", meta_data.d.stringdata, meta_data.d.data);
-
-        // store converted userdata/arraydata to object's env table
-        lua_setfield(L, -3, LQT_OBJMETASTRING_STORE);
-        lua_setfield(L, -2, LQT_OBJMETADATA_STORE);
     }
     lua_settop(L, oldtop);
     //qDebug() << (lua_gettop(L) - oldtop);

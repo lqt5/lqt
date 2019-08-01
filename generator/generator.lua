@@ -27,6 +27,11 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
+print(string.gsub('{ABC}{HELL1_3234?xxx\nO}', '{([^}]+)}', {
+	['ABC'] = 'wtf',
+	['HELLO'] = 'you',
+	['HELL1_3234?xxx\nO'] = 'ann',
+}))
 --]]
 
 local osseparator = package.config:sub(1,1)
