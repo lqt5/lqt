@@ -106,11 +106,14 @@ public:
     void setFrame(bool);
     bool hasFrame() const;
 
-    inline int findText(const QString &text,
-                        Qt::MatchFlags flags = static_cast<Qt::MatchFlags>(Qt::MatchExactly|Qt::MatchCaseSensitive)) const
-        { return findData(text, Qt::DisplayRole, flags); }
-    int findData(const QVariant &data, int role = Qt::UserRole,
-                 Qt::MatchFlags flags = static_cast<Qt::MatchFlags>(Qt::MatchExactly|Qt::MatchCaseSensitive)) const;
+    inline int findText(const QString &text, Qt::MatchFlags flags = Qt::MatchExactly|Qt::MatchCaseSensitive) const;
+    int findData(const QVariant &data, int role = Qt::UserRole, Qt::MatchFlags flags = Qt::MatchExactly|Qt::MatchCaseSensitive) const;
+    // TODO:lqt bind(default argument)
+    // inline int findText(const QString &text,
+    //                     Qt::MatchFlags flags = static_cast<Qt::MatchFlags>(Qt::MatchExactly|Qt::MatchCaseSensitive)) const
+    //     { return findData(text, Qt::DisplayRole, flags); }
+    // int findData(const QVariant &data, int role = Qt::UserRole,
+    //              Qt::MatchFlags flags = static_cast<Qt::MatchFlags>(Qt::MatchExactly|Qt::MatchCaseSensitive)) const;
 
     enum InsertPolicy {
         NoInsert,
