@@ -29,7 +29,43 @@ local QtCore = require 'qtcore'
 rawset(_G, 'SIGNAL', function(s) return '2' .. s end)
 rawset(_G, 'SLOT', function (s) return '1' .. s end)
 rawset(_G, 'tr', assert(QtCore.QObject.tr))
+rawset(_G, 'qApp', function() return QtCore.QCoreApplication.instance() end)
+--------------------------------------------------------------------------------
+-- Qt ui loader
+--------------------------------------------------------------------------------
+rawset(_G, 'qSetupUi', function(path, root)
+    local QtUiTools = require 'qtuitools'
 
+    local file = QtCore.QFile(path)
+    file:open(QtCore.QIODevice.ReadOnly)
+
+    local loader = QtUiTools.QUiLoader()
+    function loader:createWidget(className, parent, name)
+        -- if name:toStdString() == 'root' and parent == nil then
+        if not parent then
+            return root
+        end
+        return QtUiTools.QUiLoader.createWidget(self, className, parent, name)
+    end
+
+    local function traversalChildren(widget, callback)
+        for name,child in pairs(widget:children()) do
+            callback(name, child)
+            traversalChildren(child, callback)
+        end
+    end
+
+    local ui = {}
+
+    local formWidget = loader:load(file)
+    traversalChildren(formWidget, function(name, child)
+        ui[name] = child
+    end)
+
+    root.ui = ui
+
+    QtCore.QMetaObject.connectSlotsByName(root)
+end)
 --------------------------------------------------------------------------------
 -- for debug purpuse
 --------------------------------------------------------------------------------

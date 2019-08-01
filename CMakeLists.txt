@@ -22,6 +22,10 @@
 #  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #  OTHER DEALINGS IN THE SOFTWARE.
+#
+# TODO:
+#	[ ] C++ rref parse (Type&& value)
+#	[ ] verbose print support
 
 cmake_minimum_required(VERSION 3.1.0)
 
