@@ -68,6 +68,21 @@
        <string>Pagefold</string>
       </property>
      </item>
+     <item>
+      <property name="text" >
+       <string>Aqua</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Amoled</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Darcula</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="0" column="3" >
