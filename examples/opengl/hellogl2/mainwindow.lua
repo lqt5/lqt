@@ -47,6 +47,7 @@
 ** $QT_END_LICENSE$
 **
 ***************************************************************************]]
+local QtCore = require 'qtcore'
 local QtWidgets = require 'qtwidgets'
 
 local Window = require 'window'
@@ -79,4 +80,4 @@ function Class:onAddNew()
     end
 end
 
-return Class:class()
+return QtCore.Class(Class)

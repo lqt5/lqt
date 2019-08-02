@@ -47,6 +47,7 @@
 ** $QT_END_LICENSE$
 **
 ***************************************************************************]]
+local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 
 local QtWidgets = require 'qtwidgets'
@@ -83,4 +84,4 @@ function Class:prepareRow(first, second, third)
 	return rowItems
 end
 
-return Class:class()
+return QtCore.Class(Class)

@@ -384,4 +384,4 @@ function AddressBook:updateInterface(mode)
     end
 end
 
-return AddressBook:class()
+return QtCore.Class(AddressBook)

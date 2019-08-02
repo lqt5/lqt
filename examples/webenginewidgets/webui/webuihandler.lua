@@ -88,4 +88,4 @@ function Class.registerUrlScheme()
 	QtWebEngineCore.QWebEngineUrlScheme.registerScheme(webUiScheme)
 end
 
-return Class:class()
+return QtCore.Class(Class)

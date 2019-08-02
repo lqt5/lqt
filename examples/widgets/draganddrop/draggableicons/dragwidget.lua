@@ -182,4 +182,4 @@ function Class:__uninit()
     print('__uninit', self)
 end
 
-return Class:class()
+return QtCore.Class(Class)

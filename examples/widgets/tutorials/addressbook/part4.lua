@@ -358,7 +358,7 @@ function AddressBook:updateInterface(mode)
     end
 end
 --! [update interface() part 2]
-AddressBook = AddressBook:class()
+AddressBook = QtCore.Class(AddressBook)
 
 local addressBook = AddressBook()
 addressBook:show()

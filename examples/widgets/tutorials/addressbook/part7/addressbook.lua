@@ -539,4 +539,4 @@ function AddressBook:exportAsVCard()
 end
 --! [export function part4]
 
-return AddressBook:class()
+return QtCore.Class(AddressBook)

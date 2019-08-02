@@ -19,11 +19,15 @@ function Class:__init(name)
 	end
 end
 
+function Class:__uninit()
+	print('gc', self)
+end
+
 function Class:dump()
 	print('ClassName:', self, self.className)
 end
 
-Class = Class:class()
+Class = QtCore.Class(Class)
 
 local function main()
 	local obj = Class()

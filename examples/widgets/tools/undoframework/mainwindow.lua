@@ -206,4 +206,4 @@ function Class:about()
     )
 end
 
-return Class:class()
+return QtCore.Class(Class)

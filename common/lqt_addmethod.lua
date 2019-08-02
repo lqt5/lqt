@@ -372,8 +372,6 @@ return function(QtCore
     end
 
     -- register create_class function
-    --  QtCore.QObject.class
-    rawset(QObject_metatable, 'class', create_class)
     --  QtCore.Class
     rawset(QtCore, 'Class', create_class)
 

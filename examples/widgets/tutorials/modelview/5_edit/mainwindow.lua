@@ -47,10 +47,10 @@
 ** $QT_END_LICENSE$
 **
 ***************************************************************************]]
+local QtCore = require 'qtcore'
 local QtWidgets = require 'qtwidgets'
 
 local MyModel = require 'mymodel'
--- local QtCore = require 'qtcore'
 -- local QtGui = require 'qtgui'
 
 -- local Class = QtCore.QAbstractTableModel()
@@ -77,4 +77,4 @@ function Class:showWindowTitle(title)
 	self:setWindowTitle(title)
 end
 
-return Class:class()
+return QtCore.Class(Class)

@@ -118,4 +118,4 @@ function Class:selectionChangedSlot(newSelection, oldSelection)
     self:setWindowTitle(showString)
 end
 
-return Class:class()
+return QtCore.Class(Class)

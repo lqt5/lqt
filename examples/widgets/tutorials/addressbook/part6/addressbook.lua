@@ -471,4 +471,4 @@ function AddressBook:loadFromFile()
 end
 --! [loadFromFile() function part3]
 
-return AddressBook:class()
+return QtCore.Class(AddressBook)

@@ -241,7 +241,7 @@ function AddressBook:previous()
     self.addressText:setText(info.address)
 end
 --! [previous() function]
-AddressBook = AddressBook:class()
+AddressBook = QtCore.Class(AddressBook)
 
 local addressBook = AddressBook()
 addressBook:show()

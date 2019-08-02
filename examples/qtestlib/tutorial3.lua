@@ -72,6 +72,6 @@ function TestObject:testGui()
 	QtTest.QCOMPARE(lineEdit:text(), QtCore.QLatin1String 'hello world')
 end
 
-TestObject = TestObject:class()
+TestObject = QtCore.Class(TestObject)
 
 return test_main('widgets', TestObject)

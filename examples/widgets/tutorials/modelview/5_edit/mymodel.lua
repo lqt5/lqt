@@ -123,4 +123,4 @@ function Class:flags(index)
     return flags
 end
 
-return Class:class()
+return QtCore.Class(Class)

@@ -148,4 +148,4 @@ function Class:createSlider()
     return slider
 end
 
-return Class:class()
+return QtCore.Class(Class)

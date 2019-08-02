@@ -87,4 +87,4 @@ function Class:mouseReleaseEvent(event)
 	QtWidgets.QGraphicsScene.mouseReleaseEvent(self, event)
 end
 
-return Class:class()
+return QtCore.Class(Class)

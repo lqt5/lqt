@@ -99,4 +99,4 @@ function Class:timerHit()
     self:__emit('dataChanged', topLeft, topLeft)
 end
 
-return Class:class()
+return QtCore.Class(Class)

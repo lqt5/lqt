@@ -99,4 +99,4 @@ function FindDialog:getFindText()
 end
 --! [getFindText() function]
 
-return FindDialog:class()
+return QtCore.Class(FindDialog)

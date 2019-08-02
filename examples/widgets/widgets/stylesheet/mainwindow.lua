@@ -87,4 +87,4 @@ function Class:on_aboutAction_triggered()
     )
 end
 
-return Class:class()
+return QtCore.Class(Class)

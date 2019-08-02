@@ -67,6 +67,6 @@ function TestObject:toUpper()
 	QtTest.QCOMPARE(str:toUpper(), QtCore.QString('HELLO'))
 end
 
-TestObject = TestObject:class()
+TestObject = QtCore.Class(TestObject)
 
 return test_main('console', TestObject)

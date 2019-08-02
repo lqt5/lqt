@@ -110,4 +110,4 @@ function Class:data(index, role)
     return val
 end
 
-return Class:class()
+return QtCore.Class(Class)

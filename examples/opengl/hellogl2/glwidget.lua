@@ -361,4 +361,4 @@ function Class:setupVertexAttribs()
     self.m_logoVbo:release()
 end
 
-return Class:class()
+return QtCore.Class(Class)

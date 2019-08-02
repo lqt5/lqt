@@ -75,4 +75,4 @@ function Class:data(index, role)
 	return QtCore.QVariant()
 end
 
-return Class:class()
+return QtCore.Class(Class)

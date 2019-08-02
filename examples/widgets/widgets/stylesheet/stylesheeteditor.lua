@@ -108,4 +108,4 @@ function Class:loadStyleSheet(sheetName)
 	self.ui.applyButton:setEnabled(false)
 end
 
-return Class:class()
+return QtCore.Class(Class)

@@ -18,11 +18,9 @@ function Base:event(event)
 	return false
 end
 
-Base = Base:class()
+Base = QtCore.Class(Base)
 
--- TODO:fix crash
--- local Child = Base({ Base }, 20)
-local Child = Base({ Base.new() }, 20)
+local Child = Base({ Base }, 20)
 print(Child)
 
 -- Base:event()
