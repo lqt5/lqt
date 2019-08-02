@@ -159,7 +159,9 @@ void lqtL_qobject_custom (lua_State *L) {
     lua_getfield(L, LUA_REGISTRYINDEX, "QObject*");
     int qobject = lua_gettop(L);
 
-    luaL_dostring(L, (const char *) add_method_string);
+    if(luaL_loadbuffer(L, (const char *) add_method_string, sizeof(add_method_string), "bultin(add_method_string)") != 0)
+        lua_error(L);
+    lua_call(L, 0, LUA_MULTRET);
     {
 	    if(!lua_isfunction(L, -1))
     		lua_error(L);

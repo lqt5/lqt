@@ -227,7 +227,7 @@ if module_name == 'qtcore' then
 	local script = fp:read '*all'
 	fp:close()
 
-	-- script = string.dump(loadstring(script)(), false)
+	script = string.dump(loadstring(script, '@common/lqt_addmethod.lua'), false)
 
 	local bytes = {}
 	script:gsub('.', function(c)
@@ -240,8 +240,6 @@ if module_name == 'qtcore' then
 			table.insert(bytes, '\n\t')
 		end
 	end)
-	-- eof
-	table.insert(bytes, 0)
 
 	fp = io.open(string.format('%s/../common/lqt_addmethod.h', path), 'wb')
 	fp:write(string.format('static const unsigned char add_method_string[] = {\n%s\n};\n'
