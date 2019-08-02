@@ -52,7 +52,7 @@
 // #define Q_OVERRIDE(a)
 // #define Q_OS_OS2
 // #define Q_NO_USING_KEYWORD
-#define Q_DECLARE_PRIVATE(a)
+#define Q_DECLARE_PRIVATE(a) Q_DISABLE_COPY(a)
 
 #define Q_DECLARE_TYPEINFO_BODY(TYPE, FLAGS)
 

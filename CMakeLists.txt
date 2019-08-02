@@ -64,6 +64,7 @@ set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 find_package (Qt5 REQUIRED
 	Core
 	Network
+	Sql
 	Positioning
 	Qml
 	WebChannel
@@ -245,6 +246,10 @@ else()
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Network Core)
 	build_qt_lib_binding(QtNetwork QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES Sql Core)
+	build_qt_lib_binding(QtSql QtCore)
 
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Positioning Core)
