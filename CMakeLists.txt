@@ -114,8 +114,8 @@ else(WIN32)
 endif(WIN32)
 
 if(APPLE)
-    set(CMAKE_SHARED_MODULE_CREATE_CXX_FLAGS
-       "${CMAKE_SHARED_MODULE_CREATE_CXX_FLAGS} -flat_namespace -undefined dynamic_lookup")
+    set(CMAKE_SHARED_MODULE_CREATE_C_FLAGS "${CMAKE_SHARED_MODULE_CREATE_C_FLAGS} -flat_namespace -undefined dynamic_lookup")
+    set(CMAKE_SHARED_MODULE_CREATE_CXX_FLAGS "${CMAKE_SHARED_MODULE_CREATE_CXX_FLAGS} -flat_namespace -undefined dynamic_lookup")
 endif(APPLE)
 
 add_subdirectory(cpptoxml)
@@ -314,6 +314,7 @@ else()
 endif()
 
 add_subdirectory(modules/lrdb)
+add_subdirectory(modules/lpeglabel)
 
 # # Find includes in corresponding build directories
 # set(CMAKE_INCLUDE_CURRENT_DIR ON)

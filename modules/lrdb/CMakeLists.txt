@@ -14,13 +14,13 @@ set(CMAKE_MACOSX_RPATH 1)
 # endif(NOT MSVC)
 
 include_directories(${LUA_INCLUDE_DIRS}
-  ../../depends/lrdb/include
-  ../../depends/lrdb/third_party/picojson
-  ../../depends/lrdb/third_party/asio/asio/include
+	../../depends/lrdb/include
+	../../depends/lrdb/third_party/picojson
+	../../depends/lrdb/third_party/asio/asio/include
 )
 
 set(lrdb_src
-  main.cpp
+	main.cpp
 )
 
 link_directories(${LUA_LIBS_FOR_MODULE})
