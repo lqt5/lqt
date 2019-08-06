@@ -61,16 +61,38 @@ local function commandLineUrlArgument()
     args = args:mid(1)
     for idx = 0, args:size() - 1 do
         local arg = args:at(idx)
-        if not arg:startsWith(QtCore.QLatin1Char('-')) then
+        if not arg:startsWith('-') then
             return QtCore.QUrl.fromUserInput(arg)
         end
     end
-    return QtCore.QUrl(QtCore.QString('http://www.threejs.org'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://accessibility/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://gpu/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://appcache-internals/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://blob-internals/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://dino/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://histograms/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://indexeddb-internals/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://media-internals/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://network-errors/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://process-internals/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://quota-internals/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://serviceworker-internals/'))
+    -- return QtCore.QUrl(QtCore.QString('chrome://webrtc-internals/'))
+
+    return QtCore.QUrl(QtCore.QString('http://html5test.com/'))
+    -- return QtCore.QUrl(QtCore.QString('http://www.threejs.org'))
+    -- return QtCore.QUrl(QtCore.QString('http://www.baidu.com'))
 end
 
+-- QtCore.QCoreApplication.setAttribute(QtCore.AA_ShareOpenGLContexts)
+-- QtCore.QCoreApplication.setAttribute(QtCore.AA_UseDesktopOpenGL)
+-- QtCore.QCoreApplication.setAttribute(QtCore.AA_UseOpenGLES)
 QtCore.QCoreApplication.setAttribute(QtCore.AA_EnableHighDpiScaling)
+-- QtCore.QCoreApplication.setAttribute(QtCore.AA_UseSoftwareOpenGL)
 
-local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
+-- local app = QtWidgets.QApplication(1 + select('#', ...), {arg[0], ...})
+-- local app = QtWidgets.QApplication(2 + select('#', ...), {arg[0], '--enable-webgl', ...})
+local app = QtWidgets.QApplication(2 + select('#', ...), {arg[0], '--ignore-gpu-blacklist', ...})
 
 local view = QtWebEngineWidgets.QWebEngineView()
 view:setUrl(commandLineUrlArgument())
@@ -82,6 +104,6 @@ devToolsPage:resize(1024, 750)
 devToolsPage:show()
 
 devToolsPage:page():setInspectedPage(view:page())
--- view:page():setDevToolsPage(devToolsPage:page())
+view:page():setDevToolsPage(devToolsPage:page())
 
 app.exec()
