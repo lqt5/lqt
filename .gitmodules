@@ -4,3 +4,6 @@
 [submodule "depends/lpeglabel"]
 	path = depends/lpeglabel
 	url = https://github.com/sqmedeiros/lpeglabel
+[submodule "depends/luafilesystem"]
+	path = depends/luafilesystem
+	url = https://github.com/keplerproject/luafilesystem

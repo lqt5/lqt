@@ -315,6 +315,7 @@ endif()
 
 add_subdirectory(modules/lrdb)
 add_subdirectory(modules/lpeglabel)
+add_subdirectory(modules/lfs)
 
 # # Find includes in corresponding build directories
 # set(CMAKE_INCLUDE_CURRENT_DIR ON)
