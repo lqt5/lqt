@@ -48,7 +48,7 @@
 ** $QT_END_LICENSE$
 **
 ***************************************************************************]]
-dofile(arg[0]:gsub('examples/.+', 'examples/init.lua'))
+dofile(arg[0]:gsub('examples[/\\].+', 'examples/init.lua'))
 
 return qml_main('tutorial1.qml')
 -- return qml_main('tutorial2.qml')

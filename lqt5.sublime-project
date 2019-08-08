@@ -19,9 +19,10 @@
 			{
 				"cmd":
 				[
-					"D:/Codes/server/bin/win32/lua.exe",
+					"$project_path/depends/LuaJIT-2.1.0-beta3/src/luajit.exe",
 					"$file"
-				]
+				],
+				"shell": true
 			},
 			"working_dir": "$file_path"
 		}

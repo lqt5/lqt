@@ -48,7 +48,7 @@
 ** $QT_END_LICENSE$
 **
 ***************************************************************************]]
-dofile(arg[0]:gsub('examples/.+', 'examples/init.lua'))
+dofile(arg[0]:gsub('examples[/\\].+', 'examples/init.lua'))
 
 local QtCore = require 'qtcore'
 local QtTest = require 'qttest'

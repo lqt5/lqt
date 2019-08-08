@@ -48,7 +48,7 @@
 ** $QT_END_LICENSE$
 **
 ***************************************************************************]]
-dofile(arg[0]:gsub('examples/.+', 'examples/init.lua'))
+dofile(arg[0]:gsub('examples[/\\].+', 'examples/init.lua'))
 
 --     Q_INIT_RESOURCE(undoframework);
 local QtCore = require 'qtcore'

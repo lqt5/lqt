@@ -8,7 +8,9 @@ end
 --------------------------------------------------------------------------------
 -- setup cpath/luapath
 --------------------------------------------------------------------------------
-local dlpath = get_source_path():gsub('init.lua', '../build/lib/?.so')
+local dlpath = get_source_path():gsub('init.lua'
+	, jit.os == 'Windows' and '../build/lib/RelWithDebInfo/?.dll' or '../build/lib/?.so'
+)
 package.cpath = package.cpath .. ';' .. dlpath
 
 local luapath = table.concat({

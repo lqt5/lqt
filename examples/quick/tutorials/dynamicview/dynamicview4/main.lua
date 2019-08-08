@@ -48,6 +48,6 @@
 ** $QT_END_LICENSE$
 **
 ***************************************************************************]]
-dofile(arg[0]:gsub('examples/.+', 'examples/init.lua'))
+dofile(arg[0]:gsub('examples[/\\].+', 'examples/init.lua'))
 
 return qml_main('dynamicview.qml')
