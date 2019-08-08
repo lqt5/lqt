@@ -27,5 +27,6 @@ link_directories(${LUA_LIBS_FOR_MODULE})
 
 add_library(lrdb MODULE ${lrdb_src})
 
+target_link_libraries(lrdb ${LUA_LIBS_FOR_MODULE})
 set_target_properties(lrdb PROPERTIES PREFIX "")
 set_target_properties(lrdb PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)

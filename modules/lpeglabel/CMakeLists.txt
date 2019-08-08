@@ -26,5 +26,6 @@ link_directories(${LUA_LIBS_FOR_MODULE})
 
 add_library(lpeglabel MODULE ${lpeglabel_src})
 
+target_link_libraries(lpeglabel ${LUA_LIBS_FOR_MODULE})
 set_target_properties(lpeglabel PROPERTIES PREFIX "")
 set_target_properties(lpeglabel PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
