@@ -85,6 +85,12 @@ On Windows sytem (use msvc 2017):
     set(CMAKE_PREFIX_PATH D:/Qt/Qt5.13.0/5.13.0/msvc2017_64/lib/cmake)
 ```
 
+4. update submodule use:
+```sh
+    git submodule init
+    git submodule update
+```
+
 Then, use CMake to generate the Makefile and run `make` as usual:
 
 ```sh
