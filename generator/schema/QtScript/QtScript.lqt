@@ -1,0 +1,19 @@
+#ifndef QT_QTSCRIPT_MODULE_H
+#define QT_QTSCRIPT_MODULE_H
+#include <QtScript/QtScriptDepends.lqt>
+#include "qtscriptglobal.lqt"
+#include "qscriptable.lqt"
+#include "qscriptclass.lqt"
+#include "qscriptclasspropertyiterator.lqt"
+#include "qscriptcontext.lqt"
+#include "qscriptcontextinfo.lqt"
+#include "qscriptengine.lqt"
+#include "qscriptengineagent.lqt"
+#include "qscriptextensioninterface.lqt"
+#include "qscriptextensionplugin.lqt"
+#include "qscriptprogram.lqt"
+#include "qscriptstring.lqt"
+#include "qscriptvalue.lqt"
+#include "qscriptvalueiterator.lqt"
+#include "qtscriptversion.lqt"
+#endif

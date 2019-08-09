@@ -21,6 +21,7 @@ Features
   * QtNetwork
   * QtSql
   * QtPositioning
+  * QtScript
   * QtQml
   * QtWebChannel
   * QtGui

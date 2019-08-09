@@ -66,6 +66,7 @@ find_package (Qt5 REQUIRED
 	Network
 	Sql
 	Positioning
+	Script
 	Qml
 	WebChannel
 	Gui
@@ -255,6 +256,10 @@ else()
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Positioning Core)
 	build_qt_lib_binding(QtPositioning QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES Script Core)
+	build_qt_lib_binding(QtScript QtCore)
 
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Qml Network Core)
