@@ -711,6 +711,7 @@ void lqtL_copyudata (lua_State *L, const void *p, const char *name) {
 
 void *lqtL_toudata (lua_State *L, int index, const char *name) {
     void *ret = 0;
+    if (lua_isnil(L, index) && strchr(name, '*')) return ret;
     if (!lqtL_testudata(L, index, name)) return 0;
     void **pp = static_cast<void**>(lua_touserdata(L, index));
     ret = *pp;
@@ -735,6 +736,7 @@ void lqtL_eraseudata (lua_State *L, int index, const char *name) {
 }
 
 bool lqtL_testudata (lua_State *L, int index, const char *name) {
+    if (lua_isnil(L, index) && strchr(name, '*')) return true;
     if (!lua_isuserdata(L, index) || lua_islightuserdata(L, index)) return false;
 
     lua_getmetatable(L, index);
