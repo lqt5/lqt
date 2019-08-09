@@ -67,6 +67,7 @@ find_package (Qt5 REQUIRED
 	Sql
 	Positioning
 	Script
+	ScriptTools
 	Qml
 	WebChannel
 	Gui
@@ -175,6 +176,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 								${GEN_XML}
 								${EXTRA_LUA_OPTIONS}
 								-i ${BINDING_HEADER} -i lqt_qt.hpp 
+								-i "${QT_LIBRARIES}"
 								-n ${BINDING_NAME} 
 								-t ${CMAKE_SOURCE_DIR}/generator/qtypes.lua
 								${${BINDING_NAME}_TYPES}
@@ -262,6 +264,10 @@ else()
 	build_qt_lib_binding(QtScript QtCore)
 
 	set(REUSE_FILES 1)
+	set(QT_LIBRARIES ScriptTools Widgets Gui Script Core)
+	build_qt_lib_binding(QtScriptTools QtWidgets QtGui QtScript QtCore)
+
+	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Qml Network Core)
 	build_qt_lib_binding(QtQml QtNetwork QtCore)
 
@@ -286,7 +292,6 @@ else()
 	build_qt_lib_binding(QtPrintSupport QtWidgets QtGui QtCore)
 
 	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Qt5::UiTools)
 	set(QT_LIBRARIES UiTools Widgets Gui Core)
 	build_qt_lib_binding(QtUiTools QtWidgets QtGui QtCore)
 
