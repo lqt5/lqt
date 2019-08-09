@@ -19,6 +19,7 @@ Features
 * supported modules:
   * QtCore
   * QtNetwork
+  * QtSql
   * QtPositioning
   * QtQml
   * QtWebChannel
@@ -28,6 +29,7 @@ Features
   * QtPrintSupport
   * QtUiTools
   * QtQuick
+  * QtQuickWidgets
   * QtWebEngineCore
   * QtWebEngineWidgets
   * QtTest
