@@ -61,7 +61,12 @@ do
 			module_name = select(i, ...)
 		elseif argi=='-i' then
 			i = i + 1
-			table.insert(output_includes, (select(i, ...)))
+			for name in string.gmatch(select(i, ...), '[^;]+') do
+				if not name:find('^Qt') and not name:find('^lqt_qt') then
+					name = 'Qt' .. name
+				end
+				table.insert(output_includes, name)
+			end
 		elseif argi=='-t' then
 			i = i + 1
 			table.insert(typefiles, (select(i, ...)))
@@ -227,7 +232,7 @@ if module_name == 'qtcore' then
 	local script = fp:read '*all'
 	fp:close()
 
-	script = string.dump(loadstring(script, '@common/lqt_addmethod.lua'), false)
+	-- script = string.dump(loadstring(script, '@common/lqt_addmethod.lua'), false)
 
 	local bytes = {}
 	script:gsub('.', function(c)

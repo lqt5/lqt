@@ -85,4 +85,23 @@ return {
 			-- 'QVector<QVariant>',
 		},
 	},
+	qtscript = {
+		['QList<T>'] = {
+			{
+				'QList<QScriptValue>',
+				-- ignore these functions(compile errors.)
+				{
+					'removeOne',
+					'removeAll',
+					'lastIndexOf',
+					'startsWith',
+					'contains',
+					'operator==',
+					'indexOf',
+					'count',
+					'endsWith',
+				},
+			},
+		},
+	},
 }
