@@ -183,11 +183,17 @@ public:
     QScriptValue newActivationObject();
 
 #ifndef QT_NO_QOBJECT
+    // TODO:lqt fix QFlags binding
     QScriptValue newQObject(QObject *object, ValueOwnership ownership = QtOwnership,
-                            const QObjectWrapOptions &options = QObjectWrapOptions());
+                            QObjectWrapOption options = 0);
     QScriptValue newQObject(const QScriptValue &scriptObject, QObject *qtObject,
                             ValueOwnership ownership = QtOwnership,
-                            const QObjectWrapOptions &options = QObjectWrapOptions());
+                            QObjectWrapOption options = 0);
+    // QScriptValue newQObject(QObject *object, ValueOwnership ownership = QtOwnership,
+    //                         const QObjectWrapOptions &options = QObjectWrapOptions());
+    // QScriptValue newQObject(const QScriptValue &scriptObject, QObject *qtObject,
+    //                         ValueOwnership ownership = QtOwnership,
+    //                         const QObjectWrapOptions &options = QObjectWrapOptions());
 
     QScriptValue newQMetaObject(const QMetaObject *metaObject, const QScriptValue &ctor = QScriptValue());
 
