@@ -79,7 +79,7 @@ end)
 --------------------------------------------------------------------------------
 -- qml examples main func
 --------------------------------------------------------------------------------
-rawset(_G, 'qml_main', function(name, ...)
+rawset(_G, 'qQmlMain', function(name, ...)
 	local QtGui = require 'qtgui'
 	local QtQml = require 'qtqml'
 	local QtQuick = require 'qtquick'
@@ -116,7 +116,7 @@ end)
 --------------------------------------------------------------------------------
 -- qt test main func
 --------------------------------------------------------------------------------
-rawset(_G, 'test_main', function(type, Class)
+rawset(_G, 'qTestMain', function(type, Class)
 	local QtTest = require 'qttest'
 
 	QtTest.QCOMPARE = function(actual, expected)

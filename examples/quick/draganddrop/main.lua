@@ -50,4 +50,4 @@
 ***************************************************************************]]
 dofile(arg[0]:gsub('examples[/\\].+', 'examples/init.lua'))
 
-return qml_main('draganddrop.qml')
+return qQmlMain('draganddrop.qml')

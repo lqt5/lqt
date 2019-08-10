@@ -74,4 +74,4 @@ end
 
 TestObject = QtCore.Class(TestObject)
 
-return test_main('widgets', TestObject)
+return qTestMain('widgets', TestObject)

@@ -69,4 +69,4 @@ end
 
 TestObject = QtCore.Class(TestObject)
 
-return test_main('console', TestObject)
+return qTestMain('console', TestObject)

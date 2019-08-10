@@ -50,6 +50,6 @@
 ***************************************************************************]]
 dofile(arg[0]:gsub('examples[/\\].+', 'examples/init.lua'))
 
-return qml_main('tutorial1.qml')
--- return qml_main('tutorial2.qml')
--- return qml_main('tutorial3.qml')
+return qQmlMain('tutorial1.qml')
+-- return qQmlMain('tutorial2.qml')
+-- return qQmlMain('tutorial3.qml')
