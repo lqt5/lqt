@@ -171,7 +171,7 @@ class Q_CORE_EXPORT QVariant
 
     QVariant();
     ~QVariant();
-    QVariant(Type type);
+    // QVariant(Type type);
     QVariant(int typeId, const void *copy);
     QVariant(int typeId, const void *copy, uint flags);
     QVariant(const QVariant &other);
