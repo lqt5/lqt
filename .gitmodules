@@ -7,3 +7,15 @@
 [submodule "depends/luafilesystem"]
 	path = depends/luafilesystem
 	url = https://github.com/keplerproject/luafilesystem
+[submodule "depends/lua-miniz"]
+	path = depends/lua-miniz
+	url = https://github.com/starwing/lua-miniz
+[submodule "depends/luautf8"]
+	path = depends/luautf8
+	url = https://github.com/starwing/luautf8
+[submodule "depends/lpath"]
+	path = depends/lpath
+	url = https://github.com/starwing/lpath
+[submodule "depends/luagbk"]
+	path = depends/luagbk
+	url = https://github.com/starwing/luagbk

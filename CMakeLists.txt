@@ -331,6 +331,10 @@ endif()
 add_subdirectory(modules/lrdb)
 add_subdirectory(modules/lpeglabel)
 add_subdirectory(modules/lfs)
+add_subdirectory(modules/lpath)
+add_subdirectory(modules/lua-miniz)
+add_subdirectory(modules/luautf8)
+add_subdirectory(modules/luagbk)
 
 # # Find includes in corresponding build directories
 # set(CMAKE_INCLUDE_CURRENT_DIR ON)
