@@ -510,6 +510,8 @@ int lqtL_createclass (lua_State *L, const char *name, luaL_Reg *mt,
     lua_setfield(L, -2, "__tostring");
     lua_pushstring(L, name);
     lua_setfield(L, -2, "__type");
+    lua_pushcfunction(L, lqtL_local_ctor); // (3)
+    lua_setfield(L, -2, "__call"); // (2)
 
     // set it as its own metatable
     lua_pushvalue(L, -1); // (2)

@@ -47,3 +47,4 @@ print('start gc')
 collectgarbage()
 print('end gc')
 
+table.foreach(debug.getregistry()['Registry Ref Class'], print)

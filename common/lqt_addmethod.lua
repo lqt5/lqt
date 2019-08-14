@@ -311,7 +311,6 @@ return function(QtCore
     --  this:__addproperty()
     --  this:__addenum()
     --  this:__addset()
-
     local function create_object(new, self, super_env, ctor, ctor_args, ...)
         local obj = ctor(unpack(ctor_args or {}))
 
@@ -356,17 +355,6 @@ return function(QtCore
         rawset(env, 'new', function(ctor_args, ...)
             return create_object(true, self, env, ctor, ctor_args, ...)
         end)
-        rawset(env, '__call', function(_, ctor_args, ...)
-            return create_object(false, self, env, ctor, ctor_args, ...)
-        end)
-
-        local mt = getmetatable(self)
-        if not rawget(mt, '__call') then
-            rawset(mt, '__call', function(self, ctor_args, ...)
-                local env = debug.getfenv(self)
-                return env.__call(self, ctor_args, ...)
-            end)
-        end
 
         return self
     end
