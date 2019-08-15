@@ -39,7 +39,16 @@
 			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtNetwork.framework"
 		},
 		{
+			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtSql.framework"
+		},
+		{
 			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtPositioning.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtScript.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtScriptTools.framework"
 		},
 		{
 			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtQml.framework"
@@ -64,6 +73,9 @@
 		},
 		{
 			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtQuick.framework"
+		},
+		{
+			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtQuickWidgets.framework"
 		},
 		{
 			"path": "/Users/saniko/Qt/5.13.0/clang_64/lib/QtWebEngineCore.framework"

@@ -43,6 +43,8 @@ local function main()
 end
 main()
 
+table.foreach(debug.getregistry()['Registry Ref Class'], print)
+
 print('start gc')
 collectgarbage()
 print('end gc')
