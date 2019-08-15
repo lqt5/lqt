@@ -1,5 +1,5 @@
 #!/usr/bin/lua
-dofile(arg[0]:gsub('test/.+', 'examples/init.lua'))
+dofile(arg[0]:gsub('test[/\\].+', 'examples/init.lua'))
 
 local QtCore = require 'qtcore'
 

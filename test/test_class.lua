@@ -1,9 +1,9 @@
 #!/usr/bin/lua
-package.cpath = package.cpath .. ';../build/lib/?.so'
+dofile(arg[0]:gsub('test[/\\].+', 'examples/init.lua'))
 
 local QtCore = require'qtcore'
 
-qa = QtCore.QCoreApplication.new(1, {'test_class'})
+local qa = QtCore.QCoreApplication.new(1, {'test_class'})
 
 local Class = QtCore.Class('TestClass', QtCore.QObject) {}
 

@@ -1,15 +1,15 @@
--- #!/usr/bin/lua
-dofile(arg[0]:gsub('test/.+', 'examples/init.lua'))
+#!/usr/bin/lua
+dofile(arg[0]:gsub('test[/\\].+', 'examples/init.lua'))
 
 local QtCore = require 'qtcore'
 -- require 'class'
 
--- local object = QtCore.QObject()
--- object:__addsignal('clicked()')
--- object:__addslot('echo()', function() print 'echo' end)
--- object:connect('2clicked()', object, '1echo()')
+local object = QtCore.QObject()
+object:__addsignal('clicked()')
+object:__addslot('echo()', function() print 'echo' end)
+object:connect('2clicked()', object, '1echo()')
 
--- object:__emit('clicked')
+object:__emit('clicked')
 local app = QtCore.QCoreApplication.new(1, {'test_class'})
 
 local Base = QtCore.Class('Base', QtCore.QObject) {

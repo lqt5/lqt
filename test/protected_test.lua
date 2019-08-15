@@ -1,13 +1,14 @@
-package.cpath = package.cpath .. ';../build/lib/?.so'
+#!/usr/bin/lua
+dofile(arg[0]:gsub('test[/\\].+', 'examples/init.lua'))
 
 local QtCore = require "qtcore"
 local QtGui = require "qtgui"
 local QtWidgets = require 'qtwidgets'
 
-A = QtWidgets.QApplication(1, {'Protected test'})
+local A = QtWidgets.QApplication(1, {'Protected test'})
 
 -- We will implement our custom model
-M = QtCore.QAbstractListModel()
+local M = QtCore.QAbstractListModel()
 
 -- stored in the environment table of the userdata
 M.luaData = {'Hello', 'World'}
@@ -43,19 +44,19 @@ function M:addAnotherString(str)
 end
 
 -- some simple layout - list and a button
-MW = QtWidgets.QWidget()
+local MW = QtWidgets.QWidget()
 
-W = QtWidgets.QListView()
+local W = QtWidgets.QListView()
 W:setModel(M)
 
-B = QtWidgets.QPushButton('Add Lua data')
+local B = QtWidgets.QPushButton('Add Lua data')
 local counter = 1
 B:connect('2clicked()', function()
 	M:addAnotherString('Added text ' .. counter)
 	counter = counter + 1
 end)
 
-L = QtWidgets.QVBoxLayout()
+local L = QtWidgets.QVBoxLayout()
 L:addWidget(W)
 L:addWidget(B)
 MW:setLayout(L)

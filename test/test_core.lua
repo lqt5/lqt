@@ -1,9 +1,9 @@
 #!/usr/bin/lua
-package.cpath = package.cpath .. ';../build/lib/?.so'
+dofile(arg[0]:gsub('test[/\\].+', 'examples/init.lua'))
 
 local QtCore = require'qtcore'
 
-qa = QtCore.QCoreApplication.new(1, {'test_core'})
+local qa = QtCore.QCoreApplication.new(1, {'test_core'})
 
 local latin1 = QtCore.QLatin1String('wtf', 1)
 print(latin1:data())
@@ -21,7 +21,7 @@ print(qa:objectName():toStdString())
 -- table.foreach(, print)
 -- print(QtCore.QCoreApplication.__addmethod)
 
-qo = QtCore.QObject.new()
+local qo = QtCore.QObject.new()
 qo.event = function(o, e)
 	print('event overload called', e:type())
 	return false
@@ -37,7 +37,7 @@ qo:connect('2destroyed()', function() print('destroyed') end)
 -- qo:__addmethod('setValue(int)', function(_, val) slider:setValue(val) end)
 -- qo:emitSignal('destroyed()')
 
-ql = {}
+local ql = {}
 
 for i = 1, 5 do
 	table.insert(ql, qo:new())

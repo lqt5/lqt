@@ -1,4 +1,5 @@
-package.cpath = package.cpath .. ';../build/lib/?.so'
+#!/usr/bin/lua
+dofile(arg[0]:gsub('test[/\\].+', 'examples/init.lua'))
 
 local QtCore = require 'qtcore'
 
@@ -11,3 +12,6 @@ print('flush file =>', f:flush())
 print('close file => ', f:close())
 print('reopen file =>', f:open{'ReadOnly'})
 print('correct read => ', f:readAll()==s)
+f:close()
+
+os.remove('tmp_file')

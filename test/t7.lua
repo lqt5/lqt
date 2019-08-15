@@ -1,5 +1,5 @@
 #!/usr/bin/lua
-package.cpath = package.cpath .. ';../build/lib/?.so'
+dofile(arg[0]:gsub('test[/\\].+', 'examples/init.lua'))
 
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
@@ -63,7 +63,7 @@ end
 local app = QtWidgets.QApplication.new(1 + select('#', ...), {arg[0], ...})
 app.__gc = app.delete -- take ownership of object
 
-widget = new_MyWidget()
+local widget = new_MyWidget()
 widget:show()
 print('gc begin')
 collectgarbage()
