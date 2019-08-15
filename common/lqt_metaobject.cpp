@@ -26,6 +26,8 @@
 
 #include "lqt_common.hpp"
 
+// #define VERBOSE_BUILD
+
 #define LQT_OBJMETADATA_STORE ("*" LQT_OBJMETADATA)
 #define LQT_OBJMETASTRING_STORE ("*" LQT_OBJMETASTRING)
 
@@ -186,16 +188,6 @@ const QMetaObject& lqtL_qt_metaobject (lua_State *L
                return super_data;
         }
         lua_getfield(L, -2, LQT_OBJMETADATA);
-
-#ifdef VERBOSE_BUILD
-        printf("Copying qmeta object for slots in %s to %p, inherit from %p\n", name, &meta_data, &super_data);
-        printf("Dump qt_meta_stringdata_LqtSlotAcceptor\n");
-        dump((unsigned char *) &qt_meta_stringdata_LqtSlotAcceptor, sizeof(qt_meta_stringdata_LqtSlotAcceptor));
-        printf("Dump qt_meta_data_LqtSlotAcceptor\n");
-        dump((unsigned char *)qt_meta_data_LqtSlotAcceptor
-            , sizeof(qt_meta_data_LqtSlotAcceptor) / sizeof(qt_meta_data_LqtSlotAcceptor[0])
-        );
-#endif
 
         meta_data.d.superdata = &super_data;
         if(!lqtL_is_meta_dirty(L, lua_objlen(L, -1), lua_objlen(L, -2))) {

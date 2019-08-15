@@ -6,6 +6,8 @@
 #include <QMetaObject>
 #include <QMetaMethod>
 
+// #define VERBOSE_BUILD
+
 #define CASE(x) case QMetaMethod::x : lua_pushstring(L, " " #x); break
 static int lqtL_methods(lua_State *L) {
 	QObject* self = static_cast<QObject*>(lqtL_toudata(L, 1, "QObject*"));
@@ -120,6 +122,15 @@ static int lqtL_connect(lua_State *L) {
         lua_call(L, 3, 0);
 
         methodName.prepend("1");
+
+#ifdef VERBOSE_BUILD
+        printf("Connect method (%p) %d(`%s`) to lua-method `%s`\n"
+            , receiver
+            , idxS
+            , signal
+            , methodName.toStdString().c_str()
+        );
+#endif
     } else {
         receiver = static_cast<QObject*>(lqtL_toudata(L, 3, "QObject*"));
         if (receiver == NULL)
@@ -131,6 +142,17 @@ static int lqtL_connect(lua_State *L) {
         int idxR = receiverMeta->indexOfMethod(method + 1);
         if (idxR == -1)
             return luaL_argerror(L, 4, qPrintable(QString("no such receiver method: '%1'").arg(method + 1)));
+
+#ifdef VERBOSE_BUILD
+        printf("Connect method (%p) %d(`%s`) to method (%p) %d(`%s`)\n"
+            , sender
+            , idxS
+            , signal
+            , receiver
+            , idxR
+            , method
+        );
+#endif
     }
 
     bool ok = QObject::connect(sender, signal, receiver, qPrintable(methodName));

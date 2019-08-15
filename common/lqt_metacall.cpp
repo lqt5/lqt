@@ -1,6 +1,8 @@
 #include "lqt_qt.hpp"
 #include "lqt_addmethod.h"
 
+// #define VERBOSE_BUILD
+
 static int lqt_InvokeMetaMethod (lua_State *L
     , QObject *self
     , QObject *acceptor
@@ -161,7 +163,7 @@ int lqtL_qt_metacall (lua_State *L, QObject *self, QObject *acceptor,
         , acceptor->metaObject()->className()
         , callTypeToString(call)
         , name
-        , index
+        , index + 1
     );
 #endif
 

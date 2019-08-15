@@ -5,7 +5,7 @@ local QtCore = require'qtcore'
 
 qa = QtCore.QCoreApplication.new(1, {'test_class'})
 
-local Class = QtCore.QObject()
+local Class = QtCore.Class('TestClass', QtCore.QObject) {}
 
 function Class:__static_init()
 	print('__static_init', self)
@@ -26,8 +26,6 @@ end
 function Class:dump()
 	print('ClassName:', self, self.className)
 end
-
-Class = QtCore.Class(Class)
 
 local function main()
 	local obj = Class()

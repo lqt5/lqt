@@ -966,7 +966,9 @@ private:
 		..lua_name..'*", lqt_metatable'
 		..c.xarg.id..', '..getters_setters..', '..overrides..', lqt_base'
 		..c.xarg.id..');')
-	
+	print_meta('\tlua_pushstring(L, "'..lua_name..'*");')
+	print_meta('\tlua_setfield(L, -2, "__type");')
+
 	if c.implicit then
 		print_meta('\tluaL_getmetatable(L, "'..lua_name..'*");')
 		print_meta('\tlua_pushliteral(L, "__test");')

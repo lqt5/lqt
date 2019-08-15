@@ -258,7 +258,24 @@ return function(QtCore
         end
 
         -- add new method info
-        table.insert(metaMethods, methodInfo)
+        if not func then
+            local inserted = false
+            -- is signal, insert before slot
+            for idx = #metaMethods,1,-1 do
+                local info = metaMethods[idx]
+                if not info[-3] then
+                    table.insert(metaMethods, idx + 1, methodInfo)
+                    inserted = true
+                    break
+                end
+            end
+
+            if not inserted then
+                table.insert(metaMethods, 1, methodInfo)
+            end
+        else
+            table.insert(metaMethods, methodInfo)
+        end
 
         buildMetaData()
 
@@ -307,61 +324,254 @@ return function(QtCore
         meta.invokeMethod(self, name, QtCore.AutoConnection, ...)
     end)
 
+    QtCore.QObject.__addslot = QObject_metatable.__addslot
+    QtCore.QObject.__addsignal = QObject_metatable.__addsignal
+    QtCore.QObject.__emit = QObject_metatable.__emit
+
     -- TODO:
     --  this:__addproperty()
     --  this:__addenum()
     --  this:__addset()
-    local function create_object(new, self, super_env, ctor, ctor_args, ...)
-        local obj = ctor(unpack(ctor_args or {}))
 
-        if super_env then
+    ----------------------------------------------------------------------------------------------------
+    --- Creates a deep copy of an object.
+    ----------------------------------------------------------------------------------------------------
+    local function deepCopy(tab)
+        local lookup = {}
+        local function _copy(value)
+            if type(value) ~= 'table' then
+                return value
+            elseif lookup[value] then
+                return lookup[value]
+            end
+            local new = {}
+            lookup[value] = new
+            for k,v in pairs(value) do
+                new[_copy(k)] = _copy(v)
+            end
+        end
+        return _copy(tab)
+    end
+    ----------------------------------------------------------------------------------------------------
+    -- call __static_init(static constructor)
+    ----------------------------------------------------------------------------------------------------
+    local staticInit = (function()
+        local __cache = setmetatable({}, { __mode = 'k' })
+
+        local function __init(classDef)
+            if __cache[classDef] then
+                return
+            end
+            __cache[classDef] = true
+
+            local __super = rawget(classDef, '__super')
+            if __super then
+                __init(__super)
+            end
+
+            local __static_init = rawget(classDef, '__static_init')
+            if type(__static_init) == 'function' then
+
+                -- local metaStrings = __super and __super[LQT_OBJMETASTRING] or nil
+                -- local metaData = __super and __super[LQT_OBJMETADATA] or nil
+                -- local metaSlots = __super and __super[LQT_OBJSLOTS] or nil
+                -- local metaSignals = __super and __super[LQT_OBJSIGS] or nil
+
+                -- classDef[LQT_OBJMETASTRING] = deepCopy(metaStrings)
+                -- classDef[LQT_OBJMETADATA] = deepCopy(metaData)
+                -- classDef[LQT_OBJSLOTS] = deepCopy(metaSlots)
+                -- classDef[LQT_OBJSIGS] = deepCopy(metaSignals)
+                -- classDef[LQT_OBJMETADATA_STORE] = ''
+                -- classDef[LQT_OBJMETASTRING_STORE] = ''
+
+                __static_init(classDef)
+            end     
+        end
+
+        return __init
+    end)()
+    ----------------------------------------------------------------------------------------------------
+    -- trigger lqtAddOverride virtual-bind function
+    ----------------------------------------------------------------------------------------------------
+    local function addOverride(inst, classDef)
+        local __super = rawget(classDef, '__super')
+        if __super then
+            addOverride(inst, __super)
+        end
+
+        for k,v in pairs(classDef) do
+            if type(v) == 'function' then
+                inst[k] = v
+                inst[k] = nil
+            end
+        end
+    end
+    -- reversed fields, cannot used in class defitition table
+    local reversedFields = {
+        'new',
+        '__name',
+        '__classDef',
+        '__proto',
+        '__super',
+    }
+    ----------------------------------------------------------------------------------------------------
+    -- 'Is a class' check.
+    ----------------------------------------------------------------------------------------------------
+    local isClass = function (x)
+        return type(x) == 'table' and type(x.__classDef) == 'table'
+    end
+    ----------------------------------------------------------------------------------------------------
+    -- 'Is an object' check.
+    ----------------------------------------------------------------------------------------------------
+    local isObject = function (x)
+        return type(x) == 'userdata' and isClass(x.__class)
+    end
+    ----------------------------------------------------------------------------------------------------
+    -- 'Is an instance of' check.
+    --  @param x Object that is tested for being an instance of class.
+    --  @param cls A class that the object is tested against.
+    --  @return Returns `true` if `obj` is an immediate instance of `cls` or one of it's ancestors.
+    ----------------------------------------------------------------------------------------------------
+    local isInstanceOf = (function()
+        local function checkQt(obj, cls)
+            if type(obj) ~= 'userdata' or type(cls) ~= 'table' then
+                return false
+            end
+            local __type = rawget(cls, '__type')
+            return __type and (obj[__type] ~= nil)
+        end
+
+        local function check(obj, cls)
+            if not isObject(obj) then
+                return false
+            end
+
+            local ret = false
+
+            local env = debug.getfenv(obj)
+            local __class = rawget(env, '__class')
+
+            while __class and __class ~= cls do
+                -- check if obj create by __proto(Qt objects)
+                if __class.__proto == cls then
+                    return true
+                end
+                __class = rawget(__class, '__super')
+            end
+
+            return __class == cls
+        end
+
+        local clsCaches = {}
+
+        return function(obj, cls)
+            local objCaches = clsCaches[cls]
+            if objCaches then
+                local flag = objCaches[obj]
+                if flag ~= nil then
+                    return flag
+                end
+            end
+
+            local ret = checkQt(obj, cls) or check(obj, cls)
+
+            if not objCaches then
+                objCaches = setmetatable({}, { __mode = 'k' })
+                clsCaches[cls] = objCaches
+            end
+            objCaches[obj] = ret
+
+            return ret
+        end
+    end)()
+
+    rawset(QtCore, 'isClass', isClass)
+    rawset(QtCore, 'isObject', isObject)
+    rawset(QtCore, 'isInstanceOf', isInstanceOf)
+
+    local function errorNew()
+        error('attempt to call `new` from an instance')
+    end
+
+    rawset(QtCore, 'Class', function(name, proto)
+        assert(type(name) == 'string', 'Class name must be an string')
+
+        local function createInst(inst, classDef, ...)
+            local env = debug.getfenv(inst)
+            env.new = errorNew
+            env.__class = classDef
             -- set object env inherit super(self) env
-            local obj_env = setmetatable({}, { __index = super_env })
-            debug.setfenv(obj, obj_env)
+            setmetatable(env, { __index = classDef })
 
-            for k,v in pairs(super_env) do
-                -- trigger lqtAddOverride virtual-bind function
-                obj[k] = v
-                obj[k] = nil
-            end
+            -- call __static_init once
+            --  for class object
+            staticInit(classDef)
 
-            local __init = rawget(super_env, '__init')
+            -- trigger lqtAddOverride virtual-bind function
+            addOverride(inst, classDef)
+
+            -- call __init(custom constructor)
+            local __init = rawget(classDef, '__init')
             if type(__init) == 'function' then
-                __init(obj, ...)
+                __init(inst, ...)
             end
+
+            return inst
         end
 
-        if new then
-            obj.__gc = false
+        return function(classDef)
+            if not classDef then
+                classDef = {}
+            end
+
+            for _,name in ipairs(reversedFields) do
+                assert(rawget(classDef, name) == nil
+                    , string.format('`%s` is reversed classDef field!', name)
+                )
+            end
+
+            classDef.__name = name
+            classDef.__classDef = classDef
+            classDef.__proto = proto.__proto and proto.__proto or proto
+            classDef.__super = proto.__classDef and proto or nil
+
+            local function ctor(new, ctorArgs)
+                assert(type(ctorArgs) == 'table' or ctorArgs == nil, 'ctorArgs must be table or nil')
+                return ctorArgs and new(unpack(ctorArgs)) or new()
+            end
+
+            classDef.new = function(ctorArgs, ...)
+                local inst = ctor(classDef.__proto.new, ctorArgs)
+                inst.__gc = false
+                return createInst(inst, classDef, ...)
+            end
+
+            return setmetatable(classDef, {
+                __index = function(_,k)
+                    -- call __static_init once
+                    --  for class object
+                    staticInit(classDef)
+
+                    local v = rawget(classDef, k)
+                    if v ~= nil then
+                        return v
+                    end
+
+                    v = proto[k]
+
+                    if type(v) == nil then
+                        error(string.format('Class `%s` : can not get undeclared member variable `%s`', name, k), 2)
+                    end
+
+                    return v
+                end,
+                __call = function(self, ctorArgs, ...)
+                    local inst = ctor(classDef.__proto, ctorArgs)
+                    return createInst(inst, classDef, ...)
+                end,
+            })
         end
-
-        obj.__super = self
-
-        return obj
-    end
-
-    local function create_class(self)
-        assert(type(self) == 'userdata')
-        -- call __static_init once
-        --  for class object
-        if self.__static_init ~= nil then
-            self:__static_init()
-            self.__static_init = false
-        end
-
-        local ctor = self.new
-
-        local env = debug.getfenv(self)
-        rawset(env, 'new', function(ctor_args, ...)
-            return create_object(true, self, env, ctor, ctor_args, ...)
-        end)
-
-        return self
-    end
-
-    -- register create_class function
-    --  QtCore.Class
-    rawset(QtCore, 'Class', create_class)
+    end)
 
     -- also modify the static QObject::create function
     -- local QObject_global = QtCore['QObject']
