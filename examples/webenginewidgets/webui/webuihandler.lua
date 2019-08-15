@@ -50,7 +50,7 @@
 local QtCore = require 'qtcore'
 local QtWebEngineCore = require 'qtwebenginecore'
 
-local Class = QtWebEngineCore.QWebEngineUrlSchemeHandler()
+local Class = QtCore.Class('WebUiHandler', QtWebEngineCore.QWebEngineUrlSchemeHandler) {}
 
 local webUiOrigin = QtCore.QString('webui:about')
 
@@ -88,4 +88,4 @@ function Class.registerUrlScheme()
 	QtWebEngineCore.QWebEngineUrlScheme.registerScheme(webUiScheme)
 end
 
-return QtCore.Class(Class)
+return Class

@@ -49,7 +49,7 @@
 ***************************************************************************]]
 local QtCore = require 'qtcore'
 
-local Class = QtCore.QAbstractTableModel()
+local Class = QtCore.Class('MyModel', QtCore.QAbstractTableModel) {}
 
 function Class:parent()
 	return QtCore.QModelIndex()
@@ -75,4 +75,4 @@ function Class:data(index, role)
 	return QtCore.QVariant()
 end
 
-return QtCore.Class(Class)
+return Class

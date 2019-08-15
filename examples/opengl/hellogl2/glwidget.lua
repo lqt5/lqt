@@ -54,7 +54,7 @@ local QtOpengl = require 'qtopengl'
 
 local Logo = require 'logo'
 
-local Class = QtWidgets.QOpenGLWidget()
+local Class = QtCore.Class('GLWidget', QtWidgets.QOpenGLWidget) {}
 
 local function sizeof(t)
     if t == QtOpengl.GL_FLOAT then
@@ -361,4 +361,4 @@ function Class:setupVertexAttribs()
     self.m_logoVbo:release()
 end
 
-return QtCore.Class(Class)
+return Class

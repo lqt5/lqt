@@ -50,7 +50,7 @@
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 
-local Class = QtCore.QAbstractTableModel()
+local Class = QtCore.Class('MyModel', QtCore.QAbstractTableModel) {}
 
 function Class:parent()
 	return QtCore.QModelIndex()
@@ -110,4 +110,4 @@ function Class:data(index, role)
     return val
 end
 
-return QtCore.Class(Class)
+return Class

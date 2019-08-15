@@ -52,7 +52,7 @@ local QtWidgets = require 'qtwidgets'
 
 local GLWidget = require 'glwidget'
 
-local Class = QtWidgets.QWidget()
+local Class = QtCore.Class('Window', QtWidgets.QWidget) {}
 
 function Class:__static_init()
     self:__addslot('dockUndock()', self.dockUndock, 'private')
@@ -148,4 +148,4 @@ function Class:createSlider()
     return slider
 end
 
-return QtCore.Class(Class)
+return Class

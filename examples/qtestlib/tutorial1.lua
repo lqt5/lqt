@@ -53,7 +53,7 @@ dofile(arg[0]:gsub('examples[/\\].+', 'examples/init.lua'))
 local QtCore = require 'qtcore'
 local QtTest = require 'qttest'
 
-local TestObject = QtCore.QObject()
+local TestObject = QtCore.Class('TestObject', QtCore.QObject) {}
 
 function TestObject:__static_init()
 	self:__addslot('toUpper()', self.toUpper, 'private')
@@ -66,7 +66,5 @@ function TestObject:toUpper()
 	local str = QtCore.QString('Hello')
 	QtTest.QCOMPARE(str:toUpper(), QtCore.QString('HELLO'))
 end
-
-TestObject = QtCore.Class(TestObject)
 
 return qTestMain('console', TestObject)

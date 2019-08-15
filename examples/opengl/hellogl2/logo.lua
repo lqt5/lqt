@@ -50,7 +50,7 @@
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 
-local Class = QtCore.QVector_float_()
+local Class = QtCore.Class('Logo', QtCore.QVector_float_) {}
 
 function Class:__init()
     self.m_count = 0
@@ -165,4 +165,4 @@ function Class:extrude(x1, y1, x2, y2)
     self:add(QtGui.QVector3D(x1, y1, -0.05), n)
 end
 
-return QtCore.Class(Class)
+return Class

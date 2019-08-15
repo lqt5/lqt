@@ -51,7 +51,7 @@ local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 local QtWidgets = require 'qtwidgets'
 
-local Class = QtWidgets.QMainWindow()
+local Class = QtCore.Class('MainWindow', QtWidgets.QMainWindow) {}
 
 function Class:__static_init()
     self:__addslot('selectionChangedSlot(QItemSelection,QItemSelection)'
@@ -118,4 +118,4 @@ function Class:selectionChangedSlot(newSelection, oldSelection)
     self:setWindowTitle(showString)
 end
 
-return QtCore.Class(Class)
+return Class

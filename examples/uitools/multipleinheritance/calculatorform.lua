@@ -60,7 +60,7 @@ local function loadUiFile(parent)
     return loader:load(file, parent)
 end
 
-local Class = QtWidgets.QWidget()
+local Class = QtCore.Class('CalculatorForm', QtWidgets.QWidget) {}
 
 function Class:__static_init()
     self:__addslot('on_inputSpinBox1_valueChanged(int)', self.on_inputSpinBox1_valueChanged)
@@ -91,4 +91,4 @@ function Class:on_inputSpinBox2_valueChanged(value)
     self.ui_outputWidget:setText(QtCore.QString.number(value + self.ui_inputSpinBox1:value()))
 end
 
-return QtCore.Class(Class)
+return Class

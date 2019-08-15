@@ -54,7 +54,7 @@ local MyModel = require 'mymodel'
 -- local QtGui = require 'qtgui'
 
 -- local Class = QtCore.QAbstractTableModel()
-local Class = QtWidgets.QMainWindow()
+local Class = QtCore.Class('MainWindow', QtWidgets.QMainWindow) {}
 
 function Class:__static_init()
 	self:__addslot('showWindowTitle(QString)', self.showWindowTitle)
@@ -77,4 +77,4 @@ function Class:showWindowTitle(title)
 	self:setWindowTitle(title)
 end
 
-return QtCore.Class(Class)
+return Class

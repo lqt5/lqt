@@ -54,7 +54,7 @@ local QtWidgets = require 'qtwidgets'
 local FindDialog = require 'finddialog'
 --! [include finddialog's header]
 
-local AddressBook = QtWidgets.QWidget()
+local AddressBook = QtCore.Class('AddressBook', QtWidgets.QWidget) {}
 
 --! [Mode enum]
 local Mode = {
@@ -539,4 +539,4 @@ function AddressBook:exportAsVCard()
 end
 --! [export function part4]
 
-return QtCore.Class(AddressBook)
+return AddressBook

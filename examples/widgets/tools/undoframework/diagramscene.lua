@@ -51,7 +51,7 @@ local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 local QtWidgets = require 'qtwidgets'
 
-local Class = QtWidgets.QGraphicsScene()
+local Class = QtCore.Class('DiagramScene', QtWidgets.QGraphicsScene) {}
 
 function Class:__static_init()
     self:__addsignal('itemMoved(QGraphicsPolygonItem*,QPointF)')
@@ -87,4 +87,4 @@ function Class:mouseReleaseEvent(event)
 	QtWidgets.QGraphicsScene.mouseReleaseEvent(self, event)
 end
 
-return QtCore.Class(Class)
+return Class

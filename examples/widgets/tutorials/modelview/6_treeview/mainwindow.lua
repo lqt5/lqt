@@ -52,7 +52,7 @@ local QtGui = require 'qtgui'
 
 local QtWidgets = require 'qtwidgets'
 
-local Class = QtWidgets.QMainWindow()
+local Class = QtCore.Class('MainWindow', QtWidgets.QMainWindow) {}
 
 function Class:__init()
 	self.treeView = QtWidgets.QTreeView(self)
@@ -84,4 +84,4 @@ function Class:prepareRow(first, second, third)
 	return rowItems
 end
 
-return QtCore.Class(Class)
+return Class

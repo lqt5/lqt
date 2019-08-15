@@ -68,7 +68,7 @@ local function loadTextFile()
     return ins:readAll()
 end
 
-local Class = QtWidgets.QWidget()
+local Class = QtCore.Class('TextFinder', QtWidgets.QWidget) {}
 
 function Class:__static_init()
     self:__addslot('on_findButton_clicked()', self.on_findButton_clicked)
@@ -148,4 +148,4 @@ function Class:on_findButton_clicked()
     end
 end
 
-return QtCore.Class(Class)
+return Class

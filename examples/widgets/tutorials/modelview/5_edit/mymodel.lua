@@ -50,7 +50,7 @@
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 
-local Class = QtCore.QAbstractTableModel()
+local Class = QtCore.Class('MyModel', QtCore.QAbstractTableModel) {}
 
 local ROWS = 2
 local COLS = 3
@@ -123,4 +123,4 @@ function Class:flags(index)
     return flags
 end
 
-return QtCore.Class(Class)
+return Class

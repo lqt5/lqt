@@ -50,7 +50,7 @@
 local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 
-local Class = QtCore.QAbstractTableModel()
+local Class = QtCore.Class('MyModel', QtCore.QAbstractTableModel) {}
 
 function Class:__static_init()
 	self:__addslot('timerHit()', self.timerHit)
@@ -99,4 +99,4 @@ function Class:timerHit()
     self:__emit('dataChanged', topLeft, topLeft)
 end
 
-return QtCore.Class(Class)
+return Class

@@ -51,7 +51,7 @@ local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 local QtWidgets = require 'qtwidgets'
 
-local Class = QtWidgets.QGraphicsPolygonItem()
+local Class = QtCore.Class('DiagramItem', QtWidgets.QGraphicsPolygonItem) {}
 
 function Class:__static_init()
 	self.Type = QtWidgets.QGraphicsItem.UserType + 1
@@ -99,4 +99,4 @@ function Class:type()
 	return self.Type
 end
 
-return QtCore.Class(Class)
+return Class

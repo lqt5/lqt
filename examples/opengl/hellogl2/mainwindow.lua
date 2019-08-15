@@ -52,7 +52,7 @@ local QtWidgets = require 'qtwidgets'
 
 local Window = require 'window'
 
-local Class = QtWidgets.QMainWindow()
+local Class = QtCore.Class('MainWindow', QtWidgets.QMainWindow) {}
 
 function Class:__static_init()
     self:__addslot('onAddNew()', self.onAddNew)
@@ -80,4 +80,4 @@ function Class:onAddNew()
     end
 end
 
-return QtCore.Class(Class)
+return Class

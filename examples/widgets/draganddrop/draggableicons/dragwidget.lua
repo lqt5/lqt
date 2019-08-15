@@ -51,7 +51,7 @@ local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 local QtWidgets = require 'qtwidgets'
 
-local Class = QtWidgets.QFrame()
+local Class = QtCore.Class('DragWidget', QtWidgets.QFrame) {}
 
 function Class:__init()
     self:setMinimumSize(200, 200)
@@ -182,4 +182,4 @@ function Class:__uninit()
     print('__uninit', self)
 end
 
-return QtCore.Class(Class)
+return Class

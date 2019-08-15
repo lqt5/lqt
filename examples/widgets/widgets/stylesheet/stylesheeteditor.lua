@@ -52,7 +52,7 @@ local QtCore = require 'qtcore'
 local QtWidgets = require 'qtwidgets'
 local QtUiTools = require 'qtuitools'
 
-local Class = QtWidgets.QDialog()
+local Class = QtCore.Class('StyleSheetEditor', QtWidgets.QDialog) {}
 
 function Class:__static_init()
     self:__addslot('on_styleCombo_activated(QString)', self.on_styleCombo_activated)
@@ -108,4 +108,4 @@ function Class:loadStyleSheet(sheetName)
 	self.ui.applyButton:setEnabled(false)
 end
 
-return QtCore.Class(Class)
+return Class

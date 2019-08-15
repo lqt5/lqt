@@ -53,7 +53,7 @@ local QtWidgets = require 'qtwidgets'
 
 local StyleSheetEditor = require 'stylesheeteditor'
 
-local Class = QtWidgets.QMainWindow()
+local Class = QtCore.Class('MainWindow', QtWidgets.QMainWindow) {}
 
 function Class:__static_init()
     self:__addslot('on_editStyleAction_triggered()', self.on_editStyleAction_triggered)
@@ -87,4 +87,4 @@ function Class:on_aboutAction_triggered()
     )
 end
 
-return QtCore.Class(Class)
+return Class

@@ -55,7 +55,7 @@ local Commands = require 'commands'
 local DiagramItem = require 'diagramitem'
 local DiagramScene = require 'diagramscene'
 
-local Class = QtWidgets.QMainWindow()
+local Class = QtCore.Class('MainWindow', QtWidgets.QMainWindow) {}
 
 function Class:__static_init()
     self:__addslot('itemMoved(QGraphicsPolygonItem*,QPointF)', self.itemMoved)
@@ -206,4 +206,4 @@ function Class:about()
     )
 end
 
-return QtCore.Class(Class)
+return Class

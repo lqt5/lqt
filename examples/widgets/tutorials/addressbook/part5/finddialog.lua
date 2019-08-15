@@ -50,7 +50,7 @@
 local QtCore = require 'qtcore'
 local QtWidgets = require 'qtwidgets'
 
-local FindDialog = QtWidgets.QDialog()
+local FindDialog = QtCore.Class('FindDialog', QtWidgets.QDialog) {}
 
 function FindDialog:__static_init()
 	self:__addslot('findClicked()', self.findClicked)
@@ -99,4 +99,4 @@ function FindDialog:getFindText()
 end
 --! [getFindText() function]
 
-return QtCore.Class(FindDialog)
+return FindDialog

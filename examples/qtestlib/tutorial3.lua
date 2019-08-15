@@ -55,7 +55,7 @@ local QtGui = require 'qtgui'
 local QtWidgets = require 'qtwidgets'
 local QtTest = require 'qttest'
 
-local TestObject = QtCore.QObject()
+local TestObject = QtCore.Class('TestObject', QtCore.QObject) {}
 
 function TestObject:__static_init()
 	self:__addslot('testGui()', self.testGui, 'private')
@@ -71,7 +71,5 @@ function TestObject:testGui()
 
 	QtTest.QCOMPARE(lineEdit:text(), QtCore.QLatin1String 'hello world')
 end
-
-TestObject = QtCore.Class(TestObject)
 
 return qTestMain('widgets', TestObject)

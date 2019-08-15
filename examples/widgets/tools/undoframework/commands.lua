@@ -61,7 +61,7 @@ local function createCommandString(item, pos)
     )
 end
 
-local MoveCommand = QtWidgets.QUndoCommand()
+local MoveCommand = QtCore.Class('MoveCommand', QtWidgets.QUndoCommand) {}
 
 function MoveCommand:__static_init()
     self.Id = 1234
@@ -107,7 +107,7 @@ function MoveCommand:mergeWith(command)
     return true
 end
 
-local DeleteCommand = QtWidgets.QUndoCommand()
+local DeleteCommand = QtCore.Class('DeleteCommand', QtWidgets.QUndoCommand) {}
 
 function DeleteCommand:__init(scene)
     self.myGraphicsScene = scene
@@ -129,7 +129,7 @@ function DeleteCommand:redo()
     self.myGraphicsScene:removeItem(self.myDiagramItem)
 end
 
-local AddCommand = QtWidgets.QUndoCommand()
+local AddCommand = QtCore.Class('AddCommand', QtWidgets.QUndoCommand) {}
 
 function AddCommand:__static_init()
     self.itemCount = 0
@@ -172,7 +172,7 @@ function AddCommand:__uninit()
 end
 
 return {
-    MoveCommand = QtCore.Class(MoveCommand),
-    AddCommand = QtCore.Class(AddCommand),
-    DeleteCommand = QtCore.Class(DeleteCommand),
+    MoveCommand = MoveCommand,
+    AddCommand = AddCommand,
+    DeleteCommand = DeleteCommand,
 }
