@@ -120,9 +120,8 @@ function Class:__init()
 end
 
 function Class:__uninit()
-    if self:cleanup(true) then
-        self.m_logoVbo:delete()
-    end
+    self:cleanup(true)
+    self.m_logoVbo:delete()
 end
 
 local function qNormalizeAngle(angle)
@@ -163,9 +162,6 @@ function Class:setZRotation(angle)
 end
 
 function Class:cleanup(gc)
-    if not self.m_program then
-        return false
-    end
     self:makeCurrent()
     if not gc then
         self.m_logoVbo:destroy()
@@ -173,7 +169,6 @@ function Class:cleanup(gc)
     self.m_program:delete()
     self.m_program = false
     self:doneCurrent()
-    return true
 end
 
 local vertexShaderSourceCore = [[#version 150
