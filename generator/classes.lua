@@ -482,7 +482,8 @@ function fill_wrapper_code(f)
 	local has_args = true
 	local wrap, line = '  int oldtop = lua_gettop(L);\n', ''
 
-	if f.xarg.abstract then
+	-- always bind virtual function
+	if f.xarg.abstract and not f.xarg.virtual then
 		ignore(f.xarg.fullname, 'abstract method', f.xarg.member_of_class)
 		return nil
 	end
@@ -497,16 +498,29 @@ function fill_wrapper_code(f)
 		and f.xarg.member_of ~= f.xarg.name
 		and not f.xarg.signal
 	then
-  		local protected_code = string.format([[  %s%s %s({PARAM_DECLS}) %s{
+  		local protected_code
+  		if f.xarg.abstract then
+	  		protected_code = string.format([[  %s%s %s({PARAM_DECLS}) %s{
+    return %s;
+  }]]
+	  			, f.xarg.static and 'static ' or ''
+	  			, f.xarg.type_name
+	  			, f.xarg.name
+	  			, f.xarg.constant and 'const ' or ''
+	  			, virtuals.parse_return_type(f.return_type)
+	  		)
+  		else
+	  		protected_code = string.format([[  %s%s %s({PARAM_DECLS}) %s{
     return %s::%s({PARAMS});
   }]]
-  			, f.xarg.static and 'static ' or ''
-  			, f.xarg.type_name
-  			, f.xarg.name
-  			, f.xarg.constant and 'const ' or ''
-  			, f.xarg.member_of
-  			, f.xarg.name
-  		)
+	  			, f.xarg.static and 'static ' or ''
+	  			, f.xarg.type_name
+	  			, f.xarg.name
+	  			, f.xarg.constant and 'const ' or ''
+	  			, f.xarg.member_of
+	  			, f.xarg.name
+	  		)
+	  	end
 
   		local param_decls = {}
   		local params = {}
@@ -557,11 +571,14 @@ function fill_wrapper_code(f)
 			if not line then return nil end
 		-- elseif f.xarg.virtual then
 		-- 	line = 'self->'..f.xarg.name..'('
+		elseif f.xarg.abstract then
+			line = 'self->'..f.xarg.name..'('
 		elseif class_prefix then
 			line = 'self->'..class_prefix..f.xarg.member_of_class:match('[^:]+$')..'::'..f.xarg.name..'('
 		else
 			line = 'self->'..f.xarg.fullname..'('
 		end
+
 		if VERBOSE_BUILD then
 			wrap = wrap .. '  printf("[%p; %p] %s :: %s (%d)\\n", ' ..
 				'QThread::currentThreadId(), self, ' ..

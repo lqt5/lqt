@@ -21,7 +21,7 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i);
 bool lqtL_isGenericArgument(lua_State *L, int i);
 
 // QWebEngineCallback type handlers
-#ifdef MODULE_qtwebenginewidgets
+#if defined(MODULE_qtwebenginecore) || defined(MODULE_qtwebenginewidgets)
 #include <QtWebEngineCore/QWebEngineCallback>
 
 QWebEngineCallback<int> lqtL_getQWebEngineCallback_int(lua_State *L, int idx);

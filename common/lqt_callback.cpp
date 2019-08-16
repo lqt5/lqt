@@ -1,7 +1,7 @@
 #include "lqt_qt.hpp"
 #include "lqt_addmethod.h"
 
-#ifdef MODULE_qtwebenginewidgets
+#if defined(MODULE_qtwebenginecore) || defined(MODULE_qtwebenginewidgets)
 
 QWebEngineCallback<int> lqtL_getQWebEngineCallback_int(lua_State *L, int idx) {
 

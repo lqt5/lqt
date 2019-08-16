@@ -88,7 +88,6 @@ typedef QList<QObject*> QObjectList;
 class Q_CORE_EXPORT QObjectData {
 public:
     virtual ~QObjectData() = 0;
-    virtual void __lqt_disable() = 0;
 
     QObject *q_ptr;
     QObject *parent;
@@ -106,6 +105,9 @@ public:
     int postedEvents;
     QDynamicMetaObjectData *metaObject;
     QMetaObject *dynamicMetaObject() const;
+private:
+    // TODO:lqt disable ctor
+    Q_DECLARE_PRIVATE(QObjectData)
 };
 
 class Q_CORE_EXPORT QObject

@@ -106,7 +106,7 @@ function fill_virtuals(classes)
 	end
 end
 
-local function parse_return_type(return_type)
+function parse_return_type(return_type)
 	if not return_type then
 		return ''
 	elseif return_type:find('%*$') then
@@ -242,16 +242,6 @@ function fill_virtual_overloads(classes)
 			local vidx = 0
 			for i, list in pairs(c.virtuals) do
 				for _,v in ipairs(list) do
-					if not v.xarg then
-						print('\n')
-						table.foreach(c.virtuals, print)
-						print('\n')
-						table.foreach(list, print)
-						print('\n')
-						table.foreach(v, print)
-						print('\n')
-					end
-
 					if v.xarg.access~='private' then
 						local vret, err = virtual_overload(v)
 						if not vret and v.xarg.abstract then
