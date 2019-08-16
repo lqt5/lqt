@@ -26,6 +26,17 @@ require 'strict'
 
 local QtCore = require 'qtcore'
 --------------------------------------------------------------------------------
+-- QFlags::testFlag
+--------------------------------------------------------------------------------
+QtCore.testFlag = function(flags, field)
+    for _,flag in ipairs(flags) do
+        if flag == field then
+            return true
+        end
+    end
+    return false
+end
+--------------------------------------------------------------------------------
 -- Qt useful routines
 --------------------------------------------------------------------------------
 rawset(_G, 'SIGNAL', function(s) return '2' .. s end)
@@ -43,7 +54,7 @@ end
 --------------------------------------------------------------------------------
 -- Qt ui loader
 --------------------------------------------------------------------------------
-rawset(_G, 'qSetupUi', function(path, root)
+rawset(_G, 'qSetupUi', function(path, root, customBuilder)
     local QtUiTools = require 'qtuitools'
 
     local file = QtCore.QFile(path)
@@ -54,6 +65,11 @@ rawset(_G, 'qSetupUi', function(path, root)
         -- if name:toStdString() == 'root' and parent == nil then
         if not parent then
             return root
+        end
+        local widget = customBuilder and customBuilder(className, parent) or nil
+        if widget ~= nil then
+        	widget:setObjectName(name)
+        	return widget
         end
         return QtUiTools.QUiLoader.createWidget(self, className, parent, name)
     end
@@ -75,6 +91,8 @@ rawset(_G, 'qSetupUi', function(path, root)
     root.ui = ui
 
     QtCore.QMetaObject.connectSlotsByName(root)
+
+    return formWidget
 end)
 --------------------------------------------------------------------------------
 -- for debug purpuse

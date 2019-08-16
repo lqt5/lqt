@@ -466,8 +466,9 @@ return function(QtCore
 
         return function(obj, cls)
             local objCaches = clsCaches[cls]
+            local key = tostring(obj)
             if objCaches then
-                local flag = objCaches[obj]
+                local flag = objCaches[key]
                 if flag ~= nil then
                     return flag
                 end
@@ -479,7 +480,7 @@ return function(QtCore
                 objCaches = setmetatable({}, { __mode = 'k' })
                 clsCaches[cls] = objCaches
             end
-            objCaches[obj] = ret
+            objCaches[key] = ret
 
             return ret
         end
