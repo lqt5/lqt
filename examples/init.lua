@@ -33,6 +33,14 @@ rawset(_G, 'SLOT', function (s) return '1' .. s end)
 rawset(_G, 'tr', assert(QtCore.QObject.tr))
 rawset(_G, 'qApp', function() return QtCore.QCoreApplication.instance() end)
 --------------------------------------------------------------------------------
+-- hook print lua api, flush after print
+--------------------------------------------------------------------------------
+local print = _G.print
+_G.print = function(...)
+	print(...)
+	io.flush()
+end
+--------------------------------------------------------------------------------
 -- Qt ui loader
 --------------------------------------------------------------------------------
 rawset(_G, 'qSetupUi', function(path, root)

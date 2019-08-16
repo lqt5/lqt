@@ -609,6 +609,10 @@ function fill_wrapper_code(f)
 		local aget, an, arg_as = typesystem[a.xarg.type_name].get(stackn, type_name)
 		stack_args = stack_args .. typesystem[a.xarg.type_name].onstack
 		if typesystem[a.xarg.type_name].defect then defects = defects + typesystem[a.xarg.type_name].defect end
+		-- replace typename into non-ref type
+		--	fix error: non-const lvalue reference to type 'QWebEngineCallback<...>' cannot bind to a temporary of type 'QWebEngineCallback<...>'
+		--   QWebEngineCallback<int>& arg1 = lqtL_getQWebEngineCallback_int(L, 1);
+		if typesystem[a.xarg.type_name].lvalue then type_name = type_name:gsub('&$', '') end
 		if class_prefix then
 			wrap = wrap .. '  ' .. argument_name(type_name, 'arg'..argn) .. ' = '
 		else

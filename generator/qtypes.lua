@@ -109,6 +109,28 @@ qt_types['QGenericArgument'] = {
 	onstack = 'any,',
 }
 
+local QWebEngineCallback_type = function(d) return {
+	get = function(j)
+		return 'lqtL_getQWebEngineCallback_'..d..'(L, '..tostring(j)..')', 1
+	end,
+	test = function(j)
+		return 'lua_isfunction(L, '..tostring(j)..')', 1
+	end,
+	onstack = 'function,',
+	lvalue = true,
+} end
+
+qt_types['QWebEngineCallback<int>&'] = QWebEngineCallback_type('int')
+qt_types['QWebEngineCallback<int> const&'] = QWebEngineCallback_type('int')
+qt_types['QWebEngineCallback<const QByteArray&>&'] = QWebEngineCallback_type('QByteArray')
+qt_types['QWebEngineCallback<const QByteArray&> const&'] = QWebEngineCallback_type('QByteArray')
+qt_types['QWebEngineCallback<bool>&'] = QWebEngineCallback_type('bool')
+qt_types['QWebEngineCallback<bool> const&'] = QWebEngineCallback_type('bool')
+qt_types['QWebEngineCallback<const QString&>&'] = QWebEngineCallback_type('QString')
+qt_types['QWebEngineCallback<const QString&> const&'] = QWebEngineCallback_type('QString')
+qt_types['QWebEngineCallback<const QVariant&>&'] = QWebEngineCallback_type('QVariant')
+qt_types['QWebEngineCallback<const QVariant&> const&'] = QWebEngineCallback_type('QVariant')
+
 if not getmetatable(qt_types) then
 	setmetatable(qt_types, {
 		__index = function(t, k)

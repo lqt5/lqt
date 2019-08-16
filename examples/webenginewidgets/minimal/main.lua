@@ -99,11 +99,22 @@ view:setUrl(commandLineUrlArgument())
 view:resize(1024, 750)
 view:show()
 
-local devToolsPage = QtWebEngineWidgets.QWebEngineView()
-devToolsPage:resize(1024, 750)
-devToolsPage:show()
+-- local devToolsPage = QtWebEngineWidgets.QWebEngineView()
+-- devToolsPage:resize(1024, 750)
+-- devToolsPage:show()
 
-devToolsPage:page():setInspectedPage(view:page())
-view:page():setDevToolsPage(devToolsPage:page())
+-- devToolsPage:page():setInspectedPage(view:page())
+-- view:page():setDevToolsPage(devToolsPage:page())
+
+view:connect(SIGNAL 'loadFinished(bool)', function(_,ok)
+    print('loadFinished', ok)
+
+    view:page():runJavaScript('document.location.href', function(value)
+        print(value:value():toStdString())
+    end)
+    view:page():runJavaScript('Math.random()', function(value)
+        print(value:value())
+    end)
+end)
 
 app.exec()

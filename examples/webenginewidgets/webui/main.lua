@@ -76,7 +76,7 @@ page:load(WebUiHandler.aboutUrl)
 local view = QtWebEngineWidgets.QWebEngineView()
 view:setPage(page)
 view:setContextMenuPolicy(QtCore.NoContextMenu)
-view:resize(600, 600)
+view:resize(500, 600)
 view:show()
 
 app.exec()
