@@ -7,17 +7,39 @@ function fill_virtuals(classes)
 	for c in pairs(classes) do
 		byname[c.xarg.fullname] = c
 	end
+	-- check if func exists in list
+	local function exists(list, func)
+		for _,f in ipairs(list) do
+			if f == func then
+				return true
+			end
+		end
+		return false
+	end
+
 	local function get_virtuals(c, includePrivate)
 		local methods = {}
 		for _, f in ipairs(c) do
 			if f.label=='Function' and f.xarg.virtual ~= '1' then
-				methods[f.xarg.name] = f
+				if not methods[f.xarg.name] then
+					methods[f.xarg.name] = { f }
+				-- do not insert same function twice
+				elseif not exists(methods[f.xarg.name], f) then
+					table.insert(methods[f.xarg.name], f)
+				end
 			end
 		end
 
 		local ret = {}
 		local function add_overload(name, func)
-			ret[name] = func
+			-- support for multiple virtual overload functions
+			assert(func.xarg)
+			if not ret[name] then
+				ret[name] = { func }
+			-- do not insert same function twice
+			elseif not exists(ret[name], func) then
+				table.insert(ret[name], func)
+			end
 		end
 
 		-- add virtual methods declared in the class
@@ -35,16 +57,20 @@ function fill_virtuals(classes)
 			local base = byname[b]
 			if type(base)=='table' then
 				local bv = get_virtuals(base, true)
-				for n, f in pairs(bv) do
+				for n, list in pairs(bv) do
 					-- print('found', n, 'in', b, 'for', c.xarg.name, 'have', not not ret[n])
 					if not ret[n] then
 						if methods[n] then
 							-- print('has', n, 'which is not marked virtual')
-							methods[n].xarg.virtual = '1'
-							add_overload(n, methods[n])
+							for _,f in ipairs(methods[n]) do
+								f.xarg.virtual = '1'
+								add_overload(n, f)
+							end
 						else
-							-- print('does not have', n)
-							add_overload(n, f)
+							for _,f in ipairs(list) do
+								-- print('does not have', n)
+								add_overload(n, f)
+							end
 						end
 					end
 				end
@@ -66,8 +92,10 @@ function fill_virtuals(classes)
 		end
 
 		local virtual_index = 0
-		for n, f in pairs(ret) do
-			f.virtual_index = virtual_index
+		for n, list in pairs(ret) do
+			for _,f in ipairs(list) do
+				f.virtual_index = virtual_index
+			end
 			virtual_index = virtual_index + 1
 		end
 
@@ -212,12 +240,24 @@ function fill_virtual_overloads(classes)
 	for c in pairs(classes) do
 		if c.virtuals then
 			local vidx = 0
-			for i, v in pairs(c.virtuals) do
-				if v.xarg.access~='private' then
-					local vret, err = virtual_overload(v)
-					if not vret and v.xarg.abstract then
-						-- cannot create instance without implementation of an abstract method
-						c.abstract = true
+			for i, list in pairs(c.virtuals) do
+				for _,v in ipairs(list) do
+					if not v.xarg then
+						print('\n')
+						table.foreach(c.virtuals, print)
+						print('\n')
+						table.foreach(list, print)
+						print('\n')
+						table.foreach(v, print)
+						print('\n')
+					end
+
+					if v.xarg.access~='private' then
+						local vret, err = virtual_overload(v)
+						if not vret and v.xarg.abstract then
+							-- cannot create instance without implementation of an abstract method
+							c.abstract = true
+						end
 					end
 				end
 			end
@@ -257,9 +297,11 @@ function fill_shell_class(c)
 		cline = cline .. ' : ' .. c.xarg.fullname .. '(arg1), L(l) {}\n'
 		shell = shell .. cline
 	end
-	for i, v in pairs(c.virtuals) do
-		if v.xarg.access~='private' then
-			if v.virtual_proto then shell = shell .. '  virtual ' .. v.virtual_proto .. ';\n' end
+	for i, list in pairs(c.virtuals) do
+		for _,v in ipairs(list) do
+			if v.xarg.access~='private' then
+				if v.virtual_proto then shell = shell .. '  virtual ' .. v.virtual_proto .. ';\n' end
+			end
 		end
 	end
 	shell = shell .. '  ~'..shellname..'() { lqtL_unregister(L, this, "' .. c.xarg.fullname .. '*"); }\n'
@@ -333,9 +375,11 @@ end
 function sort_by_index(c)
 	local res = {}
 	local vidx = 0
-	for name, virt in pairs(c.virtuals) do
-		virt.virtual_index = vidx
-		res[#res + 1] = virt
+	for name, list in pairs(c.virtuals) do
+		for _,virt in ipairs(list) do
+			virt.virtual_index = vidx
+			res[#res + 1] = virt
+		end
 		vidx = vidx + 1
 	end
 	table.sort(res, function(v1, v2) return v1.virtual_index < v2.virtual_index end)
