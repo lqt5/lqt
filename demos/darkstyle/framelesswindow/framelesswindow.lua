@@ -135,87 +135,43 @@ function Class:setWindowIcon(icon)
 end
 
 function Class:styleWindow(active, maximized)
-    -- print(string.format('styleWindow %s %s', active and 'active' or 'inactive', maximized and 'maximized' or 'normal'))
-    if active then
-        if not maximized then
-            self:layout():setMargin(15)
-            self.ui.windowTitlebar:setStyleSheet [[#windowTitlebar {
+
+    local qssWindowTitlebar = ([[#windowTitlebar {
     border: 0px none palette(shadow);
-    border-top-left-radius:5px;
-    border-top-right-radius:5px;
-    background-color:palette(shadow);
+    border-top-left-radius:{border}px;
+    border-top-right-radius:{border}px;
+    background-color:palette({palette});
     height:20px;
-}]]
-            self.ui.windowFrame:setStyleSheet [[#windowFrame {
-    border:1px solid palette(highlight);
-    border-radius:5px 5px 5px 5px;
+}]]):gsub('{palette}', active and 'shadow' or 'dark')
+    :gsub('{border}', maximized and 0 or 5)
+
+    local qssWindowFrame = ([[#windowFrame {
+    border:1px solid {palette};
+    border-radius:{border}px {border}px {border}px {border}px;
     background-color:palette(Window);
-}]]
-            local oldShadow = self.ui.windowFrame:graphicsEffect()
-            if oldShadow then oldShadow:delete() end
-            local windowShadow = QtWidgets.QGraphicsDropShadowEffect.new()
-            windowShadow:setBlurRadius(9.0)
-            windowShadow:setColor(self:palette():color('Highlight'))
-            windowShadow:setOffset(0, 0)
-            self.ui.windowFrame:setGraphicsEffect(windowShadow)
-        else
-            self:layout():setMargin(0)
-            self.ui.windowTitlebar:setStyleSheet [[#windowTitlebar {
-    border: 0px none palette(shadow);
-    border-top-left-radius:0px;
-    border-top-right-radius:0px;
-    background-color:palette(shadow);
-    height:20px;
-}]]
-            self.ui.windowFrame:setStyleSheet [[#windowFrame {
-    border:1px solid palette(dark);
-    border-radius:0px 0px 0px 0px;
-    background-color:palette(Window);
-}]]
-            local oldShadow = self.ui.windowFrame:graphicsEffect()
-            if oldShadow then oldShadow:delete() end
-            self.ui.windowFrame:setGraphicsEffect(nil)
-        end
+}]]):gsub('{palette}'
+        , maximized
+            and (active and 'dark' or 'shadow')
+            or (active and 'palette(highlight)' or '#000000')
+    )
+    :gsub('{border}', maximized and 0 or 5)
+
+    self:layout():setMargin(maximized and 0 or 15)
+
+    self.ui.windowTitlebar:setStyleSheet(qssWindowTitlebar)
+    self.ui.windowFrame:setStyleSheet(qssWindowFrame)
+
+    local oldShadow = self.ui.windowFrame:graphicsEffect()
+    if oldShadow then oldShadow:delete() end
+
+    if not maximized then
+        local windowShadow = QtWidgets.QGraphicsDropShadowEffect.new()
+        windowShadow:setBlurRadius(9.0)
+        windowShadow:setColor(self:palette():color(active and 'Highlight' or 'Shadow'))
+        windowShadow:setOffset(0, 0)
+        self.ui.windowFrame:setGraphicsEffect(windowShadow)
     else
-        if not maximized then
-            self:layout():setMargin(15)
-            self.ui.windowTitlebar:setStyleSheet [[#windowTitlebar {
-    border: 0px none palette(shadow); 
-    border-top-left-radius:5px;
-    border-top-right-radius:5px;
-    background-color:palette(dark);
-    height:20px;
-}]]
-            self.ui.windowFrame:setStyleSheet [[#windowFrame {
-    border:1px solid #000000;
-    border-radius:5px 5px 5px 5px;
-    background-color:palette(Window);
-}]]
-            local oldShadow = self.ui.windowFrame:graphicsEffect()
-            if oldShadow then oldShadow:delete() end
-            local windowShadow = QtWidgets.QGraphicsDropShadowEffect.new()
-            windowShadow:setBlurRadius(9.0)
-            windowShadow:setColor(self:palette():color('Shadow'))
-            windowShadow:setOffset(0, 0)
-            self.ui.windowFrame:setGraphicsEffect(windowShadow)
-        else
-            self:layout():setMargin(0)
-            self.ui.windowTitlebar:setStyleSheet [[#titlebarWidget {
-    border: 0px none palette(shadow);
-    border-top-left-radius:0px;
-    border-top-right-radius:0px;
-    background-color:palette(dark);
-    height:20px;
-}]]
-            self.ui.windowFrame:setStyleSheet [[#windowFrame {
-    border:1px solid palette(shadow);
-    border-radius:0px 0px 0px 0px;
-    background-color:palette(Window);
-}]]
-            local oldShadow = self.ui.windowFrame:graphicsEffect()
-            if oldShadow then oldShadow:delete() end
-            self.ui.windowFrame:setGraphicsEffect(nil)
-        end
+        self.ui.windowFrame:setGraphicsEffect(nil)
     end
 end
 
@@ -243,60 +199,59 @@ function Class:mouseDoubleClickEvent(event)
 end
 
 function Class:updateMouseBorderHit(globalMousePos, pressed)
-    if self:leftBorderHit(globalMousePos) and self:topBorderHit(globalMousePos) then
-        if pressed then
-            self.dragTop = true
-            self.dragLeft = true
+    for _, info in ipairs {
+        { QtCore.SizeFDiagCursor, 'dragLeft,dragTop', self.leftBorderHit, self.topBorderHit },
+        { QtCore.SizeBDiagCursor, 'dragRight,dragTop', self.rightBorderHit, self.topBorderHit },
+        { QtCore.SizeBDiagCursor, 'dragLeft,dragBottom', self.leftBorderHit, self.bottomBorderHit },
+        { QtCore.SizeVerCursor, "dragTop", self.topBorderHit },
+        { QtCore.SizeHorCursor, "dragLeft", self.leftBorderHit },
+        { QtCore.SizeHorCursor, "dragRight", self.rightBorderHit },
+        { QtCore.SizeVerCursor, "dragBottom", self.bottomBorderHit },
+    } do
+        local pass = true
+        for idx = 3,#info do
+            local func = info[idx]
+            if not func(self, globalMousePos) then
+                pass = false
+                break
+            end
         end
-        self:setCursor(QtCore.SizeFDiagCursor)
-        return true
-    elseif self:rightBorderHit(globalMousePos) and self:topBorderHit(globalMousePos) then
-        if pressed then
-            self.dragRight = true
-            self.dragTop = true
+        if pass then
+            if pressed then
+                for coord in (info[2]):gmatch('%w+') do
+                    self[coord] = true
+                end
+            end
+
+            self:setCursor(info[1])
+            return true
         end
-        self:setCursor(QtCore.SizeBDiagCursor)
-        return true
-    elseif self:leftBorderHit(globalMousePos) and self:bottomBorderHit(globalMousePos) then
-        if pressed then
-            self.dragLeft = true
-            self.dragBottom = true
-        end
-        self:setCursor(QtCore.SizeBDiagCursor)
-        return true
-    elseif self:topBorderHit(globalMousePos) then
-        if pressed then
-            self.dragTop = true
-        end
-        self:setCursor(QtCore.SizeVerCursor)
-        return true
-    elseif self:leftBorderHit(globalMousePos) then
-        if pressed then
-            self.dragLeft = true
-        end
-        self:setCursor(QtCore.SizeHorCursor)
-        return true
-    elseif self:rightBorderHit(globalMousePos) then
-        if pressed then
-            self.dragRight = true
-        end
-        self:setCursor(QtCore.SizeHorCursor)
-        return true
-    elseif self:bottomBorderHit(globalMousePos) then
-        if pressed then
-            self.dragBottom = true
-        end
-        self:setCursor(QtCore.SizeVerCursor)
-        return true
     end
     return false
+end
+
+function Class:setGeometry(rect)
+    local geometry = self:geometry()
+
+    -- limit size ti minimumSize
+    local size = self:minimumSize()
+    if rect:width() > size:width() then
+        geometry:setX(rect:x())
+        geometry:setWidth(rect:width())
+    end
+
+    if rect:height() > size:height() then
+        geometry:setY(rect:y())
+        geometry:setHeight(rect:height())
+    end
+
+    QtWidgets.QWidget.setGeometry(self, geometry)
 end
 
 function Class:checkBorderDragging(event)
     if self:isMaximized() then
         return
     end
-    -- print('checkBorderDragging', event)
 
     local globalMousePos = event:globalPos()
     if self.mousePressed then
@@ -447,23 +402,21 @@ function Class:mouseReleaseEvent(event)
 end
 
 function Class:eventFilter(obj, event)
-    if self:isMaximized() then
-        return QtWidgets.QWidget.eventFilter(self, obj, event)
-    end
-
-    -- check mouse move event when mouse is moved on any object
-    if event:type() == 'MouseMove' then
-        if QtCore.isInstanceOf(event, QtGui.QMouseEvent) then
-            self:checkBorderDragging(event)
-        end
-    -- press is triggered only on frame window
-    elseif event:type() == 'MouseButtonPress' and obj == self then
-        if QtCore.isInstanceOf(event, QtGui.QMouseEvent) then
-            self:mousePressEvent(event)
-        end
-    elseif event:type() == 'MouseButtonRelease' then
-        if QtCore.isInstanceOf(event, QtGui.QMouseEvent) then
-            self:mouseReleaseEvent(event)
+    if not self:isMaximized() then
+        -- check mouse move event when mouse is moved on any object
+        if event:type() == 'MouseMove' then
+            if QtCore.isInstanceOf(event, QtGui.QMouseEvent) then
+                self:checkBorderDragging(event)
+            end
+        -- press is triggered only on frame window
+        elseif event:type() == 'MouseButtonPress' and obj == self then
+            if QtCore.isInstanceOf(event, QtGui.QMouseEvent) then
+                self:mousePressEvent(event)
+            end
+        elseif event:type() == 'MouseButtonRelease' then
+            if QtCore.isInstanceOf(event, QtGui.QMouseEvent) then
+                self:mouseReleaseEvent(event)
+            end
         end
     end
     return QtWidgets.QWidget.eventFilter(self, obj, event)
