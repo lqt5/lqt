@@ -184,8 +184,8 @@ public:
         // last event id used = 132
 
 // #ifdef QT_KEYPAD_NAVIGATION
-//         EnterEditFocus = 150,                   // enter edit mode in keypad navigation
-//         LeaveEditFocus = 151,                   // enter edit mode in keypad navigation
+//        EnterEditFocus = 150,                   // enter edit mode in keypad navigation
+//        LeaveEditFocus = 151,                   // enter edit mode in keypad navigation
 // #endif
         AcceptDropsChange = 152,
 
@@ -248,15 +248,15 @@ public:
         TouchEnd = 196,
 
 // #ifndef QT_NO_GESTURES
-//         NativeGesture = 197,                    // QtGui native gesture
+        NativeGesture = 197,                    // QtGui native gesture
 // #endif
         RequestSoftwareInputPanel = 199,
         CloseSoftwareInputPanel = 200,
 
         WinIdChange = 203,
 // #ifndef QT_NO_GESTURES
-//         Gesture = 198,
-//         GestureOverride = 202,
+        Gesture = 198,
+        GestureOverride = 202,
 // #endif
         ScrollPrepare = 204,
         Scroll = 205,
