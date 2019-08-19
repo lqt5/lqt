@@ -185,7 +185,7 @@ local function pointer_type(type)
 		test = function(j) -- must handle arguments (e.g. in virtual callbacks) and return values
 			return 'lqtL_ispointer(L, '..tostring(j)..')', 1
 		end,
-		onstack = 'userdata,',
+		onstack = 'userdata/cdata/nil,',
 	}
 end
 
@@ -193,5 +193,6 @@ base_types['void const*'] = pointer_type('void')
 base_types['float const*'] = pointer_type('float')
 base_types['double const*'] = pointer_type('double')
 base_types['qreal const*'] = base_types['double const*']
+base_types['unsigned char const*'] = pointer_type('unsigned char')
 
 return base_types
