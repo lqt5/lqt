@@ -53,8 +53,18 @@ end
 function create(class, ret)
 	local temps = should_copy(class)
 
-	local replace_in = {name=true, context=true, fullname=true, member_of=true, member_of_class=true,
-		scope=true, type_base=true, type_name=true, return_type=true }
+	local replace_in = {
+		name = true,
+		context = true,
+		fullname = true,
+		member_of = true,
+		member_of_class = true,
+		scope = true,
+		type_base = true,
+		type_name = true,
+		return_type = true,
+		defaultvalue = true,
+	}
 
 	local function is_disabled_func(name, list)
 		for _,n in ipairs(list) do
@@ -65,19 +75,39 @@ function create(class, ret)
 		return false
 	end
 
-	local function template_repare(o, orig, new, disable_funcs)
-		for k,v in pairs(o) do
+	local function template_repare(obj, orig, new, disable_funcs)
+		-- generate replace-map splite by ','
+		--	orig: Key,T
+		--	new: QString,QVariant
+		--  	-> { Key = 'QString', T = 'QVariant' }
+		local replaces = {}
+		for o in orig:gmatch('[^,]+') do table.insert(replaces, o) end
+		for n in new:gmatch('[^,]+') do
+			local o = table.remove(replaces, 1)
+			assert(o ~= nil, string.format('invalid replace tempalte: %s -> %s', orig, new))
+			replaces[o] = n
+		end
+
+		for k,v in pairs(obj) do
 			if replace_in[k] then
-				o[k] = o[k]:gsub(orig, new)
+				-- local old = obj[k]
+
+				obj[k] = obj[k]:gsub('%w+', function(o)
+					return replaces[o] or o
+				end)
+
+				-- if old ~= obj[k] then
+				-- 	print(' >> replace', orig, new, old, obj[k])
+				-- end
 			elseif k == 'member_template_parameters' then
 				-- ignore
-				o[k] = nil
+				obj[k] = nil
 			elseif type(v) == "table" then
 				template_repare(v, orig, new, disable_funcs)
 			end
 		end
-		if o.label and o.label:match'^Function' and not is_disabled_func(o.xarg.name, disable_funcs) then
-			idindex_add[o] = true -- will be copied to index, so that later it can be picked up by copy_functions
+		if obj.label and obj.label:match'^Function' and not is_disabled_func(obj.xarg.name, disable_funcs) then
+			idindex_add[obj] = true -- will be copied to index, so that later it can be picked up by copy_functions
 		end
 	end
 

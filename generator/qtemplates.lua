@@ -5,10 +5,6 @@ return {
 	-- module = { ['ex2<K,V>'] = { 'example<char*, int>' } }
 	
 	qtcore = {
-		-- 'QHash<QString,QVariant>',
-		-- 'QHash<int,QByteArray>',
-		-- 'QMap<QString,QVariant>',
-		-- 'QMap<int,QVariant>',
 		-- 'QPair<QCborValue,QCborValue>',
 		-- 'QPair<qint64,unsigned>',
 		-- 'QStringBuilder<QByteArray,QByteArray>',
@@ -88,9 +84,17 @@ return {
 		['QFlags<Enum>'] = {
 			-- 'QFlags<KeyboardModifier>',
 		},
+		['QHash<Key,T>'] = {
+			'QHash<QString,QVariant>',
+			'QHash<int,QByteArray>',
+		},
+		['QMap<Key,T>'] = {
+			'QMap<QString,QVariant>',
+			'QMap<int,QVariant>',
+			'QMap<QByteArray,QVariant>',
+		},
 	},
 	qtnetwork = {
-		-- 'QMap<QByteArray,QVariant>',
 		-- 'QPair<QHostAddress,int>',
 		['QList<T>'] = {
 			{ 'QList<QDnsDomainNameRecord>', { 'count', 'indexOf', 'contains', 'startsWith', 'endsWith', 'removeOne', 'removeAll', 'lastIndexOf', 'operator==' } },
@@ -189,7 +193,6 @@ return {
 		},
 	},
 	qtwidgets = {
-		-- 'QMap<QDate,QTextCharFormat>',
 		['QList<T>'] = {
 			'QList<QAbstractButton*>',
 			'QList<QAction*>',
@@ -220,6 +223,9 @@ return {
 			'QVector<QTableWidgetItem*>',
 			'QVector<QTreeWidgetItem*>',
 		},
+		['QMap<Key,T>'] = {
+			'QMap<QDate,QTextCharFormat>',
+		},
 	},
 	qtopengl = {
 		['QList<T>'] = {
@@ -244,9 +250,11 @@ return {
 		},
 	},
 	qtwebchannel = {
-		-- 'QHash<QString,QObject*>',
 		['QQmlListProperty<T>'] = {
 			'QQmlListProperty<QObject>',
+		},
+		['QHash<Key,T>'] = {
+			'QHash<QString,QObject*>',
 		},
 	},
 	qtwebenginewidgets = {
