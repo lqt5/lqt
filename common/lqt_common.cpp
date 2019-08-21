@@ -1180,11 +1180,15 @@ void lqtL_pushflags (lua_State *L, int value, const char *name) {
                 //<< ((void*)value) << (void*)(lua_tointeger(L, -2)&value)
                 //<< ((lua_tointeger(L, -2)&value)==lua_tointeger(L, -2)) << lua_tostring(L, -1);
         //}
-        if (lua_isnumber(L, -2) &&
-                ((lua_tointeger(L, -2)&value)==lua_tointeger(L, -2))) {
-            // (4) if index is the value
-            lua_rawseti(L, -4, index); // (3) the string is put into the ret table
-            index = index + 1; // (3) the size of the ret table has increased
+        if (lua_isnumber(L, -2)) {
+            int flag = lua_tointeger(L, -2);
+            if ((value & flag) == flag && (flag != 0 || value == flag)) {
+                // (4) if index is the value
+                lua_rawseti(L, -4, index); // (3) the string is put into the ret table
+                index = index + 1; // (3) the size of the ret table has increased
+            } else {
+                lua_pop(L, 1); // (3) pop the value
+            }
         } else {
             lua_pop(L, 1); // (3) pop the value
         }
