@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Transform Tool DOM + SVG</title>
+	<style type="text/css">
+		#dom { background-color:#FFE; border:1px solid black; position:relative; overflow: hidden; width:640px; height:480px; }
+		#dom img, #dom div, #dom svg { display:block; position:absolute; }
+		#text-box { background-color:#8C9; color:#000; width:100px; height:75px; padding:0.5em; overflow:hidden; }
+		#svg-tool {width:100%; height:100%; }
+	</style>
+</head>
+<body onLoad="App.create();">
+
+	<div id="dom">
+		<img alt="dunny" id="dunny" src="images/dunny.png" />
+		<img alt="fatcap" id="fatcap" src="images/fatcap.png" />
+		<img alt="piggy" id="piggy" src="images/piggy.png" />
+		<div id="text-box">Lorem <b>ipsum</b> dolor <u>sit</u> amet, consectetur <i>adipisicing</i> elit</div>
+		<svg id="svg-tool" xmlns="http://www.w3.org/2000/svg"></svg>
+	</div>
+	
+	<button onClick="App.instance.tool.setControls(ControlSet.getStandard()); App.instance.render();">Standard标准</button>
+	<button onClick="App.instance.tool.setControls(ControlSet.getScaler()); App.instance.render();">Scaler定标器</button>
+	<button onClick="App.instance.tool.setControls(ControlSet.getScalerWithRotate()); App.instance.render();">Scaler With Rotate缩放与旋转</button>
+	<button onClick="App.instance.tool.setControls(ControlSet.getUniformScaler()); App.instance.render();">Uniform Scaler均匀缩放</button>
+	<button onClick="App.instance.tool.setControls(ControlSet.getDynamic()); App.instance.render();">Dynamic动态</button>
+	<button onClick="App.instance.tool.setControls(App.instance.getCustomControls()); App.instance.render();">Custom自定义</button>
+	
+	<script type="text/javascript" src="Utils.js"></script>
+	<script type="text/javascript" src="../src/js/TransformTool.js"></script>
+	<script type="text/javascript" src="../src/js/DOMTransformTool.js"></script>
+	<script type="text/javascript" src="TransformDOMPictures.js"></script>
+	
+</body>
+</html>

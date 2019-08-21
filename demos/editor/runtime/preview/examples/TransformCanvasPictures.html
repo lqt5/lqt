@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Transform Tool Canvas</title>
+	<style type="text/css">
+		#canvas { border:1px solid black; background-color:#FFE; display:block; }
+	</style>
+</head>
+<body onLoad="App.create();">
+	
+	<canvas id="canvas" width="640" height="480">No Canvas.</canvas>
+	
+	<button onClick="App.instance.tool.setControls(ControlSet.getStandard()); App.instance.render();">Standard</button>
+	<button onClick="App.instance.tool.setControls(ControlSet.getScaler()); App.instance.render();">Scaler</button>
+	<button onClick="App.instance.tool.setControls(ControlSet.getScalerWithRotate()); App.instance.render();">Scaler With Rotate</button>
+	<button onClick="App.instance.tool.setControls(ControlSet.getUniformScaler()); App.instance.render();">Uniform Scaler</button>
+	<button onClick="App.instance.tool.setControls(ControlSet.getDynamic()); App.instance.render();">Dynamic</button>
+	<button onClick="App.instance.tool.setControls(App.instance.getCustomControls()); App.instance.render();">Custom</button>
+	
+	<script type="text/javascript" src="Utils.js"></script>
+	<script type="text/javascript" src="../src/js/TransformTool.js"></script>
+	<script type="text/javascript" src="TransformCanvasPictures.js"></script>
+</body>
+</html>
