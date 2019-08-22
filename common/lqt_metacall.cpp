@@ -148,6 +148,9 @@ case QMetaObject::QueryPropertyStored: return "QueryPropertyStored";
 case QMetaObject::QueryPropertyEditable: return "QueryPropertyEditable";
 case QMetaObject::QueryPropertyUser: return "QueryPropertyUser";
 case QMetaObject::CreateInstance: return "CreateInstance";
+case QMetaObject::IndexOfMethod: return "IndexOfMethod";
+case QMetaObject::RegisterPropertyMetaType: return "RegisterPropertyMetaType";
+case QMetaObject::RegisterMethodArgumentMetaType: return "RegisterMethodArgumentMetaType";
     }
     return "???";
 }
