@@ -316,9 +316,11 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
             return QGenericArgument("int", &tuple_val);            
         } else if(lqtL_isudata(L, -1, "QObject*")) {
 
-            QObject* arg = static_cast<QObject*>(lqtL_toudata(L, -1, tuple_type));
+			// TODO:out of bounds check?
+			static QObject* tuple_ptr[16];
+			tuple_ptr[i] = static_cast<QObject*>(lqtL_toudata(L, -1, tuple_type));
             lua_pop(L, 1);
-            return QGenericArgument(tuple_type, arg);
+            return QGenericArgument(tuple_type, &tuple_ptr[i]);
         }
 
         QGenericArgument arg = lqtL_getGenericArgument(L, -1);
@@ -341,8 +343,8 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
 #define CASE_VARIANT_TYPE(...)\
     else if(lqtL_isudata(L, i, #__VA_ARGS__"*")) {\
     \
-        __VA_ARGS__* arg = static_cast<__VA_ARGS__*>(lqtL_toudata(L, i, #__VA_ARGS__"*"));\
-        return QGenericArgument(#__VA_ARGS__, arg);\
+        __VA_ARGS__ const& arg1 = *static_cast<__VA_ARGS__*>(lqtL_toudata(L, i, #__VA_ARGS__"*"));\
+        return QGenericArgument(#__VA_ARGS__, &arg1);\
     }
 
 #ifndef QT_NO_DATASTREAM

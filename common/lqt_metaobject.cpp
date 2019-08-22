@@ -53,18 +53,19 @@ static unsigned int * lqtL_touintarray (lua_State *L, int idx) {
     p[0] = n;
     // eod
     p[n] = 0;
-    // printf("lqtL_touintarray n=%d\n", n);
-
+#ifdef VERBOSE_BUILD
+    printf("lqtL_touintarray n=%d\n", n);
+#endif
     for (int i = 1; i <= n; i++) {
         lua_rawgeti(L, idx - 1, i);
         p[i] = lua_tointeger(L, -1);
         lua_pop(L, 1);
     }
     lua_remove(L, idx - 1);
-
-    // printf("dump lqtL_touintarray data, size = %d\n", (int) n);
-    // dump(p, n);
-
+#ifdef VERBOSE_BUILD
+    printf("dump lqtL_touintarray data, size = %d\n", (int) n);
+    dump(p, n);
+#endif
     return &p[1];
 }
 
@@ -100,7 +101,8 @@ static QByteArrayData* lqlL_tostringdata (lua_State *L, int idx) {
     n = 0;
     size_t offset = data_size;
     foreach(QString literal, literals) {
-        const char *s = literal.toUtf8().constData();
+        QByteArray utf8 = literal.toUtf8();
+        const char *s = utf8.constData();
         size_t sz = strlen(s);
 
         QByteArrayData *array = &data[n++];

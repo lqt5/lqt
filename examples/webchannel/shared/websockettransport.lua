@@ -101,9 +101,6 @@ function Class:textMessageReceived(messageData)
 		return
 	end
 	local obj = message:object()
-	print('messageReceived', obj, self, QtCore.QJsonDocument(obj):toJson():data())
-	obj:remove('type')
-	print('messageReceived', obj, self, QtCore.QJsonDocument(obj):toJson():data())
 	self:__emit('messageReceived', obj, { 'QWebChannelAbstractTransport*', self })
 end
 

@@ -85,10 +85,6 @@ local function main(...)
 	-- setup the channel
 	local channel = QtWebChannel.QWebChannel()
 	QtCore.QObject.connect(clientWrapper, SIGNAL 'clientConnected(QWebChannelAbstractTransport*)', channel, SLOT 'connectTo(QWebChannelAbstractTransport*)')
-	-- QtCore.QObject.connect(clientWrapper, SIGNAL 'clientConnected(QWebChannelAbstractTransport*)', function(_,transport)
-	-- 	print(channel, 'connect to', transport)
-	-- 	channel:connectTo(transport)
-	-- end)
 
 	-- setup the UI
 	local dialog = Dialog()

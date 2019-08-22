@@ -82,7 +82,6 @@ end
 function Class:handleNewConnection()
 	local socket = self.server:nextPendingConnection()
 	local transport = WebSocketTransport.new({ socket }, socket)
-	print('emit clientConnected', self, transport)
 	self:__emit('clientConnected'
 		, { 'QWebChannelAbstractTransport*', transport }
 	)
