@@ -314,6 +314,11 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
             tuple_val = lua_tointeger(L, -1);
             lua_pop(L, 1);
             return QGenericArgument("int", &tuple_val);            
+        } else if(lqtL_isudata(L, -1, "QObject*")) {
+
+            QObject* arg = static_cast<QObject*>(lqtL_toudata(L, -1, tuple_type));
+            lua_pop(L, 1);
+            return QGenericArgument(tuple_type, arg);
         }
 
         QGenericArgument arg = lqtL_getGenericArgument(L, -1);
@@ -332,6 +337,60 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
 
         return QGenericArgument(arg1.typeName(), arg1.constData());
     }
+
+#define CASE_VARIANT_TYPE(...)\
+    else if(lqtL_isudata(L, i, #__VA_ARGS__"*")) {\
+    \
+        __VA_ARGS__* arg = static_cast<__VA_ARGS__*>(lqtL_toudata(L, i, #__VA_ARGS__"*"));\
+        return QGenericArgument(#__VA_ARGS__, arg);\
+    }
+
+#ifndef QT_NO_DATASTREAM
+    CASE_VARIANT_TYPE(QDataStream)
+#endif // QT_NO_DATASTREAM
+    CASE_VARIANT_TYPE(QByteArray)
+    CASE_VARIANT_TYPE(QBitArray)
+    CASE_VARIANT_TYPE(QString)
+    CASE_VARIANT_TYPE(QLatin1String)
+    CASE_VARIANT_TYPE(QDate)
+    CASE_VARIANT_TYPE(QTime)
+    CASE_VARIANT_TYPE(QDateTime)
+    CASE_VARIANT_TYPE(QList<QVariant>)
+    CASE_VARIANT_TYPE(QMap<QString,QVariant>)
+    CASE_VARIANT_TYPE(QHash<QString,QVariant>)
+#ifndef QT_NO_GEOM_VARIANT
+    CASE_VARIANT_TYPE(QSize)
+    CASE_VARIANT_TYPE(QSizeF)
+    CASE_VARIANT_TYPE(QPoint)
+    CASE_VARIANT_TYPE(QPointF)
+    CASE_VARIANT_TYPE(QLine)
+    CASE_VARIANT_TYPE(QLineF)
+    CASE_VARIANT_TYPE(QRect)
+    CASE_VARIANT_TYPE(QRectF)
+#endif // QT_NO_GEOM_VARIANT
+    CASE_VARIANT_TYPE(QLocale)
+#ifndef QT_NO_REGEXP
+    CASE_VARIANT_TYPE(QRegExp)
+#endif // QT_NO_REGEXP
+#if QT_CONFIG(regularexpression)
+    CASE_VARIANT_TYPE(QRegularExpression)
+#endif // QT_CONFIG(regularexpression)
+#ifndef QT_BOOTSTRAPPED
+    CASE_VARIANT_TYPE(QUrl)
+    CASE_VARIANT_TYPE(QEasingCurve)
+    CASE_VARIANT_TYPE(QUuid)
+    CASE_VARIANT_TYPE(QJsonValue)
+    CASE_VARIANT_TYPE(QJsonObject)
+    CASE_VARIANT_TYPE(QJsonArray)
+    CASE_VARIANT_TYPE(QJsonDocument)
+#endif // QT_BOOTSTRAPPED
+#if QT_CONFIG(itemmodel)
+    CASE_VARIANT_TYPE(QModelIndex)
+    CASE_VARIANT_TYPE(QPersistentModelIndex)
+#endif
+
+    #undef CASE_TYPE
+
     else if(lqtL_isudata(L, i, "QObject*")) {
 
         QObject* arg = static_cast<QObject*>(lqtL_toudata(L, i, "QObject*"));

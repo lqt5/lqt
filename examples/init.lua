@@ -52,6 +52,28 @@ _G.print = function(...)
 	io.flush()
 end
 --------------------------------------------------------------------------------
+-- Qt message logger
+--------------------------------------------------------------------------------
+local function qLogger()
+    local info = debug.getinfo(2)
+    return QtCore.QMessageLogger(info.short_src, info.currentline, info.namewhat)
+end
+rawset(_G, 'qDebug', function(...)
+    return qLogger():debug(...)
+end)
+rawset(_G, 'qInfo', function(...)
+    return qLogger():info(...)
+end)
+rawset(_G, 'qWarning', function(...)
+    return qLogger():warning(...)
+end)
+rawset(_G, 'qCritical', function(...)
+    return qLogger():critical(...)
+end)
+rawset(_G, 'qFatal', function(...)
+    return qLogger():fatal(...)
+end)
+--------------------------------------------------------------------------------
 -- Qt ui loader
 --------------------------------------------------------------------------------
 rawset(_G, 'qSetupUi', function(path, root, customBuilder)

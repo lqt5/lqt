@@ -43,7 +43,9 @@ return function(QtCore
     , MetaConvertType
 )
     local function hook(self, signature, func, access)
-        local metaName = 'LuaObject('.. tostring(self) .. ')'
+        local metaName = string.format('%s('.. tostring(self) .. ')'
+            , (type(self) == 'table' and rawget(self, '__name') or nil) or 'LuaObject'
+        )
         local metaStrings = self[LQT_OBJMETASTRING]
         local metaData = self[LQT_OBJMETADATA]
         local metaSlots = {}

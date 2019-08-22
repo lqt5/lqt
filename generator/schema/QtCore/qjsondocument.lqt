@@ -74,6 +74,9 @@ struct Q_CORE_EXPORT QJsonParseError
 
     int        offset;
     ParseError error;
+
+    // TODO:lqt add default struct ctor
+    QJsonParseError();
 };
 
 class Q_CORE_EXPORT QJsonDocument
