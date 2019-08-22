@@ -117,6 +117,7 @@ function parse_return_type(return_type)
 		['bool'] = 'false',
 		['int'] = '-1',
 		['long long'] = '-1',
+		['unsigned int'] = 0,
 	}
 
 	if not map[return_type] and not return_type:find('^Q') then

@@ -77,6 +77,7 @@ find_package (Qt5 REQUIRED
 	UiTools
 	Quick
 	QuickWidgets
+	WebSockets
 	WebEngineCore
 	WebEngineWidgets
 	Test
@@ -302,6 +303,10 @@ else()
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES QuickWidgets Widgets Quick Gui Qml Core)
 	build_qt_lib_binding(QtQuickWidgets QtWidgets QtQuick QtGui QtQml QtCore)
+
+	set(REUSE_FILES 1)
+	set(QT_LIBRARIES WebSockets Network Core)
+	build_qt_lib_binding(QtWebSockets QtNetwork QtCore)
 
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES WebEngineCore WebChannel Positioning Quick Qml Gui Core)
