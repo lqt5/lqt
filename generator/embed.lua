@@ -36,7 +36,7 @@ local function lua2h(input)
 			lqt_modules[mod] = mod
 
 			table.insert(lqt_modules, mod)
-			local module_path = input:gsub('main', mod)
+			local module_path = input:gsub('([%w%d_]+)%.lua$', mod .. '.lua')
 			lua2h(module_path)
 		end
 	end
