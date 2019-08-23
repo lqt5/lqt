@@ -22,9 +22,12 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ***************************************************************************]]
-local QtCore
-local LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS
+-- locals from lqt_embed.cpp
+local QtCore, LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS
 
+----------------------------------------------------------------------------------------------------
+-- Add signal/slot for qt object
+----------------------------------------------------------------------------------------------------
 local function hook(self, signature, func, access)
     local metaName = string.format('%s('.. tostring(self) .. ')'
         , (type(self) == 'table' and rawget(self, '__name') or nil) or 'LuaObject'
@@ -278,12 +281,16 @@ local function hook(self, signature, func, access)
     self[LQT_OBJSLOTS] = metaSlots
     self[LQT_OBJSIGS] = metaSignals
 end
-
+----------------------------------------------------------------------------------------------------
+-- Validate method(signal/slot) name
+----------------------------------------------------------------------------------------------------
 local function checkMethodName(methodName)
     local name,args = string.match(methodName, '^(.*)%((.*)%)$')
     return name ~= nil and args ~= nil
 end
-
+----------------------------------------------------------------------------------------------------
+-- Entry
+----------------------------------------------------------------------------------------------------
 return function(...)
 	local LQT
 	QtCore, LQT = ...

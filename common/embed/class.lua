@@ -175,11 +175,15 @@ local isInstanceOf = (function()
 		return ret
 	end
 end)()
-
+----------------------------------------------------------------------------------------------------
+-- Disable .new for instance object
+----------------------------------------------------------------------------------------------------
 local function errorNew()
 	error('attempt to call `new` from an instance')
 end
-
+----------------------------------------------------------------------------------------------------
+-- Defines a new class.
+----------------------------------------------------------------------------------------------------
 local function Class(name, proto)
 	assert(type(name) == 'string', 'Class name must be an string')
 
@@ -259,7 +263,9 @@ local function Class(name, proto)
 		})
 	end
 end
-
+----------------------------------------------------------------------------------------------------
+-- Entry
+----------------------------------------------------------------------------------------------------
 return function(QtCore, LQT)
 	rawset(QtCore, 'isClass', isClass)
 	rawset(QtCore, 'isObject', isObject)
