@@ -82,17 +82,46 @@ rawset(_G, 'qSetupUi', function(path, root, customBuilder)
     local file = QtCore.QFile(path)
     file:open(QtCore.QIODevice.ReadOnly)
 
+    local QtWidgets = require 'qtwidgets'
+    local QtOpenGL = require 'qtopengl'
+   
+    local QtQml = require 'qtqml'
+    local QtQuick = require 'qtquick'
+    local QtQuickWidgets = require 'qtquickwidgets'
+
+    local QtWebEngineCore = require 'qtwebenginecore'
+    local QtWebEngineWidgets = require 'qtwebenginewidgets'
+
+    local function createWidget(className, parent)
+        local class = QtWidgets[className]
+            or QtOpenGL[className]
+            or QtQuickWidgets[className]
+            or QtWebEngineWidgets[className]
+
+        if class then
+            return class.new(parent)
+        end
+        print('Unknown ui widget : ' .. tostring(className))
+    end
+
     local loader = QtUiTools.QUiLoader()
     function loader:createWidget(className, parent, name)
-        -- if name:toStdString() == 'root' and parent == nil then
         if not parent then
             return root
         end
+
         local widget = customBuilder and customBuilder(className, parent) or nil
+        if widget == nil then
+            -- try use lqt class.new to create widget
+            --  you can use __addsignal/__addslot on created object
+            widget = createWidget(className:toStdString(), parent)
+        end
+        -- set widget object name
         if widget ~= nil then
         	widget:setObjectName(name)
         	return widget
         end
+        -- use default uitools widget creator
         return QtUiTools.QUiLoader.createWidget(self, className, parent, name)
     end
 
@@ -123,6 +152,17 @@ rawset(_G, 'gc', function()
 	print('gc start')
 	collectgarbage()
 	print('gc end')
+end)
+--------------------------------------------------------------------------------
+-- Cleanup lqt ref's before application shutdown
+--------------------------------------------------------------------------------
+rawset(_G, 'qCleanup', function()
+    -- cleanup registry ref class
+    local LQT_REF_CLASS = "Registry Ref Class"
+    local registry = debug.getregistry()
+    registry[LQT_REF_CLASS] = {}
+    -- do full gc
+    gc()
 end)
 --------------------------------------------------------------------------------
 -- qml examples main func
