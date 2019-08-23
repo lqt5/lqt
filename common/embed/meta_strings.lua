@@ -22,7 +22,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ***************************************************************************]]
-
+local QtCore
 ----------------------------------------------------------------------------------------------------
 -- Meta string container
 ----------------------------------------------------------------------------------------------------
@@ -32,6 +32,7 @@ local Class = {}
 -- Setup locals from lqt_embed.cpp
 ----------------------------------------------------------------------------------------------------
 function Class.setup(...)
+    QtCore = ...
 end
 ----------------------------------------------------------------------------------------------------
 -- Create an Class object

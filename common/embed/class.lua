@@ -108,13 +108,19 @@ local reversedFields = {
 -- 'Is a class' check.
 ----------------------------------------------------------------------------------------------------
 local isClass = function (x)
-	return type(x) == 'table' and type(x.__classDef) == 'table'
+	return type(x) == 'table' and type(x.__class) == 'nil'
 end
 ----------------------------------------------------------------------------------------------------
 -- 'Is an object' check.
 ----------------------------------------------------------------------------------------------------
 local isObject = function (x)
-	return type(x) == 'userdata' and isClass(x.__class)
+	if not isClass(x.__class) then
+		return false
+	end
+		-- lqt class object
+	return (type(x) == 'userdata')
+		-- lua class object
+		or (type(x) == 'table' and x.__lua)
 end
 ----------------------------------------------------------------------------------------------------
 -- 'Is an instance of' check.
@@ -138,8 +144,15 @@ local isInstanceOf = (function()
 
 		local ret = false
 
-		local env = debug.getfenv(obj)
-		local __class = rawget(env, '__class')
+		local __class
+		-- lqt class
+		if type(obj) == 'userdata' then
+			local env = debug.getfenv(obj)
+			__class = rawget(env, '__class')
+		-- lua class
+		else
+			__class = rawget(obj, '__class')
+		end
 
 		while __class and __class ~= cls do
 			-- check if obj create by __proto(Qt objects)
@@ -184,15 +197,20 @@ end
 ----------------------------------------------------------------------------------------------------
 -- Defines a new class.
 ----------------------------------------------------------------------------------------------------
-local function Class(name, proto)
+local function Class(name, super)
 	assert(type(name) == 'string', 'Class name must be an string')
 
 	local function createInst(inst, classDef, ...)
-		local env = debug.getfenv(inst)
-		env.new = errorNew
-		env.__class = classDef
-		-- set object env inherit super(self) env
-		setmetatable(env, { __index = classDef })
+		if not classDef.__lua then
+			local env = debug.getfenv(inst)
+			env.new = errorNew
+			env.__class = classDef
+			-- set object env inherit super(self) env
+			setmetatable(env, { __index = classDef })
+		else
+			inst.__class = classDef
+			setmetatable(inst, { __index = classDef })
+		end
 
 		-- call __static_init once
 		--  for class object
@@ -223,18 +241,45 @@ local function Class(name, proto)
 
 		classDef.__name = name
 		classDef.__classDef = classDef
-		classDef.__proto = proto.__proto and proto.__proto or proto
-		classDef.__super = proto.__classDef and proto or nil
 
-		local function ctor(new, ctorArgs)
-			assert(type(ctorArgs) == 'table' or ctorArgs == nil, 'ctorArgs must be table or nil')
-			return ctorArgs and new(unpack(ctorArgs)) or new()
+		-- Lua class(not inherit from lqt CLass)
+		--	example: QtCore.Class('LuaClass')
+		if not super then
+			super = {}
+			super.new = function() return {} end
+			-- mark as lua class
+			classDef.__lua = true
+		else
+			classDef.__lua = super.__classDef and super.__classDef.__lua or nil
 		end
 
-		classDef.new = function(ctorArgs, ...)
-			local inst = ctor(classDef.__proto.new, ctorArgs)
-			inst.__gc = false
-			return createInst(inst, classDef, ...)
+		classDef.__proto = super.__proto and super.__proto or super
+		classDef.__super = super.__classDef and super or nil
+
+		if classDef.__lua then
+			classDef.new = function(...)
+				local inst = classDef.__proto.new()
+				return createInst(inst, classDef, ...)
+			end
+			classDef.__call = function(self, ...)
+				local inst = classDef.__proto.new()
+				return createInst(inst, classDef, ...)
+			end
+		else
+			local function ctor(new, ctorArgs)
+				assert(type(ctorArgs) == 'table' or ctorArgs == nil, 'ctorArgs must be table or nil')
+				return ctorArgs and new(unpack(ctorArgs)) or new()
+			end
+
+			classDef.new = function(ctorArgs, ...)
+				local inst = ctor(classDef.__proto.new, ctorArgs)
+				inst.__gc = false
+				return createInst(inst, classDef, ...)
+			end
+			classDef.__call = function(self, ctorArgs, ...)
+				local inst = ctor(classDef.__proto, ctorArgs)
+				return createInst(inst, classDef, ...)
+			end
 		end
 
 		return setmetatable(classDef, {
@@ -248,7 +293,7 @@ local function Class(name, proto)
 					return v
 				end
 
-				v = proto[k]
+				v = super[k]
 
 				if type(v) == nil then
 					error(string.format('Class `%s` : can not get undeclared member variable `%s`', name, k), 2)
@@ -256,10 +301,7 @@ local function Class(name, proto)
 
 				return v
 			end,
-			__call = function(self, ctorArgs, ...)
-				local inst = ctor(classDef.__proto, ctorArgs)
-				return createInst(inst, classDef, ...)
-			end,
+			__call = classDef.__call,
 		})
 	end
 end

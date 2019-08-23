@@ -23,8 +23,33 @@ package.path = package.path .. ';' .. luapath
 -- use strict to avoid undeclared global variables access
 --------------------------------------------------------------------------------
 require 'strict'
-
+--------------------------------------------------------------------------------
+-- reload embed script
+--  for development use
+--------------------------------------------------------------------------------
 local QtCore = require 'qtcore'
+local function reload_embed()
+    for k,_ in pairs(package.preload) do
+        if k:find('embed') then
+            package.preload[k] = nil
+        end
+    end
+    for k,_ in pairs(package.loaded) do
+        if k:find('embed') then
+            package.loaded[k] = nil
+        end
+    end
+    local luapath = get_source_path():gsub('init.lua', '../common/?.lua')
+    package.path = package.path .. ';' .. luapath
+    local f = require 'embed.main'
+    f(QtCore, {
+        'Lqt MetaStringData',
+        'Lqt MetaData',
+        'Lqt Slots',
+        'Lqt Signatures',
+    })
+end
+-- reload_embed()
 --------------------------------------------------------------------------------
 -- QFlags::testFlag
 --------------------------------------------------------------------------------

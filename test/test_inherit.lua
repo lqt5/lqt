@@ -118,6 +118,11 @@ local function testLocalCtor()
     print('>> child methods <<')
     table.foreach(child:__methods(), print)
 
+    print('>> isLua <<')
+    print(base.__lua)
+    print(super.__lua)
+    print(child.__lua)
+
     print('>> test signal/slot <<')
     base:emit()
     print ''
@@ -126,26 +131,26 @@ local function testLocalCtor()
     child:emit()
 
     print('>> isClass/isObject <<')
-    print(QtCore.isClass(Base))
-    print(QtCore.isClass(base))
+    assert(QtCore.isClass(Base))
+    assert(not QtCore.isClass(base))
 
-    print(QtCore.isObject(Base))
-    print(QtCore.isObject(base))
+    assert(not QtCore.isObject(Base))
+    assert(QtCore.isObject(base))
 
     print('>> isInstanceOf <<')
-    print(QtCore.isInstanceOf(base, Base))
-    print(QtCore.isInstanceOf(super, Base))
+    assert(QtCore.isInstanceOf(base, Base))
+    assert(QtCore.isInstanceOf(super, Base))
 
-    print(QtCore.isInstanceOf(super, Child))
+    assert(not QtCore.isInstanceOf(super, Child))
 
-    print(QtCore.isInstanceOf(child, Super))
-    print(QtCore.isInstanceOf(child, Child))
+    assert(QtCore.isInstanceOf(child, Super))
+    assert(QtCore.isInstanceOf(child, Child))
 
-    print(QtCore.isInstanceOf(base, Super))
-    print(QtCore.isInstanceOf(child, QtCore.QObject))
+    assert(not QtCore.isInstanceOf(base, Super))
+    assert(QtCore.isInstanceOf(child, QtCore.QObject))
 
-    print(QtCore.isInstanceOf(app, QtCore.QObject))
-    print(QtCore.isInstanceOf(app, QtCore.QCoreApplication))
+    assert(QtCore.isInstanceOf(app, QtCore.QObject))
+    assert(QtCore.isInstanceOf(app, QtCore.QCoreApplication))
 end
 testLocalCtor()
 
