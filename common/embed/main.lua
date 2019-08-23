@@ -1,38 +1,27 @@
---[[
- // content:
-       8,       // revision
-       0,       // classname
-       0,    0, // classinfo
-       6,   14, // methods
-       0,    0, // properties
-       0,    0, // enums/sets
-       0,    0, // constructors
-       0,       // flags
-       3,       // signalCount
+--[[*************************************************************************
+Copyright (c) 2019-2019 Saniko
 
- // signals: name, argc, parameters, tag, flags
-       1,    2,   44,    2, 0x06 /* Public */,
-       6,    1,   49,    2, 0x06 /* Public */,
-       8,    1,   52,    2, 0x06 /* Public */,
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
 
- // slots: name, argc, parameters, tag, flags
-      11,    2,   55,    2, 0x09 /* Protected */,
-      12,    1,   60,    2, 0x09 /* Protected */,
-      13,    1,   63,    2, 0x09 /* Protected */,
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
 
- // signals: parameters
-    QMetaType::Void, 0x80000000 | 3, QMetaType::Bool,    4,    5,
-    QMetaType::Void, QMetaType::QIcon,    7,
-    QMetaType::Void, 0x80000000 | 9,   10,
-
- // slots: parameters
-    QMetaType::Void, 0x80000000 | 3, QMetaType::Bool,    4,    5,
-    QMetaType::Void, QMetaType::QIcon,    7,
-    QMetaType::Void, 0x80000000 | 9,   10,
-
-       0        // eod
-]]
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+***************************************************************************]]
 local class = require 'embed.class'
 local meta = require 'embed.meta'
 
