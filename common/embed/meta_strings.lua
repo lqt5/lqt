@@ -27,20 +27,20 @@ local QtCore
 -- Meta string container
 ----------------------------------------------------------------------------------------------------
 local Class = {}
-
 ----------------------------------------------------------------------------------------------------
 -- Setup locals from lqt_embed.cpp
 ----------------------------------------------------------------------------------------------------
 function Class.setup(...)
     QtCore = ...
+    Class = QtCore.Class('MetaStrings')(Class)
 end
 ----------------------------------------------------------------------------------------------------
--- Create an Class object
+-- COnstructor
 ----------------------------------------------------------------------------------------------------
-function Class.create(initial)
-    local ret = initial or {}
-    setmetatable(ret, { __index = Class })
-    return ret
+function Class:__init(initial)
+    for _,val in ipairs(initial) do
+        table.insert(self, val)
+    end
 end
 ----------------------------------------------------------------------------------------------------
 -- Add meta string(ignore duplicate string)

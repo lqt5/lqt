@@ -38,13 +38,13 @@ local function init(self)
             , (type(self) == 'table' and rawget(self, '__name') or nil) or 'LuaObject'
         )
         -- classname & empty string
-        metaStrings = CMetaStrings.create { metaName, '' }
+        metaStrings = CMetaStrings { metaName, '' }
         self[LQT_OBJMETASTRING] = metaStrings
     end
 
     local metaData = self[LQT_OBJMETADATA]
     if not metaData then
-        metaData = CMetaData.create(metaStrings)
+        metaData = CMetaData(metaStrings)
         self[LQT_OBJMETADATA] = metaData
     end
     return metaData

@@ -32,15 +32,7 @@ local Class = {}
 ----------------------------------------------------------------------------------------------------
 function Class.setup(...)
     QtCore = ...
-end
-----------------------------------------------------------------------------------------------------
--- Create an Class object
-----------------------------------------------------------------------------------------------------
-function Class.create(...)
-    local ret = {}
-    setmetatable(ret, { __index = Class })
-    ret:__init(...)
-    return ret
+    Class = QtCore.Class('MetaData')(Class)
 end
 ----------------------------------------------------------------------------------------------------
 -- Constructor
@@ -101,7 +93,7 @@ function Class:addMethod(signature, access, func)
         -- is signal, insert before slot
         for idx = #self.methods,1,-1 do
             local info = self.methods[idx]
-            if not info[-3] then
+            if not info.func then
                 table.insert(self.methods, idx + 1, methodInfo)
                 inserted = true
                 break
