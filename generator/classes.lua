@@ -644,6 +644,11 @@ function fill_wrapper_code(f)
 			wrap = wrap .. ' ? static_cast< ' .. (type_name) .. ' >(' .. dv .. ') : '
 		end
 		wrap = wrap .. aget .. ';\n'
+		-- add variadics format "%s" argument(avoid compiler warning)
+		--	 warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+		if f.xarg.variadics and i == #f.arguments and a.xarg.type_name == 'char const*' then
+			line = line .. (i == 1 and '"%s", ' or ', "%s"')
+		end
 		line = line .. (argn==1 and 'arg' or ', arg') .. argn
 		stackn = stackn + an
 		argn = argn + 1
