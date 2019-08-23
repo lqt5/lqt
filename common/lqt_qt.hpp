@@ -35,6 +35,7 @@ QWebEngineCallback<const QVariant &> lqtL_getQWebEngineCallback_QVariant(lua_Sta
 // internal use
 int lqtL_pushqobject(lua_State *L, QObject * object);
 int lqtL_qvariant_value_custom(lua_State *L, int index, bool convert_to);
+void lqtL_embed(lua_State *L);
 
 #endif // __LQT_QT_HPP
 

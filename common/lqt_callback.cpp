@@ -1,5 +1,4 @@
 #include "lqt_qt.hpp"
-#include "lqt_addmethod.h"
 
 #if defined(MODULE_qtwebenginecore) || defined(MODULE_qtwebenginewidgets)
 

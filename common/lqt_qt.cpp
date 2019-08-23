@@ -1,5 +1,4 @@
 #include "lqt_qt.hpp"
-#include "lqt_addmethod.h"
 
 // #include <QThread>
 
@@ -174,38 +173,11 @@ static int lqtL_metaObject(lua_State *L) {
 	return 1;
 }
 
-static int lqt_metaConvertType(lua_State *L) {
-
-    const char *type = luaL_checkstring(L, 1);
-    lua_pushnumber(L, QMetaType::type(type));
-    return 1;
-}
-
 void lqtL_qobject_custom (lua_State *L) {
     lua_getfield(L, LUA_REGISTRYINDEX, "QObject*");
     int qobject = lua_gettop(L);
 
-    if(luaL_loadbuffer(L, (const char *) add_method_string, sizeof(add_method_string), "bultin(add_method_string)") != 0)
-        lua_error(L);
-    lua_call(L, 0, LUA_MULTRET);
-    {
-	    if(!lua_isfunction(L, -1))
-    		lua_error(L);
-
-        lua_pushvalue(L, -3);
-	    lua_getfield(L, LUA_REGISTRYINDEX, "QObject*");
-        lua_pushstring(L, LQT_OBJMETASTRING);
-        lua_pushstring(L, LQT_OBJMETADATA);
-        lua_pushstring(L, LQT_OBJSLOTS);
-        lua_pushstring(L, LQT_OBJSIGS);
-        lua_pushnumber(L, QMetaType::Void);
-        lua_pushcfunction(L, lqt_metaConvertType);
-	    lua_pcall(L, 8, 1, 0);
-
-	    if(!lua_isboolean(L, -1))
-    		lua_error(L);
-    	lua_pop(L, 1);
-    }
+    lqtL_embed(L);
 
     lua_pushstring(L, "__methods");
     lua_pushcfunction(L, lqtL_methods);

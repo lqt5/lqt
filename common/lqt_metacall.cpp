@@ -1,5 +1,4 @@
 #include "lqt_qt.hpp"
-#include "lqt_addmethod.h"
 
 // #define VERBOSE_BUILD
 

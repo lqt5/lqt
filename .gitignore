@@ -2,7 +2,8 @@
 
 build/*
 xcode/*
-common/lqt_addmethod.h
+common/lqt_embed.h
+common/embed/*.h
 test/styles/*
 
 generator/schema/**/*.h
