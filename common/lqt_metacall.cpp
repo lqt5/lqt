@@ -99,12 +99,9 @@ static int lqt_InvokeMetaMethod (lua_State *L
 
                     QVariant::Type type = (QVariant::Type) method.parameterType(i);
                     if ((int) type == QMetaType::QObjectStar) {
-                        if(ptr == nullptr)
-                            lua_pushnil(L);
-                        else
-                            lqtL_pushqobject(L, reinterpret_cast<QObject *>(ptr));
+                        lqtL_pushqobject(L, *(QObject **) ptr);
                     } else if(type == QVariant::UserType || type == QVariant::Invalid) {
-                        lqtL_pushudata(L, ptr, method.parameterTypes().at(i).constData());
+                        lqtL_pushudata(L, *(void **)(ptr), method.parameterTypes().at(i).constData());
                     } else {
                         QVariant &v = variants[i];
                         v = QVariant(type, ptr);

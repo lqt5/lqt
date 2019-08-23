@@ -7,7 +7,7 @@ local qa = QtCore.QCoreApplication.new(1, {'virt_test'})
 
 qa:__addsignal('valueChanged(double,QString,QObject*)')
 qa:__addslot('setValue(double,QString,QObject*)', function(self, arg1, arg2, arg3)
-	print('setValue:', self, arg1, arg2:toStdString(), arg3)
+	print('setValue:', self, arg1, arg2:toStdString(), arg3.applicationName():toStdString())
 end)
 
 QtCore.QObject.connect(qa, '2valueChanged(double,QString,QObject*)'
@@ -50,9 +50,9 @@ QtCore.QMetaObject.invokeMethod(qa
 	-- , 'setValue'
 	, 'AutoConnection'
 	, 3.14, '9.28'
-	, qa
+	, { 'QObject*', qa }
 )
 
-qa:__emit('setValue', 3.1415926, '9.28wtf', qa)
+qa:__emit('setValue', 3.1415926, '9.28wtf', { 'QObject*', qa })
 
 -- qa:__emit('valueChanged', 1234, 5678)
