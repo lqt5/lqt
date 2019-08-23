@@ -10,9 +10,11 @@ bool lqtL_isGenericArgument(lua_State *L, int i) {
         case LUA_TTABLE: {
             // GenericArgument tuple
             //  { type, value }
-            if (lua_objlen(L, i) == 2)
+            int len = lua_objlen(L, i);
+            if (len > 0 && len <= 2)
                 return true;
         } break;
+        case LUA_TBOOLEAN:
         case LUA_TNUMBER:
         case LUA_TSTRING:
             return true;
@@ -56,12 +58,14 @@ static QGenericArgument lqt_convertTupleArgument(lua_State *L, int i) {
         tuple_val = lua_tointeger(L, -1);
         lua_pop(L, 1);
         return QGenericArgument("int", &tuple_val);
-    } else if(lqtL_isudata(L, -1, tuple_type)) {
+    }
+    else if(lqtL_isudata(L, -1, tuple_type)) {
         static void* tuple_ptr[MAX_ARGUMENTS];
         tuple_ptr[i] = lqtL_toudata(L, -1, tuple_type);
         lua_pop(L, 1);
         return QGenericArgument(tuple_type, &tuple_ptr[i]);
-    } else {
+    }
+    else {
         luaL_error(L, "Unknown tuple argument type : %s", tuple_type);
     }
 
@@ -150,6 +154,12 @@ QGenericArgument lqtL_getGenericArgument(lua_State *L, int i) {
             // Tuple GenericArgument
             //  { type, value }
             return lqt_convertTupleArgument(L, i);
+        }
+
+        case LUA_TBOOLEAN: {
+            static bool booleans[MAX_ARGUMENTS];
+            booleans[i] = lua_toboolean(L, i) == 1;
+            return QGenericArgument("bool", &booleans[i]);
         }
 
         case LUA_TNUMBER: {

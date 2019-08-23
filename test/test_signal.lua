@@ -5,17 +5,17 @@ local QtCore = require 'qtcore'
 
 local qa = QtCore.QCoreApplication.new(1, {'virt_test'})
 
-qa:__addsignal('valueChanged(double,QString,QObject*)')
-qa:__addslot('setValue(double,QString,QObject*)', function(self, arg1, arg2, arg3)
-	print('setValue:', self, arg1, arg2:toStdString(), arg3.applicationName():toStdString())
+qa:__addsignal('valueChanged(bool,double,QString,QObject*)')
+qa:__addslot('setValue(bool,double,QString,QObject*)', function(self, arg1, arg2, arg3, arg4)
+	print('setValue:', self, arg1, arg2, arg3:toStdString(), arg4)
 end)
 
-QtCore.QObject.connect(qa, '2valueChanged(double,QString,QObject*)'
-	, qa, '1setValue(double,QString,QObject*)'
+QtCore.QObject.connect(qa, '2valueChanged(bool,double,QString,QObject*)'
+	, qa, '1setValue(bool,double,QString,QObject*)'
 )
 
-qa:connect('2valueChanged(double,QString,QObject*)'
-	, qa, '1setValue(double,QString,QObject*)'
+qa:connect('2valueChanged(bool,double,QString,QObject*)'
+	, qa, '1setValue(bool,double,QString,QObject*)'
 )
 
 qa:connect('2destroyed(QObject*)', function()
@@ -39,7 +39,7 @@ print(qa['*' .. LQT_OBJMETASTRING])
 qa.setApplicationName('New Application Name')
 
 local meta = qa:metaObject()
-local signalIndex = meta:indexOfMethod('setValue(double,QString,QObject*)')
+local signalIndex = meta:indexOfMethod('setValue(bool,double,QString,QObject*)')
 local signal = meta:method(signalIndex)
 print('signal:', meta, signalIndex, signal)
 
@@ -49,10 +49,12 @@ QtCore.QMetaObject.invokeMethod(qa
 	, 'valueChanged'
 	-- , 'setValue'
 	, 'AutoConnection'
+	, true
 	, 3.14, '9.28'
 	, { 'QObject*', qa }
 )
 
-qa:__emit('setValue', 3.1415926, '9.28wtf', { 'QObject*', qa })
+qa:__emit('setValue', true, 3.1415926, '9.28wtf', { 'QObject*', qa })
+qa:__emit('setValue', false, 3.1415926, '9.28wtf', { 'QObject*', nil })
 
 -- qa:__emit('valueChanged', 1234, 5678)
