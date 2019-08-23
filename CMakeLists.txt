@@ -33,6 +33,7 @@ cmake_minimum_required(VERSION 3.1.0)
 project(lqt5)
 
 # set(REUSE_FILES 1)
+# set( CMAKE_BUILD_TYPE Debug )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin) 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib) 
@@ -48,18 +49,6 @@ elseif (WIN32)
 endif()
 
 set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
-
-# set(QT_USE_QTCORE 1)
-# set(QT_USE_QTGUI 1)
-# set(QT_USE_QTNETWORK 1)
-# set(QT_USE_QTWEBKIT 1)
-# set(QT_USE_QTOPENGL 1)
-# set(QT_USE_QTSCRIPT 1)
-# set(QT_USE_QTSVG 1)
-# set(QT_USE_QTUITOOLS 1) 
-# set(QT_USE_QTXML 1)
-# set(QT_USE_QTSQL 1)
-# set(QT_USE_QTXMLPATTERNS 1)
 
 find_package (Qt5 REQUIRED
 	Core
@@ -127,7 +116,8 @@ add_subdirectory(cpptoxml)
 # # Add compiler flags for building executables (-fPIE)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
 if(APPLE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Ofast -std=c++11 -Wno-deprecated-declarations")
+	# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Ofast -std=c++11 -Wno-deprecated-declarations")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11 -Wno-deprecated-declarations")
 endif(APPLE)
 
 function(build_qt_lib_binding BINDING_HEADER)
@@ -149,7 +139,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 		# set (PP_CONFIG ${CMAKE_SOURCE_DIR}/cpptoxml/parser/rpp/pp-qt-configuration-win)
 	endif()
 
-	# set(REUSE_FILES 0)
+	set(REUSE_FILES 0)
 
 	if(NOT REUSE_FILES)
 		set (GEN_XML ${LQT_GEN_DIR}/${BINDING_NAME}.xml)
@@ -319,18 +309,6 @@ else()
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Test Widgets Gui Network Core)
 	build_qt_lib_binding(QtTest QtWidgets QtGui QtNetwork QtCore)
-
-# 	build_qt_lib_binding(QtScript QtGui QtNetwork QtCore)
-# 	build_qt_lib_binding(QtOpenGL QtGui QtNetwork QtCore)
-# 	build_qt_lib_binding(QtSvg QtScript QtGui QtNetwork QtCore)
-# 	build_qt_lib_binding(QtXml QtSvg QtScript QtGui QtNetwork QtCore)
-# 	build_qt_lib_binding(QtXmlPatterns QtCore QtXml)
-# 	build_qt_lib_binding(QtUiTools QtCore QtGui QtXml) 
-# 	build_qt_lib_binding(QtWebKit QtXmlPatterns QtSvg QtScript QtOpenGL QtGui QtNetwork QtCore QtXml)
-# 	build_qt_lib_binding(QtSql QtCore)
-# 	# TODO
-# 	#build_qt_lib_binding(QtScriptTools) # 4.5 only
-# 	#build_qt_lib_binding(Phonon)
 endif()
 
 add_subdirectory(modules/lrdb)
@@ -340,28 +318,3 @@ add_subdirectory(modules/lpath)
 add_subdirectory(modules/lua-miniz)
 add_subdirectory(modules/luautf8)
 add_subdirectory(modules/luagbk)
-
-# # Find includes in corresponding build directories
-# set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# # Find the QtWidgets library
-# find_package(Qt5Widgets)
-
-# # Add the include directories for the Qt 5 Widgets module to
-# # the compile lines.
-# include_directories(${Qt5Widgets_INCLUDE_DIRS})
-# set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# # Use the compile definitions defined in the Qt 5 Widgets module
-# add_definitions(${Qt5Widgets_DEFINITIONS})
-
-# # Add compiler flags for building executables (-fPIE)
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-# qt5_generate_moc(main.cpp main.moc)
-
-# # Tell CMake to create the helloworld executable
-# add_executable(helloworld main.cpp main.moc)
-
-# #Link the helloworld executable to the Qt 5 widgets library.
-# target_link_libraries(helloworld Qt5::Widgets)
-
