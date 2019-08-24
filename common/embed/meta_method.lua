@@ -23,6 +23,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ***************************************************************************]]
 local QtCore
+local Flags = require 'embed.flags'
 ----------------------------------------------------------------------------------------------------
 -- Meta string container
 ----------------------------------------------------------------------------------------------------
@@ -32,45 +33,68 @@ local Class = {}
 ----------------------------------------------------------------------------------------------------
 function Class.setup(...)
     QtCore = ...
-    Class = QtCore.Class('MetaStrings')(Class)
+    Class = QtCore.Class('MetaMethod')(Class)
 end
 ----------------------------------------------------------------------------------------------------
--- COnstructor
+-- Extract signal/slot name & arguments
 ----------------------------------------------------------------------------------------------------
-function Class:__init(owner, initial, clone)
-    -- data ownerd class
-    self.owner = owner
-    -- Copy for super data
-    for _,val in ipairs(clone or {}) do
-        table.insert(self, val)
+local function extractArgs(signature)
+    local name,args = string.match(signature, '^(.*)%((.*)%)$')
+    local params = {}
+    for arg in args:gmatch('[^,]+') do
+        table.insert(params, arg)
     end
-    -- Initial
-    for _,val in ipairs(initial) do
-        table.insert(self, val)
-    end
+    return name,params
 end
 ----------------------------------------------------------------------------------------------------
--- Add meta string(ignore duplicate string)
+-- Generate flags
 ----------------------------------------------------------------------------------------------------
-function Class:insert(input)
-    for i,s in ipairs(self) do
-        if s == input then
-            return i - 1
+local function generateFlags(isSignal, access)
+    local flags = isSignal and Flags.MethodFlags.MethodSignal or Flags.MethodFlags.MethodSlot
+    if access == 'private' then
+        flags = flags + Flags.MethodFlags.AccessPrivate
+    elseif access == 'protected' then
+        flags = flags + Flags.MethodFlags.AccessProtected
+    else -- access == 'public' then
+        flags = flags + Flags.MethodFlags.AccessPublic
+    end
+    return flags
+end
+----------------------------------------------------------------------------------------------------
+-- Constructor
+----------------------------------------------------------------------------------------------------
+function Class:__init(metaStrings, signature, access, func)
+	self.metaStrings = metaStrings
+	self.signature = signature
+	self.access = access
+	self.func = func or false
+	self.flags = generateFlags(not func, access)
+	self.nameIndex = -1
+end
+----------------------------------------------------------------------------------------------------
+-- Build meta method data
+----------------------------------------------------------------------------------------------------
+function Class:build()
+    local name,params = extractArgs(self.signature)
+    -- add meta string(method name)
+    self.nameIndex = self.metaStrings:insert(name)
+
+    -- Parameters MetaTypes[n]
+    for idx,p in ipairs(params) do
+        local argName = string.format('arg%d', idx)
+        self.metaStrings:insert(argName)
+        local type = QtCore.QMetaType.type(p)
+        if type == 0 then
+            local stringIndex = self.metaStrings:insert(p)
+            type = MetaDataFlags.IsUnresolvedType + stringIndex
         end
+        table.insert(self, type)
     end
-    table.insert(self, input)
-    return #self - 1
-end
-----------------------------------------------------------------------------------------------------
--- Get meta string index(0-base) from string literals
-----------------------------------------------------------------------------------------------------
-function Class:indexOf(input)
-    for i,s in ipairs(self) do
-        if s == input then
-            return i - 1
-        end
+    -- Parameters NameIndies[n]
+    for idx,p in ipairs(params) do
+        local argName = string.format('arg%d', idx)
+        table.insert(self, self.metaStrings:indexOf(argName))
     end
-    error('Invalid meta string : ' .. input)
 end
 
 return Class

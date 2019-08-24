@@ -15,7 +15,6 @@ local function readFile(path)
 	return src
 end
 local function saveFile(path, data)
-	log(' >> Save file : %s', path)
 	local fp = assert(io.open(path, 'wb'), 'Unable to save file : ' .. path)
 	fp:write(data)
 	fp:close()
