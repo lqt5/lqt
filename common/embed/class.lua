@@ -22,26 +22,10 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ***************************************************************************]]
+-- locals from lqt_embed.cpp
+local LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS
+local LQT_OBJMETADATA_STORE, LQT_OBJMETASTRING_STORE
 
-----------------------------------------------------------------------------------------------------
---- Creates a deep copy of an object.
-----------------------------------------------------------------------------------------------------
-local function deepCopy(tab)
-	local lookup = {}
-	local function _copy(value)
-		if type(value) ~= 'table' then
-			return value
-		elseif lookup[value] then
-			return lookup[value]
-		end
-		local new = {}
-		lookup[value] = new
-		for k,v in pairs(value) do
-			new[_copy(k)] = _copy(v)
-		end
-	end
-	return _copy(tab)
-end
 ----------------------------------------------------------------------------------------------------
 -- call __static_init(static constructor)
 ----------------------------------------------------------------------------------------------------
@@ -61,19 +45,6 @@ local staticInit = (function()
 
 		local __static_init = rawget(classDef, '__static_init')
 		if type(__static_init) == 'function' then
-
-			-- local metaStrings = __super and __super[LQT_OBJMETASTRING] or nil
-			-- local metaData = __super and __super[LQT_OBJMETADATA] or nil
-			-- local metaSlots = __super and __super[LQT_OBJSLOTS] or nil
-			-- local metaSignals = __super and __super[LQT_OBJSIGS] or nil
-
-			-- classDef[LQT_OBJMETASTRING] = deepCopy(metaStrings)
-			-- classDef[LQT_OBJMETADATA] = deepCopy(metaData)
-			-- classDef[LQT_OBJSLOTS] = deepCopy(metaSlots)
-			-- classDef[LQT_OBJSIGS] = deepCopy(metaSignals)
-			-- classDef[LQT_OBJMETADATA_STORE] = ''
-			-- classDef[LQT_OBJMETASTRING_STORE] = ''
-
 			__static_init(classDef)
 		end     
 	end
@@ -309,6 +280,10 @@ end
 -- Entry
 ----------------------------------------------------------------------------------------------------
 return function(QtCore, LQT)
+	LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS = unpack(LQT)
+	LQT_OBJMETADATA_STORE = '*' .. LQT_OBJMETADATA
+	LQT_OBJMETASTRING_STORE = '*' .. LQT_OBJMETASTRING
+
 	rawset(QtCore, 'isClass', isClass)
 	rawset(QtCore, 'isObject', isObject)
 	rawset(QtCore, 'isInstanceOf', isInstanceOf)

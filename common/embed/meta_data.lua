@@ -52,6 +52,7 @@ function Class:__init(owner, metaStrings, clone)
     -- Copy for super data
     if clone then
         for _,val in pairs(clone.methods) do
+            -- ref to MetaMethod (readonly!)
             table.insert(self.methods, val)
         end
     end
@@ -66,32 +67,25 @@ end
 -- Add method(signal/slot)
 ----------------------------------------------------------------------------------------------------
 function Class:addMethod(signature, access, func)
-    local methodInfo = MetaMethod(self.metaStrings
+    local index = #self.methods
+    -- makes slot order after signal
+    if func then
+        index = index + 0x80000000
+    end
+
+    local methodInfo = MetaMethod(index, self.metaStrings
         , signature
         , access
         , func
     )
     methodInfo:build()
 
-    -- add new method info
-    if not func then
-        local inserted = false
-        -- is signal, insert before slot
-        for idx = #self.methods,1,-1 do
-            local info = self.methods[idx]
-            if not info.func then
-                table.insert(self.methods, idx + 1, methodInfo)
-                inserted = true
-                break
-            end
-        end
+    table.insert(self.methods, methodInfo)
 
-        if not inserted then
-            table.insert(self.methods, 1, methodInfo)
-        end
-    else
-        table.insert(self.methods, methodInfo)
-    end
+    -- sort methods
+    table.sort(self.methods, function(left, right)
+        return left.index < right.index
+    end)
 end
 ----------------------------------------------------------------------------------------------------
 -- Build meta data
@@ -99,9 +93,6 @@ end
 function Class:build()
     -- Get meta methods(slot) table
     local metaMethods = self.methods
-
-    local metaSlots = {}
-    local metaSignals = {}
 
     -- Cleanup meta data
     for i = #self,1,-1 do
@@ -124,6 +115,9 @@ function Class:build()
         table.insert(self, val)
     end
 
+    local metaSlots = {}
+    local metaSignals = {}
+
     local function addSignalSlot(signature, func)
         if func then
             table.insert(metaSlots, func)
@@ -139,83 +133,32 @@ function Class:build()
         end
     end
 
-    local offset = #self + (self:methodCount() * 5)
-    -- build slot methods
+    local offset = #self + (self:methodCount() * MetaMethod.headerSize())
 
     local signalCount = 0
-    -- signals: name, argc, parameters, tag, flags
+    -- build signal/slot methods data
+    --  signals: name, argc, parameters, tag, flags
+    --  slots: name, argc, parameters, tag, flags
     for _,methodInfo in ipairs(metaMethods) do
-        local func = methodInfo.func
-        if not func then
-            local access = methodInfo.access
-            -- name index
-            table.insert(self, methodInfo.nameIndex)
-            -- argc
-            table.insert(self, #methodInfo / 2)
-            -- parameters offset
-            table.insert(self, offset)
-            -- tag
-            table.insert(self, 2)
-            -- flags
-            table.insert(self, methodInfo.flags)
-            -- increment data offset
-            offset = (offset + 1 + #methodInfo)
+        -- write meta header data
+        offset = methodInfo:writeHeader(self, offset)
+        -- no func, is an signal
+        if not methodInfo.func then
             signalCount = signalCount + 1
-
-            addSignalSlot(methodInfo.signature, false)
         end
+        -- add lqt signal/slot func
+        addSignalSlot(methodInfo.signature, methodInfo.func)
     end
     self[14] = signalCount
 
-    -- slots: name, argc, parameters, tag, flags
-    for _,methodInfo in ipairs(metaMethods) do
-        local func = methodInfo.func
-        if func then
-            local access = methodInfo.access
-            -- name index
-            table.insert(self, methodInfo.nameIndex)
-            -- argc
-            table.insert(self, #methodInfo / 2)
-            -- parameters offset
-            table.insert(self, offset)
-            -- tag
-            table.insert(self, 2)
-            -- flags
-            table.insert(self, methodInfo.flags)
-            -- increment data offset
-            offset = (offset + 1 + #methodInfo)
-
-            addSignalSlot(methodInfo.signature, func)
-        end
-    end
-
-    -- signals: parameters
+    -- build singal/slot parameters data(ReturnType/ParamTypes[]/NameIndies[])
+    -- signals/slots: parameters
     --  return_type param_types[argc] string_index[args]
     for _,methodInfo in ipairs(metaMethods) do
-        local func = methodInfo.func
-        if not func then
-            -- return_type always is void
-            table.insert(self, QtCore.QMetaType.Type.Void)
-            -- parameters(MetaTypes[n] + NameIndex[n]
-            for _,data in ipairs(methodInfo) do
-                table.insert(self, data)
-            end
-        end
+        -- Write method parameter data
+        methodInfo:writeParameter(self)
     end
 
-    -- slots: parameters
-    --  return_type param_types[argc] string_index[args]
-    for _,methodInfo in ipairs(metaMethods) do
-        local func = methodInfo.func
-        if func then
-            -- return_type always is void
-            table.insert(self, QtCore.QMetaType.Type.Void)
-            -- parameters(MetaTypes[n] + NameIndex[n]
-            for _,data in ipairs(methodInfo) do
-                table.insert(self, data)
-            end
-        end
-    end
     -- eod
     table.insert(self, 0)
 

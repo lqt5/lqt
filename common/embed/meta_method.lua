@@ -63,13 +63,58 @@ end
 ----------------------------------------------------------------------------------------------------
 -- Constructor
 ----------------------------------------------------------------------------------------------------
-function Class:__init(metaStrings, signature, access, func)
+function Class:__init(index, metaStrings, signature, access, func)
+	-- Meta strings
 	self.metaStrings = metaStrings
+	-- Method signature(etc: `click()`)
 	self.signature = signature
+	-- Access(public/protected/private)
 	self.access = access
+	-- Method callback func, signal if func is nil
 	self.func = func or false
+	-- Method flags
 	self.flags = generateFlags(not func, access)
+	-- Method name string index
 	self.nameIndex = -1
+	-- Sarameters data(ParamTypes[]/NameIndies[])
+	self.parameters = {}
+	-- Sort index (used for table.sort)
+	self.index = index
+end
+----------------------------------------------------------------------------------------------------
+-- Get method header data size
+----------------------------------------------------------------------------------------------------
+function Class.headerSize()
+	return 5
+end
+----------------------------------------------------------------------------------------------------
+-- Write method header data
+----------------------------------------------------------------------------------------------------
+function Class:writeHeader(data, offset)
+    -- name index
+    table.insert(data, self.nameIndex)
+    -- argc
+    table.insert(data, #self.parameters / 2)
+    -- parameters offset
+    table.insert(data, offset)
+    -- tag
+    table.insert(data, 2)
+    -- flags
+    table.insert(data, self.flags)
+    -- increment data offset
+    offset = (offset + 1 + #self.parameters)
+    return offset
+end
+----------------------------------------------------------------------------------------------------
+-- Write method parameter data
+----------------------------------------------------------------------------------------------------
+function Class:writeParameter(data)
+    -- return_type always is void
+    table.insert(data, QtCore.QMetaType.Type.Void)
+    -- parameters(MetaTypes[n] + NameIndex[n]
+    for _,val in ipairs(self.parameters) do
+        table.insert(data, val)
+    end
 end
 ----------------------------------------------------------------------------------------------------
 -- Build meta method data
@@ -79,6 +124,7 @@ function Class:build()
     -- add meta string(method name)
     self.nameIndex = self.metaStrings:insert(name)
 
+    local parameters = self.parameters
     -- Parameters MetaTypes[n]
     for idx,p in ipairs(params) do
         local argName = string.format('arg%d', idx)
@@ -88,12 +134,12 @@ function Class:build()
             local stringIndex = self.metaStrings:insert(p)
             type = MetaDataFlags.IsUnresolvedType + stringIndex
         end
-        table.insert(self, type)
+        table.insert(parameters, type)
     end
     -- Parameters NameIndies[n]
     for idx,p in ipairs(params) do
         local argName = string.format('arg%d', idx)
-        table.insert(self, self.metaStrings:indexOf(argName))
+        table.insert(parameters	, self.metaStrings:indexOf(argName))
     end
 end
 
