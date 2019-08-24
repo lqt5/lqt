@@ -170,6 +170,9 @@ static int lqtL_qvariant_setValue(lua_State *L) {
 		self->setValue(*(QSizePolicy*)lqtL_toudata(L, 2, "QSizePolicy*"));
 #endif
 
+	} else if (lqtL_testudata(L, 2, "QObject*")) {
+		QObject* obj = static_cast<QObject*>(lqtL_toudata(L, 2, "QObject*"));
+		self->setValue(obj);
 	}
 	return 0;
 }
@@ -189,6 +192,13 @@ int lqtL_qvariant_value_custom(lua_State *L, int index, bool convert_to) {
 			return 2;
 		}
 	}
+
+	if(self->type() == (int) QMetaType::QObjectStar) {
+
+		lqtL_pushqobject(L, self->value<QObject*>());
+		return 1;
+	}
+
 	switch (self->type()) {
 		case QVariant::Invalid: lua_pushnil(L); return 1;
 		/* basic types */
