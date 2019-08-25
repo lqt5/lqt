@@ -132,7 +132,7 @@ function Class:build()
         local type = QtCore.QMetaType.type(p)
         if type == 0 then
             local stringIndex = self.metaStrings:insert(p)
-            type = MetaDataFlags.IsUnresolvedType + stringIndex
+            type = Flags.MetaDataFlags.IsUnresolvedType + stringIndex
         end
         table.insert(parameters, type)
     end
