@@ -45,10 +45,6 @@ local PropertyFlags = {
     Notify = 0x00400000,
     Revisioned = 0x00800000
 }
--- -- Q_PROPERTY(QString text MEMBER m_text NOTIFY textChanged FINAL)
--- 0x00495803
--- -- Q_PROPERTY(Priority priority READ priority WRITE setPriority NOTIFY priorityChanged)
--- 0x0049510b
 
 local MethodFlags = {
     AccessPrivate = 0x00,

@@ -20,6 +20,8 @@ void lqtL_embed(lua_State *L) {
             lua_rawseti(L, -2, 3);
             lua_pushstring(L, LQT_OBJSIGS);
             lua_rawseti(L, -2, 4);
+            lua_pushstring(L, LQT_OBJPROPS);
+            lua_rawseti(L, -2, 5);
         }
         lua_pcall(L, 2, 1, 0);
 

@@ -22,10 +22,6 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ***************************************************************************]]
--- locals from lqt_embed.cpp
-local LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS
-local LQT_OBJMETADATA_STORE, LQT_OBJMETASTRING_STORE
-
 ----------------------------------------------------------------------------------------------------
 -- call __static_init(static constructor)
 ----------------------------------------------------------------------------------------------------
@@ -280,10 +276,6 @@ end
 -- Entry
 ----------------------------------------------------------------------------------------------------
 return function(QtCore, LQT)
-	LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS = unpack(LQT)
-	LQT_OBJMETADATA_STORE = '*' .. LQT_OBJMETADATA
-	LQT_OBJMETASTRING_STORE = '*' .. LQT_OBJMETASTRING
-
 	rawset(QtCore, 'isClass', isClass)
 	rawset(QtCore, 'isObject', isObject)
 	rawset(QtCore, 'isInstanceOf', isInstanceOf)

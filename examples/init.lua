@@ -47,6 +47,7 @@ local function reload_embed()
         'Lqt MetaData',
         'Lqt Slots',
         'Lqt Signatures',
+        'Lqt Properties',
     })
 end
 -- reload_embed()

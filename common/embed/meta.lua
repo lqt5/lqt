@@ -23,7 +23,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ***************************************************************************]]
 -- locals from lqt_embed.cpp
-local QtCore, LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS
+local QtCore, LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS, LQT_OBJPROPS
 
 local CMetaStrings = require 'embed.meta_strings'
 local CMetaData = require 'embed.meta_data'
@@ -59,19 +59,6 @@ local function init(self)
     return metaData
 end
 ----------------------------------------------------------------------------------------------------
--- Add signal/slot for qt object
-----------------------------------------------------------------------------------------------------
-local function addMethod(self, signature, access, func)
-    local metaData = init(self)
-
-    metaData:addMethod(signature, access, func)
-
-    local metaSlots, metaSignals = metaData:build()
-
-    self[LQT_OBJSLOTS] = metaSlots
-    self[LQT_OBJSIGS] = metaSignals
-end
-----------------------------------------------------------------------------------------------------
 -- Validate method(signal/slot) name
 ----------------------------------------------------------------------------------------------------
 local function checkMethodName(methodName)
@@ -79,49 +66,99 @@ local function checkMethodName(methodName)
     return name ~= nil and args ~= nil
 end
 ----------------------------------------------------------------------------------------------------
+-- Meta closures, register to QObject and QtCore.QObject
+----------------------------------------------------------------------------------------------------
+local MetaClosures = {}
+----------------------------------------------------------------------------------------------------
+-- Add an custom qt slot
+----------------------------------------------------------------------------------------------------
+function MetaClosures.__addslot(self, signature, func, access)
+    assert(type(func) == 'function'
+        , string.format('__addslot("%s") `func` is not function!', signature)
+    )
+
+    if not checkMethodName(signature) then
+        error(string.format('Invalid slot signature : `%s`', signature))
+    end
+
+    local metaData = init(self)
+
+    metaData:addMethod(signature, access, func)
+
+    local metaSlots, metaSignals, metaProperties = metaData:build()
+
+    self[LQT_OBJSLOTS] = metaSlots
+    self[LQT_OBJSIGS] = metaSignals
+    self[LQT_OBJPROPS] = metaProperties
+end
+----------------------------------------------------------------------------------------------------
+-- Add an custom qt signal
+----------------------------------------------------------------------------------------------------
+function MetaClosures.__addsignal(self, signature, access)
+    if not checkMethodName(signature) then
+        error(string.format('Invalid signal signature : `%s`', signature))
+    end
+
+    local metaData = init(self)
+
+    metaData:addMethod(signature, access)
+
+    local metaSlots, metaSignals, metaProperties = metaData:build()
+
+    self[LQT_OBJSLOTS] = metaSlots
+    self[LQT_OBJSIGS] = metaSignals
+    self[LQT_OBJPROPS] = metaProperties
+end
+----------------------------------------------------------------------------------------------------
+-- Add an custom qt proerty
+----------------------------------------------------------------------------------------------------
+function MetaClosures.__addproperty(self, signature, info)
+    local metaData = init(self)
+
+    local type,name = signature:match('([%w%d_]+%*?)%s+([%w%d_]+)')
+    if not type or not name then
+        error(string.format('Invalid property signature : `%s`', signature))
+    end
+
+    local metaType = QtCore.QMetaType.type(type)
+    if metaType == QtCore.QMetaType.UnknownType or metaType >= QtCore.QMetaType.User then
+        error(string.format('Unknown property type : `%s`', type))
+    end
+
+    metaData:addProperty(metaType, name, info)
+
+    local metaSlots, metaSignals, metaProperties = metaData:build()
+
+    self[LQT_OBJSLOTS] = metaSlots
+    self[LQT_OBJSIGS] = metaSignals
+    self[LQT_OBJPROPS] = metaProperties
+end
+----------------------------------------------------------------------------------------------------
+-- Emit an signal
+----------------------------------------------------------------------------------------------------
+function MetaClosures.__emit(self, name, ...)
+    local meta = self:metaObject()
+    meta.invokeMethod(self, name, QtCore.AutoConnection, ...)
+end
+----------------------------------------------------------------------------------------------------
 -- Entry
 ----------------------------------------------------------------------------------------------------
 return function(...)
 	local LQT
 	QtCore, LQT = ...
-	LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS = unpack(LQT)
+	LQT_OBJMETASTRING, LQT_OBJMETADATA, LQT_OBJSLOTS, LQT_OBJSIGS, LQT_OBJPROPS = unpack(LQT)
 
     CMetaStrings.setup(...)
     CMetaData.setup(...)
 
     local QObject_metatable = debug.getregistry()['QObject*']
 
-    rawset(QObject_metatable, '__addslot', function(self, name, func, access)
-        assert(type(func) == 'function'
-            , string.format('__addslot("%s") `func` is not function!', name)
-        )
-
-        if not checkMethodName(name) then
-            error(string.format('Invalid slot name : `%s`', name))
-        end
-
-        return addMethod(self, name, access or 'public', func)
-    end)
-
-    rawset(QObject_metatable, '__addsignal', function(self, name, access)
-        if not checkMethodName(name) then
-            error(string.format('Invalid signal name : `%s`', name))
-        end
-
-        return addMethod(self, name, access or 'public')
-    end)
-
-    rawset(QObject_metatable, '__emit', function(self, name, ...)
-        local meta = self:metaObject()
-        meta.invokeMethod(self, name, QtCore.AutoConnection, ...)
-    end)
-
-    QtCore.QObject.__addslot = QObject_metatable.__addslot
-    QtCore.QObject.__addsignal = QObject_metatable.__addsignal
-    QtCore.QObject.__emit = QObject_metatable.__emit
+    for name,func in pairs(MetaClosures) do
+        rawset(QObject_metatable, name, func)
+        QtCore.QObject[name] = func
+    end
 
     -- TODO:
-    --  this:__addproperty()
     --  this:__addenum()
     --  this:__addset()
 end
