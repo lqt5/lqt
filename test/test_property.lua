@@ -140,6 +140,9 @@ local v = QtCore.QVariant()
 v:setValue(obj)
 assert(v:value() == obj)
 
+obj:setProperty('objectProperty', v)
+assert(obj:property('objectProperty'):value() == obj)
+
 print(obj:property('objectName'):value():toStdString())
 
 print(obj:property('stringProperty'):value():toStdString())

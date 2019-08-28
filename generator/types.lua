@@ -121,6 +121,7 @@ base_types['bool*'] = {
 		return 'lqtL_isboolean(L, '..tostring(j)..')', 1
 	end,
 	onstack = 'boolean,',
+	pushref = true,
 }
 base_types['int&'] = {
 	get = function(j)
@@ -146,6 +147,7 @@ base_types['int*'] = {
 		return 'lqtL_isinteger(L, '..tostring(j)..')', 1
 	end,
 	onstack = 'integer,',
+	pushref = true,
 }
 base_types['char**'] = {
 	get = function(j)

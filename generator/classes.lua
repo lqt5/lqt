@@ -617,6 +617,8 @@ function fill_wrapper_code(f)
 		return type_name
 	end
 
+	local return_num = 0
+	local pushrefs = {}
 	for i, a in ipairs(f.arguments) do
 		if not typesystem[a.xarg.type_name] then
 			ignore(f.xarg.fullname, 'unkown argument type', a.xarg.type_name)
@@ -630,10 +632,20 @@ function fill_wrapper_code(f)
 		--	fix error: non-const lvalue reference to type 'QWebEngineCallback<...>' cannot bind to a temporary of type 'QWebEngineCallback<...>'
 		--   QWebEngineCallback<int>& arg1 = lqtL_getQWebEngineCallback_int(L, 1);
 		if typesystem[a.xarg.type_name].lvalue then type_name = type_name:gsub('&$', '') end
+		local arg_name
 		if class_prefix then
-			wrap = wrap .. '  ' .. argument_name(type_name, 'arg'..argn) .. ' = '
+			arg_name = argument_name(type_name, 'arg'..argn)
+			wrap = wrap .. '  ' .. arg_name .. ' = '
 		else
-			wrap = wrap .. '  ' .. argument_name(arg_as or type_name, 'arg'..argn) .. ' = '
+			arg_name = argument_name(arg_as or type_name, 'arg'..argn)
+			wrap = wrap .. '  ' .. arg_name .. ' = '
+		end
+		-- push ref-value after result
+		--      ex: double QVariant::toDouble(bool *succ);
+		if typesystem[a.xarg.type_name].pushref then
+			local refput,refn = typesystem[a.xarg.type_name].push('arg'..argn)
+			table.insert(pushrefs, refput)
+			return_num = return_num + refn
 		end
 		if a.xarg.default=='1' and an>0 then
 			wrap = wrap .. 'lua_isnoneornil(L, '..stackn..')'
@@ -665,12 +677,17 @@ function fill_wrapper_code(f)
 			ignore(f.xarg.fullname, 'unknown return type', f.return_type)
 			return nil
 		end
-		local rput, rn = typesystem[f.return_type].push'ret'
-		wrap = wrap .. '  luaL_checkstack(L, '..rn..', "cannot grow stack for return value");\n'
-		wrap = wrap .. '  '..rput..';\n  return '..rn..';\n'
-	else
-		wrap = wrap .. '  return 0;\n'
-	end
+        local rput,rn = typesystem[f.return_type].push'ret'
+        return_num = return_num + rn
+        wrap = wrap .. '  luaL_checkstack(L, '..return_num..', "cannot grow stack for return value");\n'
+        wrap = wrap .. '  '..rput..';\n'
+    elseif return_num > 0 then
+		wrap = wrap .. '  luaL_checkstack(L, '..return_num..', "cannot grow stack for return value");\n'
+    end
+    for _,refput in ipairs(pushrefs) do
+		wrap = wrap .. '  '..refput..';\n'
+    end
+   	wrap = wrap .. '  return '..return_num..';\n'
 	f.wrapper_code = wrap
 	f.stack_arguments = stack_args
 	f.defects = defects

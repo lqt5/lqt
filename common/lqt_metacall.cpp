@@ -141,22 +141,10 @@ static void lqt_pushTypePtr(lua_State *L, int idx, QMetaType::Type type, const c
                 lua_pushnil(L);
             }
         } break;
-        default:
-        break;
-        // {
-        //     static QVariant variants[16];
-        //     QVariant &v = variants[idx];
-        //     v = QVariant(type, ptr);
-        //     lqtL_pushudata(L, &v, "QVariant*");
-        //     int ret = lqtL_qvariant_value_custom(L, -1, false);
-        //     if (ret == 0)
-        //         lua_pushnil(L);
-        //     else if(ret == 2) {
-        //         lua_remove(L, -2);
-        //         lua_error(L);
-        //     }
-        //     lua_remove(L, -2);
-        // }
+        default: {
+            printf("Unknown meta type, push nil instead : %d %d\n", idx, type);
+            lua_pushnil(L);
+        } break;
     }
 }
 
@@ -262,7 +250,9 @@ static void lqt_getTypePtr(lua_State *L, int idx, QMetaType::Type type, void *pt
         // Nullptr = 51,
         // UnknownType = 0, 
         // VoidStar = 31,
-        default: break;
+        default: {
+            printf("Unknown meta type, ignore : %d\n", type);
+        } break;
     }
 }
 
