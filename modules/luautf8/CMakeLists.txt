@@ -5,11 +5,11 @@ project(utf8)
 set(CMAKE_MACOSX_RPATH 1)
 
 include_directories(${LUA_INCLUDE_DIRS}
-	../../depends/luautf8
+	../../modules/src/luautf8
 )
 
 set(utf8_src
-	../../depends/luautf8/lutf8lib.c
+	../../modules/src/luautf8/lutf8lib.c
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLUAMOD_API=LUALIB_API")

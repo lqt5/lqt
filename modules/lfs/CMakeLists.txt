@@ -5,12 +5,12 @@ project(lfs)
 set(CMAKE_MACOSX_RPATH 1)
 
 include_directories(${LUA_INCLUDE_DIRS}
-	../../depends/luafilesystem/src
+	../../modules/src/luafilesystem/src
 )
 
 set(lfs_src
-	../../depends/luafilesystem/src/lfs.h
-	../../depends/luafilesystem/src/lfs.c
+	../../modules/src/luafilesystem/src/lfs.h
+	../../modules/src/luafilesystem/src/lfs.c
 )
 
 link_directories(${LUA_LIBS_FOR_MODULE})

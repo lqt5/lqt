@@ -5,24 +5,24 @@ project(luagbk)
 set(CMAKE_MACOSX_RPATH 1)
 
 include_directories(${LUA_INCLUDE_DIRS}
-	../../depends/luagbk
+	../../modules/src/luagbk
 )
 
 set(gbk_src
-	../../depends/luagbk/ldbcs.h
-	../../depends/luagbk/gbk.h
-	../../depends/luagbk/lgbk.c
+	../../modules/src/luagbk/ldbcs.h
+	../../modules/src/luagbk/gbk.h
+	../../modules/src/luagbk/lgbk.c
 )
 
 set(jis_src
-	../../depends/luagbk/ldbcs.h
-	../../depends/luagbk/jis.h
-	../../depends/luagbk/ljis.c
+	../../modules/src/luagbk/ldbcs.h
+	../../modules/src/luagbk/jis.h
+	../../modules/src/luagbk/ljis.c
 )
 
 set(pinyin_src
-	../../depends/luagbk/pinyin.h
-	../../depends/luagbk/lpinyin.c
+	../../modules/src/luagbk/pinyin.h
+	../../modules/src/luagbk/lpinyin.c
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLUAMOD_API=LUALIB_API")

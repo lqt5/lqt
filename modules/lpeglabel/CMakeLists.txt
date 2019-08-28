@@ -5,21 +5,21 @@ project(lpeglabel)
 set(CMAKE_MACOSX_RPATH 1)
 
 include_directories(${LUA_INCLUDE_DIRS}
-	../../depends/lpeglabel
+	../../modules/src/lpeglabel
 )
 
 set(lpeglabel_src
-	../../depends/lpeglabel/lpcap.c
-	../../depends/lpeglabel/lpcap.h
-	../../depends/lpeglabel/lpcode.c
-	../../depends/lpeglabel/lpcode.h
-	../../depends/lpeglabel/lpprint.c
-	../../depends/lpeglabel/lpprint.h
-	../../depends/lpeglabel/lptree.c
-	../../depends/lpeglabel/lptree.h
-	../../depends/lpeglabel/lptypes.h
-	../../depends/lpeglabel/lpvm.c
-	../../depends/lpeglabel/lpvm.h
+	../../modules/src/lpeglabel/lpcap.c
+	../../modules/src/lpeglabel/lpcap.h
+	../../modules/src/lpeglabel/lpcode.c
+	../../modules/src/lpeglabel/lpcode.h
+	../../modules/src/lpeglabel/lpprint.c
+	../../modules/src/lpeglabel/lpprint.h
+	../../modules/src/lpeglabel/lptree.c
+	../../modules/src/lpeglabel/lptree.h
+	../../modules/src/lpeglabel/lptypes.h
+	../../modules/src/lpeglabel/lpvm.c
+	../../modules/src/lpeglabel/lpvm.h
 )
 
 link_directories(${LUA_LIBS_FOR_MODULE})

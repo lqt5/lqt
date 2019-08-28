@@ -5,11 +5,11 @@ project(lpath)
 set(CMAKE_MACOSX_RPATH 1)
 
 include_directories(${LUA_INCLUDE_DIRS}
-	../../depends/lua-lpath
+	../../modules/src/lua-lpath
 )
 
 set(lpath_src
-	../../depends/lpath/lpath.c
+	../../modules/src/lpath/lpath.c
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLUAMOD_API=LUALIB_API")

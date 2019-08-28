@@ -5,13 +5,13 @@ project(miniz)
 set(CMAKE_MACOSX_RPATH 1)
 
 include_directories(${LUA_INCLUDE_DIRS}
-	../../depends/lua-miniz
+	../../modules/src/lua-miniz
 )
 
 set(miniz_src
-	# ../../depends/lua-miniz/miniz.c
-	../../depends/lua-miniz/miniz.h
-	../../depends/lua-miniz/lminiz.c
+	# src/lua-miniz/miniz.c
+	../../modules/src/lua-miniz/miniz.h
+	../../modules/src/lua-miniz/lminiz.c
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLUAMOD_API=LUALIB_API")
