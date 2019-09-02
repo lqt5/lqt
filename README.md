@@ -138,10 +138,10 @@ and feel free to add your own!
 License
 -------
 
-Copyright (c) 2007-2009 Mauro Iazzi
-Copyright (c) 2008-2009 Peter Kümmel
-Copyright (c) 2010-2011 Michal Kottman
-Copyright (c) 2019-2019 Saniko
+* Copyright (c) 2007-2009 Mauro Iazzi
+* Copyright (c) 2008-2009 Peter Kümmel
+* Copyright (c) 2010-2011 Michal Kottman
+* Copyright (c) 2019-2019 Saniko
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
