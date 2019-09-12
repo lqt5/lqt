@@ -59,6 +59,7 @@ end
 
 function Class:__init()
 	self.movingItem = false
+	self.oldPos = false
 end
 
 function Class:mousePressEvent(event)

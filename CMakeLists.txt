@@ -304,8 +304,8 @@ else()
 	build_qt_lib_binding(QtWebEngineCore QtWebChannel QtPositioning QtQuick QtQml QtGui QtCore)
 
 	set(REUSE_FILES 1)
-	set(QT_LIBRARIES WebEngineWidgets PrintSupport Quick Network Widgets WebEngineCore Gui Core)
-	build_qt_lib_binding(QtWebEngineWidgets QtPrintSupport QtQuick QtNetwork QtWidgets QtWebEngineCore QtGui QtCore)
+	set(QT_LIBRARIES WebEngineWidgets WebChannel PrintSupport Quick Network Widgets WebEngineCore Gui Core)
+	build_qt_lib_binding(QtWebEngineWidgets QtWebChannel QtPrintSupport QtQuick QtNetwork QtWidgets QtWebEngineCore QtGui QtCore)
 
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Test Widgets Gui Network Core)

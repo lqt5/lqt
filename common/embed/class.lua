@@ -56,10 +56,12 @@ local function addOverride(inst, classDef)
 		addOverride(inst, __super)
 	end
 
-	for k,v in pairs(classDef) do
-		if type(v) == 'function' then
-			inst[k] = v
-			inst[k] = nil
+	local __override = inst.__override
+	if type(__override) == 'function' then
+		for k,v in pairs(classDef) do
+			if type(v) == 'function' then
+				__override(inst, k)
+			end
 		end
 	end
 end
