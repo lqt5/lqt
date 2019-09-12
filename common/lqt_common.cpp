@@ -914,6 +914,19 @@ static int lqtL_errfunc(lua_State *L) {
     return 1;
 }
 
+int lqtL_setErrorHandler(lua_State *L) {
+
+    if(!lua_isfunction(L, 1))
+        luaL_typerror(L, 1, "function");
+
+    lqtL_getrefclasstable(L);
+    lua_pushvalue(L, 1);
+    lua_setfield(L, -2, "errorHandler");
+    lua_pop(L, 1);
+
+    return 0;
+}
+
 int lqtL_pcall(lua_State *L, int narg, int nres, int err) {
 
     lua_pushcfunction(L, lqtL_errfunc);
@@ -923,6 +936,17 @@ int lqtL_pcall(lua_State *L, int narg, int nres, int err) {
     if(status == 0) {
         // remove errfunc
         lua_remove(L, -(nres + 1));
+    } else {
+
+        lqtL_getrefclasstable(L);
+        lua_getfield(L, -1, "errorHandler");
+        lua_remove(L, -2);
+
+        if(lua_isfunction(L, -1)) {
+            lua_pushvalue(L, -2);
+            lua_pcall(L, 1, 0, 0);
+        } else
+            lua_pop(L, 1);
     }
     return status;
 }

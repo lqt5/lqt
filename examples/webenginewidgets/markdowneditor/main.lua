@@ -57,6 +57,13 @@ local QtWebEngineCore = require 'qtwebenginecore'
 local QtWebEngineWidgets = require 'qtwebenginewidgets'
 local QtWebChannel = require 'qtwebchannel'
 
+QtCore.setErrorHandler(function(errmsg)
+	QtWidgets.QMessageBox.critical(nil
+		, tr 'Script error'
+		, errmsg
+	)
+end)
+
 QtCore.QResource.registerResource('markdowneditor.rcc', '')
 
 QtCore.QCoreApplication.setAttribute(QtCore.AA_EnableHighDpiScaling)

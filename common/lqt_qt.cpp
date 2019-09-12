@@ -175,6 +175,8 @@ static int lqtL_metaObject(lua_State *L) {
 	return 1;
 }
 
+int lqtL_setErrorHandler(lua_State *L);
+
 void lqtL_qobject_custom (lua_State *L) {
     lua_getfield(L, LUA_REGISTRYINDEX, "QObject*");
     int qobject = lua_gettop(L);
@@ -205,6 +207,9 @@ void lqtL_qobject_custom (lua_State *L) {
     lua_getfield(L, -2, "QObject");
     lua_pushcfunction(L, lqtL_connect);
     lua_setfield(L, -2, "connect");
+    // set QtCore.setErrorHandler function
+    lua_pushcfunction(L, lqtL_setErrorHandler);
+    lua_setfield(L, -4, "setErrorHandler");
 }
 
 
