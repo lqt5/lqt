@@ -48,7 +48,6 @@ extern "C" {
 #define LQT_POINTERS "Registry Pointers"
 #define LQT_REFS "Registry References"
 #define LQT_ENUMS "Registry Enums"
-#define LQT_PCALL "Registry PCall Pointer"
 #define LQT_SUPER "Registry Super"
 #define LQT_REF_CLASS "Registry Ref Class"
 
@@ -64,11 +63,7 @@ extern "C" {
 #define LQT_TOPOSITIVE(L, i) (((i)<0)?(lua_gettop(L)+1+(i)):(i))
 
 // use standard pcall by default
-#ifndef LQT_DEBUG
-#define lqtL_pcall(L, n, r, e) lua_pcall(L, n, r, e)
-#else  // LQT_DEBUG
-#define lqtL_pcall(L, n, r, e) lqtL_pcall_debug(L, n, r, e)
-#endif // LQT_DEBUG
+int lqtL_pcall(lua_State *L, int narg, int nres, int err);
 
 typedef int (*lqt_PCallPtr) (lua_State *L, int nargs, int nresults, int errfunc);
 
@@ -167,8 +162,6 @@ const QMetaObject& lqtL_qt_metaobject (lua_State *L
     , const QMetaObject& super_data
 );
 
-int lqtL_pcall_debug (lua_State *L, int narg, int nres, int err);
-
 int lqtL_getoverload (lua_State *L, int index, const char *name);
 
 const char * lqtL_source(lua_State *L, int idx);
@@ -176,7 +169,6 @@ const char * lqtL_source(lua_State *L, int idx);
 bool lqtL_is_super(lua_State *L, int idx);
 void lqtL_register_super(lua_State *L);
 
-const char * lqtL_pushtrace(lua_State *L);
 void lqtL_pushudatatype(lua_State *L, int index);
 const char * lqtL_getarglist(lua_State *L);
 

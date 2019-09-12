@@ -220,10 +220,10 @@ function virtual_overload(v)
         ]]..fallback..[[ 
       } else
         lua_error(L);
-		]]..fallback.. -- [avoid] warning: control may reach end of non-void function [-Wreturn-type]'
+        ]]..fallback.. -- [avoid] warning: control may reach end of non-void function [-Wreturn-type]'
 [[
 
-    }
+      }
   } else {
     lua_settop(L, oldtop);
     ]]..fallback..[[

@@ -122,7 +122,9 @@ static int lqtL_connect(lua_State *L) {
         lua_pushvalue(L, 1);
         lua_pushstring(L, qPrintable(methodName));
         lua_pushvalue(L, 3);
-        lua_call(L, 3, 0);
+
+        if(lqtL_pcall(L, 3, 0, 0) != 0)
+            lua_error(L);
 
         methodName.prepend("1");
 

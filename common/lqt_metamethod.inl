@@ -94,7 +94,10 @@ static int lqt_InvokeMetaMethod (lua_State *L
                     QMetaType::Type type = (QMetaType::Type) method.parameterType(i);
                     lqt_pushTypePtr(L, i, type, method.parameterTypes().at(i).constData(), ptr);
                 }
-                lua_call(L, method.parameterCount() + 1, 0);
+
+                if(lqtL_pcall(L, method.parameterCount() + 1, 0, 0) != 0) {
+                    lua_error(L);
+                }
             } else {
                 #ifdef VERBOSE_BUILD
                 qDebug() << "Missing object slot" << name << lua_tostring(L,-1)

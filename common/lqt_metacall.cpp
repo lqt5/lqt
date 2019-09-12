@@ -348,7 +348,8 @@ static int lqt_MetaCallProperty (lua_State *L
         lqt_pushTypePtr(L, 0, (QMetaType::Type) type, nullptr, args[0]);
     }
 
-    lua_call(L, nparam + 1, nret);
+    if(lqtL_pcall(L, nparam + 1, nret, 0) != 0)
+        lua_error(L);
 
     switch(call) {
         case QMetaObject::ReadProperty: {

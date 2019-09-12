@@ -23,7 +23,8 @@ void lqtL_embed(lua_State *L) {
             lua_pushstring(L, LQT_OBJPROPS);
             lua_rawseti(L, -2, 5);
         }
-        lua_pcall(L, 2, 1, 0);
+        if(lqtL_pcall(L, 2, 1, 0) != 0)
+            lua_error(L);
 
         if(!lua_isboolean(L, -1))
             lua_error(L);

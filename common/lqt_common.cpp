@@ -453,7 +453,7 @@ static int lqtL_pushindexfunc (lua_State *L, const char *name, lqt_Base *bases) 
 static int lqtL_local_ctor(lua_State*L) {
     lua_getfield(L, 1, "new"); // (+2)
     lua_replace(L, 1); // (+2)
-    lua_call(L, lua_gettop(L)-1, LUA_MULTRET);// (X)
+    lua_call(L, lua_gettop(L)-1, LUA_MULTRET); // (X)
     lua_getfield(L, 1, "delete"); // (X+1)
     lua_setfield(L, 1, "__gc"); // (X)
 
@@ -774,11 +774,20 @@ bool lqtL_testudata (lua_State *L, int index, const char *name) {
     return true;
 }
 
-const char * lqtL_pushtrace(lua_State *L) {
+static const char * lqtL_pushtrace(lua_State *L, const char *errmsg = nullptr, int level = 0) {
     lua_getglobal(L, "debug");
     lua_getfield(L, -1, "traceback");
     lua_remove(L, -2);
-    lua_call(L, 0, 1);
+
+    if(errmsg != nullptr && level != 0) {
+        lua_pushstring(L, errmsg);
+        lua_pushnumber(L, level);
+        lua_call(L, 2, 1);
+
+    } else {
+        lua_call(L, 0, 1);
+    }
+
     return lua_tostring(L, -1);
 }
 
@@ -899,23 +908,21 @@ void lqtL_pushflags (lua_State *L, int value, const char *name) {
     return;
 }
 
-int lqtL_pcall_debug_default (lua_State *L, int narg, int nres, int err) {
-    int status = 0;
-    std::cerr << "entering a pcall" << std::endl;
-    status = lua_pcall(L, narg, nres, err);
-    std::cerr << "pcall finished with status " << status << std::endl;
-    return status;
+static int lqtL_errfunc(lua_State *L) {
+
+    lqtL_pushtrace(L, lua_tostring(L, 1), 3);
+    return 1;
 }
 
-int lqtL_pcall_debug (lua_State *L, int narg, int nres, int err) {
-    int status = 0;
-    lua_getfield(L, LUA_REGISTRYINDEX, LQT_PCALL);
-    lqt_PCallPtr pcall = (lqt_PCallPtr)lua_touserdata(L, -1);
-    lua_pop(L, 1);
-    if (pcall) {
-        status = pcall(L, narg, nres, err);
-    } else {
-        status = lqtL_pcall_debug_default(L, narg, nres, err);
+int lqtL_pcall(lua_State *L, int narg, int nres, int err) {
+
+    lua_pushcfunction(L, lqtL_errfunc);
+    // push errfunc
+    lua_insert(L, -(narg + 2));
+    int status = lua_pcall(L, narg, nres, -(narg + 2));
+    if(status == 0) {
+        // remove errfunc
+        lua_remove(L, -(nres + 1));
     }
     return status;
 }
