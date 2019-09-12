@@ -70,14 +70,6 @@ rawset(_G, 'SLOT', function (s) return '1' .. s end)
 rawset(_G, 'tr', assert(QtCore.QObject.tr))
 rawset(_G, 'qApp', function() return QtCore.QCoreApplication.instance() end)
 --------------------------------------------------------------------------------
--- hook print lua api, flush after print
---------------------------------------------------------------------------------
-local print = _G.print
-_G.print = function(...)
-	print(...)
-	io.flush()
-end
---------------------------------------------------------------------------------
 -- Qt message logger
 --------------------------------------------------------------------------------
 local function qLogger()
@@ -193,19 +185,36 @@ end
 --------------------------------------------------------------------------------
 -- get application class(console/gui/widget)
 --------------------------------------------------------------------------------
-local function getApplicationClass(type)
-    if type == 'console' then
-        return QtCore.QCoreApplication
-    elseif type == 'gui' then
-        local QtGui = require 'qtgui'
-        return QtGui.QGuiApplication
-    elseif type == 'widget' then
-        local QtGui = require 'qtgui'
-        local QtWidgets = require 'qtwidgets'
-        return QtWidgets.QApplication
-    else
-        error('invalid type ' .. tostring(type))
+local function createApplication(type, argc, argv)
+    local function class()
+        if type == 'console' then
+            return QtCore.QCoreApplication
+        elseif type == 'gui' then
+            local QtGui = require 'qtgui'
+            return QtGui.QGuiApplication
+        elseif type == 'widget' then
+            local QtGui = require 'qtgui'
+            local QtWidgets = require 'qtwidgets'
+            return QtWidgets.QApplication
+        else
+            error('invalid type ' .. tostring(type))
+        end
     end
+    local AppClass = class()
+
+    local app = AppClass(argc, argv)
+    -- Override notify funciton to handle script execute error
+    function app:notify(receiver, event)
+        local succ,ret = pcall(AppClass.notify, self, receiver, event)
+        if succ then
+            return ret
+        else
+            print(ret)
+            return false
+        end
+    end
+
+    return app
 end
 --------------------------------------------------------------------------------
 -- qt main func
@@ -213,16 +222,17 @@ end
 local function qMain(type, args, main)
     -- keep all qt object's in sandbox function
     local function sandbox()
-        local QApplicationClass = getApplicationClass(type)
-        local app = QApplicationClass(#args, args)
+        local app = createApplication(type, #args, args)
 
         local succ,window = pcall(main, app)
         if succ and window then
             window:show()
         end
+
         if not succ then
             error(window)
         end
+
         return app.exec()
     end
     -- call qCleanup to remove all qt object's ref from lua env and collect garbage
@@ -281,9 +291,7 @@ local function qTestMain(type, Class)
         QtTest.qCompare(actual, expected, 'actual', 'excepted', info.short_src, info.currentline)
     end
 
-    local QApplicationClass = getApplicationClass(type)
-
-    local app = QApplicationClass.new(1, { 'qt test' })
+    local app = createApplication(type, 1, { 'qt test' })
     app.setAttribute(QtCore.AA_Use96Dpi, true)
 
     QtTest.setMainSourcePath(debug.getinfo(2).short_src)
@@ -297,3 +305,26 @@ rawset(_G, 'qCleanup', qCleanup)
 rawset(_G, 'qMain', qMain)
 rawset(_G, 'qQmlMain', qQmlMain)
 rawset(_G, 'qTestMain', qTestMain)
+--------------------------------------------------------------------------------
+-- hook print lua api, flush after print
+--------------------------------------------------------------------------------
+local print = _G.print
+_G.print = function(...)
+    print(...)
+    io.flush()
+end
+--------------------------------------------------------------------------------
+-- Add core error handler, display error message box after script error
+--------------------------------------------------------------------------------
+QtCore.setErrorHandler(function(errmsg)
+    -- Try to load qtwidgets module
+    local succ,QtWidgets = pcall(require, 'qtwidgets')
+    if not succ then
+        return
+    end
+    -- QtWidgets successfully loaded, showing an error message box
+    QtWidgets.QMessageBox.critical(nil
+        , tr 'Script error'
+        , errmsg
+    )
+end)
