@@ -15,6 +15,7 @@ end
 function Class:__init(name)
 	print('__init', self)
 	if name then
+		print('set className')
 		self.className = name
 	end
 end
@@ -39,7 +40,21 @@ local function main()
 	local obj2 = Class.new({}, 'TestObject 2')
 	obj2:dump()
 end
-main()
+local succ,ret = xpcall(main, debug.traceback)
+if not succ then print(ret) end
+
+-- undeclared member set/get test
+succ,ret = pcall(function()
+	local obj = Class()
+	obj.wtf = 123
+end)
+assert(not succ and ret:find('can not set undeclared member variable'))
+
+succ,ret = pcall(function()
+	local obj = Class()
+	print(obj.wtf)
+end)
+assert(not succ and ret:find('can not get undeclared member variable'))
 
 table.foreach(debug.getregistry()['Registry Ref Class'], print)
 

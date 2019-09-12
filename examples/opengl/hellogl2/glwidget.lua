@@ -117,6 +117,8 @@ function Class:__init()
     self.m_proj = QtGui.QMatrix4x4()
     self.m_camera = QtGui.QMatrix4x4()
     self.m_world = QtGui.QMatrix4x4()
+
+    self.ogl = false
 end
 
 function Class:__uninit()

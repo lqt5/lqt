@@ -382,7 +382,8 @@ static int lqtL_newindexfunc (lua_State *L) {
     }
     lua_remove(L, 1); // (+0)
     lua_insert(L, 1); // (+0)
-    lua_rawset(L, 1); // (-2)
+    lua_settable(L, 1);
+    // lua_rawset(L, 1); // (-2)
     return 0;
 }
 

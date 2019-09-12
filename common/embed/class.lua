@@ -70,12 +70,16 @@ local reversedFields = {
 	'__classDef',
 	'__proto',
 	'__super',
+	'__addslot',
+	'__addsignal',
+	'__addproperty',
+	'__emit',
 }
 ----------------------------------------------------------------------------------------------------
 -- 'Is a class' check.
 ----------------------------------------------------------------------------------------------------
 local isClass = function (x)
-	return type(x) == 'table' and type(x.__class) == 'nil'
+	return type(x) == 'table' and not x.__class
 end
 ----------------------------------------------------------------------------------------------------
 -- 'Is an object' check.
@@ -167,18 +171,21 @@ end
 local function Class(name, super)
 	assert(type(name) == 'string', 'Class name must be an string')
 
+	local __protected
+
 	local function createInst(inst, classDef, ...)
 		if not classDef.__lua then
 			local env = debug.getfenv(inst)
 			env.new = errorNew
 			env.__class = classDef
 			-- set object env inherit super(self) env
-			setmetatable(env, { __index = classDef })
+			setmetatable(env, getmetatable(classDef))
 		else
 			inst.__class = classDef
-			setmetatable(inst, { __index = classDef })
+			setmetatable(inst, getmetatable(classDef))
 		end
 
+		__protected = false
 		-- call __static_init once
 		--  for class object
 		staticInit(classDef)
@@ -191,6 +198,7 @@ local function Class(name, super)
 		if type(__init) == 'function' then
 			__init(inst, ...)
 		end
+		__protected = true
 
 		return inst
 	end
@@ -206,6 +214,7 @@ local function Class(name, super)
 			)
 		end
 
+		classDef.__class = false
 		classDef.__name = name
 		classDef.__classDef = classDef
 
@@ -217,7 +226,7 @@ local function Class(name, super)
 			-- mark as lua class
 			classDef.__lua = true
 		else
-			classDef.__lua = super.__classDef and super.__classDef.__lua or nil
+			classDef.__lua = super.__classDef and super.__classDef.__lua or false
 		end
 
 		classDef.__proto = super.__proto and super.__proto or super
@@ -250,7 +259,7 @@ local function Class(name, super)
 		end
 
 		return setmetatable(classDef, {
-			__index = function(_,k)
+			__index = function(self,k)
 				-- call __static_init once
 				--  for class object
 				staticInit(classDef)
@@ -260,13 +269,37 @@ local function Class(name, super)
 					return v
 				end
 
-				v = super[k]
+				v = super and super[k] or nil
 
-				if type(v) == nil then
+				if v == nil then
+					-- ignore reversed lqt field getter
+					--	1.reversed methods
+					--	2.lqt metadata fields
+					--	3.lqt class inherit check
+					if k:find('^__') or k:find('Lqt ') or k:find('%*$') then
+						return
+					end
 					error(string.format('Class `%s` : can not get undeclared member variable `%s`', name, k), 2)
 				end
 
 				return v
+			end,
+			__newindex = function(self,k,v)
+				if not __protected or k:find('^%*Lqt ') then
+					rawset(self, k, v)
+				else
+					local ov = rawget(classDef, k)
+					if ov ~= nil then
+						rawset(classDef, k, v)
+						return
+					end
+
+					if super and super[k] ~= nil then
+						super[k] = v
+					else
+						error(string.format('Class `%s` : can not set undeclared member variable `%s` to `%s`', name, k, v), 2)
+					end
+				end
 			end,
 			__call = classDef.__call,
 		})

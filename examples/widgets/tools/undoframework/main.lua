@@ -55,7 +55,7 @@ local QtCore = require 'qtcore'
 local QtGui = require 'qtgui'
 local QtWidgets = require 'qtwidgets'
 
-return qMain('widget', { 'Undo Framework', '--ignore-gpu-blacklist', ... }, function(app)
+return qMain('widget', { 'Undo Framework', ... }, function(app)
 	local MainWindow = require 'mainwindow'
 	return MainWindow()
 end)

@@ -93,8 +93,17 @@ end
 testLocalCtor()
 
 local function testNew()
-    local base = Base.new({}, 'base')
-    local super = Super.new({}, 'super', 10086)
-    local child = Child.new({}, 'child', 9527, 3.1415926)
+    local base = Base.new('base')
+    local super = Super.new('super', 10086)
+    local child = Child.new('child', 9527, 3.1415926)
+
+    assert(base.name == 'base')
+
+    assert(super.name == 'super')
+    assert(super.id == 10086)
+
+    assert(child.name == 'child')
+    assert(child.id == 9527)
+    assert(child.hp == 3.1415926)
 end
 testNew()

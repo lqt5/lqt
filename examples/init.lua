@@ -50,7 +50,7 @@ local function reload_embed()
         'Lqt Properties',
     })
 end
--- reload_embed()
+reload_embed()
 --------------------------------------------------------------------------------
 -- QFlags::testFlag
 --------------------------------------------------------------------------------
@@ -213,6 +213,21 @@ local function createApplication(type, argc, argv)
             return false
         end
     end
+    -- Add core error handler, display error message box after script error
+    if type == 'widget' then
+        QtCore.setErrorHandler(function(errmsg)
+            -- Try to load qtwidgets module
+            local succ,QtWidgets = pcall(require, 'qtwidgets')
+            if not succ then
+                return
+            end
+            -- QtWidgets successfully loaded, showing an error message box
+            QtWidgets.QMessageBox.critical(nil
+                , tr 'Script error'
+                , errmsg
+            )
+        end)
+    end
 
     return app
 end
@@ -313,18 +328,3 @@ _G.print = function(...)
     print(...)
     io.flush()
 end
---------------------------------------------------------------------------------
--- Add core error handler, display error message box after script error
---------------------------------------------------------------------------------
-QtCore.setErrorHandler(function(errmsg)
-    -- Try to load qtwidgets module
-    local succ,QtWidgets = pcall(require, 'qtwidgets')
-    if not succ then
-        return
-    end
-    -- QtWidgets successfully loaded, showing an error message box
-    QtWidgets.QMessageBox.critical(nil
-        , tr 'Script error'
-        , errmsg
-    )
-end)
