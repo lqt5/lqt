@@ -182,80 +182,115 @@ end)
 --------------------------------------------------------------------------------
 -- Cleanup lqt ref's before application shutdown
 --------------------------------------------------------------------------------
-rawset(_G, 'qCleanup', function()
+local qCleanup = function()
     -- cleanup registry ref class
     local LQT_REF_CLASS = "Registry Ref Class"
     local registry = debug.getregistry()
     registry[LQT_REF_CLASS] = {}
     -- do full gc
     gc()
-end)
+end
+--------------------------------------------------------------------------------
+-- get application class(console/gui/widget)
+--------------------------------------------------------------------------------
+local function getApplicationClass(type)
+    if type == 'console' then
+        return QtCore.QCoreApplication
+    elseif type == 'gui' then
+        local QtGui = require 'qtgui'
+        return QtGui.QGuiApplication
+    elseif type == 'widget' then
+        local QtGui = require 'qtgui'
+        local QtWidgets = require 'qtwidgets'
+        return QtWidgets.QApplication
+    else
+        error('invalid type ' .. tostring(type))
+    end
+end
+--------------------------------------------------------------------------------
+-- qt main func
+--------------------------------------------------------------------------------
+local function qMain(type, args, main)
+    -- keep all qt object's in sandbox function
+    local function sandbox()
+        local QApplicationClass = getApplicationClass(type)
+        local app = QApplicationClass(#args, args)
+
+        local succ,window = pcall(main, app)
+        if succ and window then
+            window:show()
+        end
+        if not succ then
+            error(window)
+        end
+        return app.exec()
+    end
+    -- call qCleanup to remove all qt object's ref from lua env and collect garbage
+    local ret = sandbox()
+    qCleanup()
+    return ret
+end
 --------------------------------------------------------------------------------
 -- qml examples main func
 --------------------------------------------------------------------------------
-rawset(_G, 'qQmlMain', function(name, ...)
-	local QtGui = require 'qtgui'
-	local QtQml = require 'qtqml'
-	local QtQuick = require 'qtquick'
+local function qQmlMain(name, ...)
+    local QtGui = require 'qtgui'
+    local QtQml = require 'qtqml'
+    local QtQuick = require 'qtquick'
 
-	QtCore.QCoreApplication.setAttribute(QtCore.AA_EnableHighDpiScaling)
+    QtCore.QCoreApplication.setAttribute(QtCore.AA_EnableHighDpiScaling)
 
-	local app = QtGui.QGuiApplication(1 + select('#', unpack(arg)), { arg[0], unpack(arg) })
+    local app = QtGui.QGuiApplication(1 + select('#', unpack(arg)), { arg[0], unpack(arg) })
     app.setOrganizationName('QtProject')
-	app.setOrganizationDomain('qt-project.org')
+    app.setOrganizationDomain('qt-project.org')
     app.setApplicationName(QtCore.QFileInfo(app.applicationFilePath()):baseName())
 
     local view = QtQuick.QQuickView()
     if os.getenv('QT_QUICK_CORE_PROFILE') == '1' then
-    	local f = view:format()
-    	f:setProfile(QtGui.QSurfaceFormat.CoreProfile)
-    	f:setVersion(4, 4)
-    	view:setFormat(f)
+        local f = view:format()
+        f:setProfile(QtGui.QSurfaceFormat.CoreProfile)
+        f:setVersion(4, 4)
+        view:setFormat(f)
     end
     if os.getenv('QT_QUICK_MULTISAMPLE') == '1' then
-    	local f = view:format()
-    	f:setSamples(4)
-    	view:setFormat(f)
+        local f = view:format()
+        f:setSamples(4)
+        view:setFormat(f)
     end
-	view.connect(view:engine(), SIGNAL 'quit()', app, SLOT 'quit()')
-	local selector = QtQml.QQmlFileSelector.new(view:engine(), view)
-	view:setSource(QtCore.QUrl(name))
-	if view:status() == QtQuick.QQuickView.Error then
-		return -1
-	end
-	view:setResizeMode(QtQuick.QQuickView.SizeRootObjectToView)
-	view:show()
-	return app.exec()
-end)
+    view.connect(view:engine(), SIGNAL 'quit()', app, SLOT 'quit()')
+    local selector = QtQml.QQmlFileSelector.new(view:engine(), view)
+    view:setSource(QtCore.QUrl(name))
+    if view:status() == QtQuick.QQuickView.Error then
+        return -1
+    end
+    view:setResizeMode(QtQuick.QQuickView.SizeRootObjectToView)
+    view:show()
+    return app.exec()
+end
 --------------------------------------------------------------------------------
 -- qt test main func
 --------------------------------------------------------------------------------
-rawset(_G, 'qTestMain', function(type, Class)
-	local QtTest = require 'qttest'
+local function qTestMain(type, Class)
+    local QtTest = require 'qttest'
 
-	QtTest.QCOMPARE = function(actual, expected)
-		local info = debug.getinfo(2)
-		QtTest.qCompare(actual, expected, 'actual', 'excepted', info.short_src, info.currentline)
-	end
+    QtTest.QCOMPARE = function(actual, expected)
+        local info = debug.getinfo(2)
+        QtTest.qCompare(actual, expected, 'actual', 'excepted', info.short_src, info.currentline)
+    end
 
-	local Application
-	if type == 'console' then
-		Application = QtCore.QCoreApplication
-	elseif type == 'gui' then
-		local QtGui = require 'qtgui'
-		Application = QtGui.QGuiApplication
-	elseif type == 'widgets' then
-		local QtWidgets = require 'qtwidgets'
-		Application = QtWidgets.QApplication
-	else
-		error('invalid type ' .. tostring(type))
-	end
+    local QApplicationClass = getApplicationClass(type)
 
-	local app = Application.new(1, { 'qt test' })
-	app.setAttribute(QtCore.AA_Use96Dpi, true)
+    local app = QApplicationClass.new(1, { 'qt test' })
+    app.setAttribute(QtCore.AA_Use96Dpi, true)
 
-	QtTest.setMainSourcePath(debug.getinfo(2).short_src)
+    QtTest.setMainSourcePath(debug.getinfo(2).short_src)
 
-	return QtTest.qExec(Class(), 1, { 'qt test' })
-end)
-
+    return QtTest.qExec(Class(), 1, { 'qt test' })
+end
+--------------------------------------------------------------------------------
+-- LuaQt Global functions
+--------------------------------------------------------------------------------
+rawset(_G, 'qCleanup', qCleanup)
+rawset(_G, 'qMain', qMain)
+rawset(_G, 'qQmlMain', qQmlMain)
+rawset(_G, 'qTestMain', qTestMain)

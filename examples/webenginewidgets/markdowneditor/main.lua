@@ -57,23 +57,11 @@ local QtWebEngineCore = require 'qtwebenginecore'
 local QtWebEngineWidgets = require 'qtwebenginewidgets'
 local QtWebChannel = require 'qtwebchannel'
 
-local MainWindow = require 'mainwindow'
-
 QtCore.QResource.registerResource('markdowneditor.rcc', '')
 
 QtCore.QCoreApplication.setAttribute(QtCore.AA_EnableHighDpiScaling)
 
-local function main(...)
-	local app = QtWidgets.QApplication(2 + select('#', ...), { 'MarkDown Editor', '--ignore-gpu-blacklist', ... })
-
-	local mainWindow = MainWindow({}, app)
-	mainWindow:show()
-
-	return app.exec()
-end
-
-local ret = main(...)
-
-qCleanup()
-
-return ret
+return qMain('widget', { 'MarkDown Editor', '--ignore-gpu-blacklist', ... }, function(app)
+	local MainWindow = require 'mainwindow'
+	return MainWindow({}, app)
+end)
