@@ -51,7 +51,7 @@ endif()
 
 set(QT_SCHEMA_DIR ${CMAKE_BINARY_DIR}/../generator/schema)
 
-find_package (Qt5 REQUIRED
+find_package(Qt5 REQUIRED
 	Core
 	Network
 	Sql
@@ -72,6 +72,12 @@ find_package (Qt5 REQUIRED
 	WebEngineWidgets
 	Test
 )
+
+if(WIN32)
+	find_package(Qt5 REQUIRED WinExtras)
+elseif(APPLE)
+	find_package(Qt5 REQUIRED MacExtras)
+endif(WIN32)
 
 # set(VERBOSE_BUILD 1)
 
@@ -310,6 +316,15 @@ else()
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Test Widgets Gui Network Core)
 	build_qt_lib_binding(QtTest QtWidgets QtGui QtNetwork QtCore)
+
+	set(REUSE_FILES 1)
+	if(WIN32)
+		set(QT_LIBRARIES WinExtras Widgets Gui Core)
+		build_qt_lib_binding(QtWinExtras QtWidgets QtGui QtCore)
+	elseif(APPLE)
+		set(QT_LIBRARIES MacExtras Gui Core)
+		build_qt_lib_binding(QtMacExtras QtGui QtCore)
+	endif(WIN32)
 endif()
 
 add_subdirectory(modules/lrdb)

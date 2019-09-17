@@ -1,0 +1,16 @@
+#ifndef QT_QTWINEXTRAS_MODULE_H
+#define QT_QTWINEXTRAS_MODULE_H
+#include <QtWinExtras/QtWinExtrasDepends.lqt>
+#include "qwinextrasglobal.lqt"
+#include "qwinevent.lqt"
+#include "qwinfunctions.lqt"
+#include "qwinjumplist.lqt"
+#include "qwinjumplistcategory.lqt"
+#include "qwinjumplistitem.lqt"
+#include "qwinmime.lqt"
+#include "qwintaskbarbutton.lqt"
+#include "qwintaskbarprogress.lqt"
+#include "qwinthumbnailtoolbar.lqt"
+#include "qwinthumbnailtoolbutton.lqt"
+#include "qtwinextrasversion.lqt"
+#endif

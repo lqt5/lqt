@@ -1,0 +1,10 @@
+#ifndef QT_QTMACEXTRAS_MODULE_H
+#define QT_QTMACEXTRAS_MODULE_H
+#include <QtMacExtras/QtMacExtrasDepends.lqt>
+#include "qmacextrasglobal.lqt"
+#include "qmacfunctions.lqt"
+#include "qmacpasteboardmime.lqt"
+#include "qmactoolbar.lqt"
+#include "qmactoolbaritem.lqt"
+#include "qtmacextrasversion.lqt"
+#endif
