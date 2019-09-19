@@ -1,21 +1,21 @@
-[submodule "depends/lrdb"]
+[submodule "modules/src/lrdb"]
 	path = modules/src/lrdb
-	url = https://github.com/satoren/LRDB
-[submodule "depends/lpeglabel"]
+	url = https://github.com/lqt5/LRDB
+[submodule "modules/src/lpeglabel"]
 	path = modules/src/lpeglabel
-	url = https://github.com/sqmedeiros/lpeglabel
-[submodule "depends/luafilesystem"]
+	url = https://github.com/lqt5/lpeglabel
+[submodule "modules/src/luafilesystem"]
 	path = modules/src/luafilesystem
-	url = https://github.com/keplerproject/luafilesystem
-[submodule "depends/lua-miniz"]
+	url = https://github.com/lqt5/luafilesystem
+[submodule "modules/src/lua-miniz"]
 	path = modules/src/lua-miniz
-	url = https://github.com/starwing/lua-miniz
-[submodule "depends/luautf8"]
+	url = https://github.com/lqt5/lua-miniz
+[submodule "modules/src/luautf8"]
 	path = modules/src/luautf8
-	url = https://github.com/starwing/luautf8
-[submodule "depends/lpath"]
+	url = https://github.com/lqt5/luautf8
+[submodule "modules/src/lpath"]
 	path = modules/src/lpath
-	url = https://github.com/starwing/lpath
-[submodule "depends/luagbk"]
+	url = https://github.com/lqt5/lpath
+[submodule "modules/src/luagbk"]
 	path = modules/src/luagbk
-	url = https://github.com/starwing/luagbk
+	url = https://github.com/lqt5/luagbk
