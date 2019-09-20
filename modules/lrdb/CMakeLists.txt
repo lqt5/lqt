@@ -20,7 +20,7 @@ include_directories(${LUA_INCLUDE_DIRS}
 )
 
 set(lrdb_src
-	main.cpp
+	../../modules/src/lrdb/src/debug_server_module.cpp
 )
 
 link_directories(${LUA_LIBS_FOR_MODULE})
