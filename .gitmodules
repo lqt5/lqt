@@ -19,3 +19,6 @@
 [submodule "modules/src/luagbk"]
 	path = modules/src/luagbk
 	url = https://github.com/lqt5/luagbk
+[submodule "modules/src/LuaJIT"]
+	path = modules/src/LuaJIT
+	url = https://github.com/lqt5/LuaJIT
