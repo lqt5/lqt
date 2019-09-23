@@ -51,17 +51,19 @@ end)()
 -- trigger lqtAddOverride virtual-bind function
 ----------------------------------------------------------------------------------------------------
 local function addOverride(inst, classDef)
+	local __override = inst.__override
+	if type(__override) ~= 'function' then
+		return
+	end
+
 	local __super = rawget(classDef, '__super')
 	if __super then
 		addOverride(inst, __super)
 	end
 
-	local __override = inst.__override
-	if type(__override) == 'function' then
-		for k,v in pairs(classDef) do
-			if type(v) == 'function' then
-				__override(inst, k)
-			end
+	for k,v in pairs(classDef) do
+		if type(v) == 'function' then
+			__override(inst, k)
 		end
 	end
 end

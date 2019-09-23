@@ -31,13 +31,7 @@ local QtWidgets = require 'qtwidgets'
 local QtWebEngineCore = require 'qtwebenginecore'
 local QtWebEngineWidgets = require 'qtwebenginewidgets'
 
-local MainWindow = require 'mainwindow'
-
-QtCore.QCoreApplication.setAttribute(QtCore.AA_EnableHighDpiScaling)
-
-local app = QtWidgets.QApplication(2 + select('#', ...), { 'Game Editor', '--ignore-gpu-blacklist', ... })
-
-local mainWindow = MainWindow({}, app)
-mainWindow:show()
-
-return app.exec()
+return qMain('widget', { 'Game Editor', '--ignore-gpu-blacklist', ... }, function(app)
+	local MainWindow = require 'mainwindow'
+	return MainWindow({}, app)
+end)

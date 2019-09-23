@@ -29,7 +29,7 @@ local QtWebEngineWidgets = require 'qtwebenginewidgets'
 local Class = QtCore.Class('DevWindow', QtWidgets.QDockWidget) {}
 
 function Class:__init(scene)
-	local view = QtWebEngineWidgets.QWebEngineView()
+	local view = QtWebEngineWidgets.QWebEngineView.new()
 	view:page():setInspectedPage(scene:widget():page())
 	self:setWidget(view)
 

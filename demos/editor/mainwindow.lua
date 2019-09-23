@@ -42,8 +42,8 @@ function Class:__init(app)
 	self:setTabPosition(QtCore.AllDockWidgetAreas, 'North')
 	self:setContentsMargins(5, 5, 5, 5)
 
-	local scene = SceneWindow { self }
-	local dev = DevWindow({ self }, scene)
+	local scene = SceneWindow.new { self }
+	local dev = DevWindow.new({ self }, scene)
 
 	self:addDockWidget(QtCore.DockWidgetArea.LeftDockWidgetArea, scene)
 	self:addDockWidget(QtCore.DockWidgetArea.LeftDockWidgetArea, dev)

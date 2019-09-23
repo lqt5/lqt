@@ -95,9 +95,10 @@ static int lqtL_callfunc(lua_State *L, int idx, const char *name, bool once_only
 
     // if call once, remove function from object's env table
     if (once_only) {
-        // set field as false value
-        lua_pushboolean(L, 0); // [object, env, func, false]
-        lua_setfield(L, -4, name); // [object, env, func]
+        // raw set env[name] as false value
+        lua_pushstring(L, name); // [object, env, func, name]
+        lua_pushboolean(L, 0); // [object, env, func, name, false]
+        lua_rawset(L, -4); // [object, env, func]
     }
     lua_remove(L, -2); // [object, func]
 

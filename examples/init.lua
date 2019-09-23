@@ -128,7 +128,7 @@ rawset(_G, 'qSetupUi', function(path, root, customBuilder)
             return root
         end
 
-        local widget = customBuilder and customBuilder(className, parent) or nil
+        local widget = customBuilder and customBuilder(className, parent, name) or nil
         if widget == nil then
             -- try use lqt class.new to create widget
             --  you can use __addsignal/__addslot on created object
@@ -248,10 +248,23 @@ local function qMain(type, args, main)
             error(window)
         end
 
-        return app.exec()
+        -- run full gc after main-window created
+        --  delete Class()[local ctor] or Class.new()[ref class] problem~~~
+        --  after gc, all non referenced local ctor object will been deleted
+        collectgarbage()
+
+        return app
     end
     -- call qCleanup to remove all qt object's ref from lua env and collect garbage
-    local succ,ret = xpcall(sandbox, debug.traceback)
+    local succ,app = xpcall(sandbox, debug.traceback)
+
+    -- Run application mainloop
+    local ret = app.exec()
+    -- gc all object's without Application
+    qCleanup()
+    -- gc Application
+    app = nil
+
     qCleanup()
     if not succ then
         error(ret)

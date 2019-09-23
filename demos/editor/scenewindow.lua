@@ -26,7 +26,6 @@ local QtCore = require 'qtcore'
 local QtWidgets = require 'qtwidgets'
 local QtWebEngineWidgets = require 'qtwebenginewidgets'
 
-local DarkStyle = require 'darkstyle'
 local WebUiHandler = require 'webuihandler'
 
 local Class = QtCore.Class('SceneWindow', QtWidgets.QDockWidget) {}
@@ -42,10 +41,10 @@ function Class:__static_init()
 end
 
 function Class:__init()
-	local page = QtWebEngineWidgets.QWebEnginePage(self.profile)
+	local page = QtWebEngineWidgets.QWebEnginePage.new(self.profile)
 	page:load(WebUiHandler.aboutUrl)
 
-	local view = QtWebEngineWidgets.QWebEngineView(self)
+	local view = QtWebEngineWidgets.QWebEngineView.new(self)
 	view:setPage(page)
 	self:setWidget(view)
 
@@ -61,6 +60,14 @@ function Class:__init()
 			print(value:value():toStdString())
 		end)
 	end)
+
+	self.webView = view
+end
+
+function Class:__uninit()
+	-- custom web engine profile view page must manual delete
+	--	avoid gc crash
+	self.webView:page():delete()
 end
 
 return Class
