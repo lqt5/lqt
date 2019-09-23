@@ -146,7 +146,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 		# set (PP_CONFIG ${CMAKE_SOURCE_DIR}/cpptoxml/parser/rpp/pp-qt-configuration-win)
 	endif()
 
-	# set(REUSE_FILES 0)
+	set(REUSE_FILES 0)
 
 	if(NOT REUSE_FILES)
 		set (GEN_XML ${LQT_GEN_DIR}/${BINDING_NAME}.xml)
