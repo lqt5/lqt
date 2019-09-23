@@ -60,42 +60,59 @@ Building lqt
 
 To compile lqt, you need:
 
-* Luajit 2.0
 * [CMake](http://www.cmake.org/cmake/resources/software.html)
 * Qt and headers, download from [Qt offical site](https://www.qt.io/download)
+* Windows: Microsoft visual studio 2017
+* MacOS: XCode
 
 You can get the latest source of lqt from https://github.com/lqt5/lqt .
 When you have the sources, create an out-of-source build directory
 (where the binaries will be built, I often use `build`).
 
-Then, modify `CMakeList.txt`, change Qt/luajit path for compile.
-
-On mac os system:
-
-1. change path to you Qt5 install path:
-
-```cmake
-    set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
+# 1. Update submodules
+```sh
+git submodule update --init --recursive --remote
 ```
 
-On Windows sytem (use msvc 2017):
+# 2. Compile/install LuaJIT
 
-1. download and extract [luajit2.1.0-beta3](http://luajit.org/download.html) to `/depentds/LuaJIT-2.1.0-beta3` folder.
-2. compile luajit use msvc toolchain(run `src/msvcbuild.bat`)
-3. change `CMakeList.txt`, modify path:
+## 2.1 Windows
+```bat
+cd modules/src/LuaJIT/src
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+call msvcbuild.bat
+cd ../../../..
+```
 
+## 2.2 MacOS
+```sh
+cd modules/src/LuaJIT
+sudo make install
+```
+
+# 3. Configure Qt5 
+Modify CMakeList.txt, change path to you Qt5 install path
+
+## 3.1 Windows
 ```cmake
     set(CMAKE_PREFIX_PATH D:/Qt/Qt5.13.0/5.13.0/msvc2017_64/lib/cmake)
 ```
 
-4. update submodule use:
-```sh
-    git submodule init
-    git submodule update
+## 3.1 MacOS
+```cmake
+    set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
 ```
 
-Then, use CMake to generate the Makefile and run `make` as usual:
+# 4. Build
 
+## 4.1 Windows
+```bat
+cmake -G "Visual Studio 15 2017 Win64" -H. -Bbuild
+cmake --build build --target ALL_BUILD --config RelWithDebinfo -j4
+```
+
+## 4.2 MacOS
+Then, use CMake to generate the Makefile and run `make` as usual:
 ```sh
     mkdir build; cd build
     cmake ..
