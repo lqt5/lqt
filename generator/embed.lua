@@ -2,7 +2,7 @@ if not path then
 	path = '.'
 end
 -- compile script to bytecode
-local compile = true
+local compile = false
 
 local function log(fmt, ...)
 	print(string.format(fmt, ...))
