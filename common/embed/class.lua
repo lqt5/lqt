@@ -293,11 +293,11 @@ local function Class(name, super)
 				return v
 			end,
 			__newindex = function(self,k,v)
-				if not __protected or k:find('^%*Lqt ') then
+				if not __protected or isReversedKey(k) then
 					rawset(self, k, v)
 				else
 					local ov = rawget(classDef, k)
-					if ov ~= nil or isReversedKey(k) then
+					if ov ~= nil then
 						rawset(classDef, k, v)
 						return
 					end
