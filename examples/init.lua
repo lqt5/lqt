@@ -257,17 +257,19 @@ local function qMain(type, args, main)
     end
     -- call qCleanup to remove all qt object's ref from lua env and collect garbage
     local succ,app = xpcall(sandbox, debug.traceback)
-
     -- Run application mainloop
-    local ret = app.exec()
+    local ret = succ and app.exec() or -1
     -- gc all object's without Application
     qCleanup()
-    -- gc Application
-    app = nil
-
-    qCleanup()
-    if not succ then
-        error(ret)
+    -- gc app
+    if succ then
+        app = nil
+        -- avoid luacheck error(assign nil to app is unused)
+        if not app then
+            qCleanup()
+        end
+    else
+        error(app)
     end
     return ret
 end

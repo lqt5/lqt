@@ -207,6 +207,14 @@ local function Class(name, super)
 		return inst
 	end
 
+	-- ignore reversed lqt field getter
+	--	1.reversed methods
+	--	2.lqt metadata fields
+	--	3.lqt class inherit check
+	local function isReversedKey(k)
+		return k:find('^__') or k:find('Lqt ') or k:find('%*$')
+	end
+
 	return function(classDef)
 		if not classDef then
 			classDef = {}
@@ -276,11 +284,7 @@ local function Class(name, super)
 				v = super and super[k] or nil
 
 				if v == nil then
-					-- ignore reversed lqt field getter
-					--	1.reversed methods
-					--	2.lqt metadata fields
-					--	3.lqt class inherit check
-					if k:find('^__') or k:find('Lqt ') or k:find('%*$') then
+					if isReversedKey(k) then
 						return
 					end
 					error(string.format('Class `%s` : can not get undeclared member variable `%s`', name, k), 2)
@@ -293,7 +297,7 @@ local function Class(name, super)
 					rawset(self, k, v)
 				else
 					local ov = rawget(classDef, k)
-					if ov ~= nil then
+					if ov ~= nil or isReversedKey(k) then
 						rawset(classDef, k, v)
 						return
 					end
