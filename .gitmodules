@@ -22,3 +22,5 @@
 [submodule "modules/src/LuaJIT"]
 	path = modules/src/LuaJIT
 	url = https://github.com/lqt5/LuaJIT
+	tag = v2.1
+
