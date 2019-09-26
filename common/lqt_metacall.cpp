@@ -148,7 +148,7 @@ static void lqt_pushTypePtr(lua_State *L, int idx, QMetaType::Type type, const c
     }
 }
 
-static void lqt_getTypePtr(lua_State *L, int idx, QMetaType::Type type, void *ptr) {
+static bool lqt_getTypePtr(lua_State *L, int idx, QMetaType::Type type, void *ptr) {
 
     switch(type) {
         case QMetaType::Bool: *reinterpret_cast<bool *>(ptr) = lua_toboolean(L, idx) == 1; break;
@@ -168,8 +168,14 @@ static void lqt_getTypePtr(lua_State *L, int idx, QMetaType::Type type, void *pt
 
         case QMetaType::QObjectStar: *reinterpret_cast<QObject **>(ptr) = (QObject *) lqtL_toudata(L, idx, "QObject*");  break;
 
-        #define CASE_TYPE(Type)\
-            case QMetaType::Type: *reinterpret_cast<Type *>(ptr) = *(Type*) lqtL_convert(L, idx, #Type"*"); break;
+        #define CASE_TYPE(Type) case QMetaType::Type:\
+        {\
+            Type *ptr = (Type *) lqtL_convert(L, idx, #Type"*");\
+            if(ptr == nullptr)\
+                return false;\
+            \
+            *reinterpret_cast<Type *>(ptr) = *ptr;\
+        } break;
 
         CASE_TYPE(QChar)
         CASE_TYPE(QString)
@@ -252,8 +258,10 @@ static void lqt_getTypePtr(lua_State *L, int idx, QMetaType::Type type, void *pt
         // VoidStar = 31,
         default: {
             printf("Unknown meta type, ignore : %d\n", type);
+            return false;
         } break;
     }
+    return true;
 }
 
 #include "lqt_metamethod.inl"
@@ -280,7 +288,6 @@ static const char * callTypeToString(QMetaObject::Call call)
 
 static int lqt_MetaCallProperty (lua_State *L
     , QObject *self
-    , QObject *acceptor
     , QMetaObject::Call call
     , const char *name
     , int index
@@ -345,7 +352,7 @@ static int lqt_MetaCallProperty (lua_State *L
     lqtL_pushqobject(L, self);
 
     if(call == QMetaObject::WriteProperty) {
-        lqt_pushTypePtr(L, 0, (QMetaType::Type) type, nullptr, args[0]);
+        lqt_pushTypePtr(L, index, (QMetaType::Type) type, nullptr, args[0]);
     }
 
     if(lqtL_pcall(L, nparam + 1, nret, 0) != 0)
@@ -353,7 +360,18 @@ static int lqt_MetaCallProperty (lua_State *L
 
     switch(call) {
         case QMetaObject::ReadProperty: {
-            lqt_getTypePtr(L, -1, (QMetaType::Type) type, args[0]);
+            if(!lqt_getTypePtr(L, -1, (QMetaType::Type) type, args[0])) {
+
+                int type = lua_type(L, -1);
+                lua_pop(L, 1);
+
+                QMetaProperty prop = self->metaObject()->property(index + 1);
+                luaL_error(L, "Property `%s`: cannot convert %s to %s\n"
+                    , prop.name()
+                    , lua_typename(L, type)
+                    , prop.typeName()
+                );
+            }
             lua_pop(L, 1);
         } break;
 
@@ -364,9 +382,11 @@ static int lqt_MetaCallProperty (lua_State *L
         case QMetaObject::QueryPropertyUser: {
 
             if(!lua_isboolean(L, -1)) {
-                printf("self:%s, call:%s - must return a boolean value!\n"
-                    , self->metaObject()->className()
+                lua_pop(L, 1);
+
+                luaL_error(L, "Callback %s: self:%s must return boolean(true/false)\n"
                     , callTypeToString(call)
+                    , self->metaObject()->className()
                 );
             } else {
                 bool *b = reinterpret_cast<bool*>(args[0]);
@@ -408,7 +428,7 @@ int lqtL_qt_metacall (lua_State *L, QObject *self, QObject *acceptor,
         case QMetaObject::QueryPropertyStored:
         case QMetaObject::QueryPropertyEditable:
         case QMetaObject::QueryPropertyUser:
-            return lqt_MetaCallProperty(L, self, acceptor, call, name, index, args);
+            return lqt_MetaCallProperty(L, self, call, name, index, args);
         default:
             break;
     }
