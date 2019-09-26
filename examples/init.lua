@@ -179,6 +179,19 @@ local qCleanup = function()
     local LQT_REF_CLASS = "Registry Ref Class"
     local registry = debug.getregistry()
     registry[LQT_REF_CLASS] = {}
+    -- remove lqt registry data in all instances
+    for _,inst in ipairs(QtCore.instances()) do
+        local env = debug.getfenv(inst)
+        local removals = {}
+        for k,v in pairs(env) do
+            if k:match('^[%*]?Lqt') then
+                table.insert(removals, k)
+            end
+        end
+        for _,k in ipairs(removals) do
+            rawset(env, k, nil)
+        end
+    end
     -- do full gc
     gc()
 end

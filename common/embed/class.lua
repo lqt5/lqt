@@ -79,6 +79,8 @@ local reversedFields = {
 	'__addproperty',
 	'__emit',
 }
+-- All .new/ctor() Object instances
+local instances = setmetatable({}, { __mode = 'v' })
 ----------------------------------------------------------------------------------------------------
 -- 'Is a class' check.
 ----------------------------------------------------------------------------------------------------
@@ -262,10 +264,12 @@ local function Class(name, super)
 			classDef.new = function(ctorArgs, ...)
 				local inst = ctor(classDef.__proto.new, ctorArgs)
 				inst.__gc = false
+				table.insert(instances, inst)
 				return createInst(inst, classDef, ...)
 			end
 			classDef.__call = function(self, ctorArgs, ...)
 				local inst = ctor(classDef.__proto, ctorArgs)
+				table.insert(instances, inst)
 				return createInst(inst, classDef, ...)
 			end
 		end
@@ -321,4 +325,7 @@ return function(QtCore, LQT)
 	rawset(QtCore, 'isObject', isObject)
 	rawset(QtCore, 'isInstanceOf', isInstanceOf)
 	rawset(QtCore, 'Class', Class)
+	rawset(QtCore, 'instances', function()
+		return instances
+	end)
 end
