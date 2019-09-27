@@ -170,11 +170,11 @@ static bool lqt_getTypePtr(lua_State *L, int idx, QMetaType::Type type, void *pt
 
         #define CASE_TYPE(Type) case QMetaType::Type:\
         {\
-            Type *ptr = (Type *) lqtL_convert(L, idx, #Type"*");\
-            if(ptr == nullptr)\
+            Type *ret = (Type *) lqtL_convert(L, idx, #Type"*");\
+            if(ret == nullptr)\
                 return false;\
             \
-            *reinterpret_cast<Type *>(ptr) = *ptr;\
+            *reinterpret_cast<Type *>(ptr) = *ret;\
         } break;
 
         CASE_TYPE(QChar)
