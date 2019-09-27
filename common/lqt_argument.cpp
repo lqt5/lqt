@@ -52,22 +52,42 @@ static QGenericArgument lqt_convertTupleArgument(lua_State *L, int i) {
     lua_pop(L, 1);
 
     lua_rawgeti(L, i, 2);
-    if(strcmp(tuple_type, "int") == 0 && lua_isnumber(L, -1)) {
-        static int tuple_ints[MAX_ARGUMENTS];
-        int& tuple_val = tuple_ints[i];
-        tuple_val = lua_tointeger(L, -1);
-        lua_pop(L, 1);
-        return QGenericArgument("int", &tuple_val);
+
+    switch(lua_type(L, -1)) {
+        case LUA_TBOOLEAN: {
+            static bool booleans[MAX_ARGUMENTS];
+            booleans[i] = lua_toboolean(L, -1) == 1;
+            return QGenericArgument("bool", &booleans[i]);
+        } break;
+
+        case LUA_TNUMBER: {
+            if(strcmp(tuple_type, "int") == 0) {
+                static int ints[MAX_ARGUMENTS];
+                ints[i] = lua_tointeger(L, -1);
+                lua_pop(L, 1);
+                return QGenericArgument("int", &ints[i]);
+            }
+            else if(strcmp(tuple_type, "double") == 0) {
+                static lua_Number numbers[MAX_ARGUMENTS];
+                numbers[i] = lua_tonumber(L, -1);
+                lua_pop(L, 1);
+                return QGenericArgument("double", &numbers[i]);
+            }
+        } break;
+        case LUA_TSTRING: {
+            QString const& arg = *static_cast<QString*>(lqtL_convert(L, i, "QString*"));
+            lua_pop(L, 1);
+            return QGenericArgument("QString", &arg);
+        } break;
     }
-    else if(lqtL_isudata(L, -1, tuple_type)) {
+    if(lqtL_isudata(L, -1, tuple_type)) {
         static void* tuple_ptr[MAX_ARGUMENTS];
         tuple_ptr[i] = lqtL_toudata(L, -1, tuple_type);
         lua_pop(L, 1);
         return QGenericArgument(tuple_type, &tuple_ptr[i]);
     }
-    else {
-        luaL_error(L, "Unknown tuple argument type : %s", tuple_type);
-    }
+
+    luaL_error(L, "Unknown tuple argument type : %s", tuple_type);
 
     return QGenericArgument();
 }

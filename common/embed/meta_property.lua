@@ -200,6 +200,37 @@ local function parsePropertyInfo(name, info)
         end
     end
 
+    -- Automate emit notify signal when value changed/reseted
+    if info.NOTIFY then
+        local function wrap(func)
+            if not func then
+                return
+            end
+
+            return function(self, ...)
+                func(self, ...)
+
+                local signal,args = string.match(info.NOTIFY, '^(.*)%((.*)%)$')
+                if #args > 0 then
+                    if select('#', ...) == 1 then
+                        self:__emit(signal, { args, ... })
+                    else
+                        self:__emit(signal, { args, info.READ(self) })
+                    end
+                else
+                    self:__emit(signal)
+                end
+            end
+        end
+        info.WRITE = wrap(info.WRITE)
+        info.RESET = wrap(info.RESET)
+
+        -- Automate emit notify signal when value changed/reseted
+        if info.RESET then
+            wrap(info.RESET)
+        end
+    end
+
     local flags = Flags.PropertyFlags.Readable
 
     if info.WRITE then

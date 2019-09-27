@@ -59,9 +59,21 @@ function Object:__init()
 	self.boolValue = true
 	self.doubleValue = 0
 	self.objectValue = false
+	self.intPropertyChanged = false
+	self.doublePropertyChanged = false
+	self.objectPropertyChanged = false
 
+	self:connect(SIGNAL 'intPropertyChanged(int)', function(_,val)
+		self.intPropertyChanged = true
+		print('intPropertyChanged(int)', val)
+	end)
 	self:connect(SIGNAL 'doublePropertyChanged(double)', function(_,val)
+		self.doublePropertyChanged = true
 		print('doublePropertyChanged(double)', val)
+	end)
+	self:connect(SIGNAL 'objectPropertyChanged(QObject*)', function(_,val)
+		self.objectPropertyChanged = true
+		print('objectPropertyChanged(QObject*)', val)
 	end)
 end
 
@@ -136,6 +148,9 @@ end
 
 local obj = Object()
 
+--------------------------------------------------------------------------------
+assert(not obj.objectPropertyChanged)
+
 local v = QtCore.QVariant()
 v:setValue(obj)
 assert(v:value() == obj)
@@ -143,30 +158,37 @@ assert(v:value() == obj)
 obj:setProperty('objectProperty', v)
 assert(obj:property('objectProperty'):value() == obj)
 
-print(obj:property('objectName'):value():toStdString())
-
-print(obj:property('stringProperty'):value():toStdString())
+assert(obj.objectPropertyChanged)
+--------------------------------------------------------------------------------
+assert(obj:property('stringProperty'):value():toStdString() == 'initial string')
 obj:setProperty('stringProperty', QtCore.QString 'hello, world')
-print(obj:property('stringProperty'):value():toStdString())
+assert(obj:property('stringProperty'):value() == QtCore.QString 'hello, world')
+assert(obj:property('stringProperty'):value():toStdString() == 'hello, world')
+--------------------------------------------------------------------------------
+assert(not obj.intPropertyChanged)
 
 obj:setProperty('intProperty', 9527)
-print(obj:property('intProperty'):value())
+assert(obj:property('intProperty'):value() == 9527)
 
+assert(obj.intPropertyChanged)
+--------------------------------------------------------------------------------
 local metaObject = obj:metaObject()
 local metaProperty = metaObject:property(metaObject:indexOfProperty('doubleProperty'))
-print(metaProperty:isDesignable(obj)
-	, metaProperty:isScriptable(obj)
-	, metaProperty:isStored(obj)
-	, metaProperty:isEditable(obj)
-	, metaProperty:isUser(obj)
-)
+assert(metaProperty:isDesignable(obj))
+assert(not metaProperty:isScriptable(obj))
+assert(metaProperty:isStored(obj))
+assert(not metaProperty:isEditable(obj))
+assert(metaProperty:isUser(obj))
+
+assert(not obj.doublePropertyChanged)
 metaProperty:reset(obj)
+assert(obj.doublePropertyChanged)
 
 obj:setProperty('doubleProperty', 3.14)
-print(obj:property('doubleProperty'):value())
+assert(obj:property('doubleProperty'):value() == 3.14)
 
-local metaObject = obj:metaObject()
-for i = 1,metaObject:propertyCount() do
-	local property = metaObject:property(i - 1)
-	print(property:typeName(), property:name(), property:read(obj):value())
-end
+-- local metaObject = obj:metaObject()
+-- for i = 1,metaObject:propertyCount() do
+-- 	local property = metaObject:property(i - 1)
+-- 	print(property:typeName(), property:name(), property:read(obj):value())
+-- end
