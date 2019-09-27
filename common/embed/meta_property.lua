@@ -158,14 +158,14 @@ local Fields = {
 -- Q_PROPERTY(bool boolProperty READ boolProperty REVISION 9527 CONSTANT FINAL)
 --  12, QMetaType::Bool, 0x00895c01, // ResolveEditable Designable Revisioned Readable Stored Scriptable Constant Final
 ----------------------------------------------------------------------------------------------------
-local function parsePropertyInfo(qtype, name, info)
+local function parsePropertyInfo(name, info)
     local function check(cond, fmt, ...)
         if not cond then
             local errmsg = string.format(fmt, ...)
             error(string.format('`%s`: %s', name, errmsg))
         end
     end
-    check(not ((info.READ ~= nil or info.WRITE ~= nil) and info.MEMBER ~= nil), 'READ/WRITE conflict with MEMBER, only one of them can be used')
+    check(not (info.READ ~= nil and info.MEMBER ~= nil), 'READ/MEMBER conflict, only one of them can be used')
     check(info.READ or info.MEMBER, 'Missing field READ/MEMBER')
     check(not (info.CONSTANT and (info.WRITE or info.NOTIFY or info.RESET)), 'CONSTANT property can not use WRITE/NOTIFY/RESET')
 
@@ -190,26 +190,13 @@ local function parsePropertyInfo(qtype, name, info)
         end
     end
 
-    -- Wrap MEMBER reader/writer function
+    -- Wrap MEMBER reader function
     if info.MEMBER then
         info.READ = function(self)
             if self[info.MEMBER] == nil then
                 error('No such member value named : ' .. info.MEMBER)
             end
             return self[info.MEMBER]
-        end
-        info.WRITE = function(self, value)
-            if self[info.MEMBER] == nil then
-                error('No such member value named : ' .. info.MEMBER)
-            end
-            self[info.MEMBER] = value
-
-            local signal,args = string.match(info.NOTIFY, '^(.*)%((.*)%)$')
-            if #args > 0 then
-                self:__emit(signal, value)
-            else
-                self:__emit(signal)
-            end
         end
     end
 
@@ -294,7 +281,7 @@ function Class:__init(metaStrings, type, name, info)
     self.nameIndex = metaStrings:insert(name)
 
     -- Parse property info
-    local flags,revision,routines = parsePropertyInfo(type, name, info)
+    local flags,revision,routines = parsePropertyInfo(name, info)
     -- Insert property type to routines, used in lqt_metacall.cpp
     table.insert(routines, 1, type)
 
