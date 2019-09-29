@@ -91,6 +91,10 @@ end
 -- 'Is an object' check.
 ----------------------------------------------------------------------------------------------------
 local isObject = function (x)
+	if type(x) ~= 'userdata' or type(x) ~= 'table' then
+		return false
+	end
+
 	if not isClass(x.__class) then
 		return false
 	end
@@ -107,9 +111,6 @@ end
 ----------------------------------------------------------------------------------------------------
 local isInstanceOf = (function()
 	local function checkQt(obj, cls)
-		if type(obj) ~= 'userdata' or type(cls) ~= 'table' then
-			return false
-		end
 		local __type = rawget(cls, '__type')
 		return __type and (obj[__type] ~= nil)
 	end
@@ -145,6 +146,10 @@ local isInstanceOf = (function()
 	local clsCaches = {}
 
 	return function(obj, cls)
+		if type(obj) ~= 'userdata' or type(cls) ~= 'table' then
+			return false
+		end
+
 		local objCaches = clsCaches[cls]
 		local key = tostring(obj)
 		if objCaches then

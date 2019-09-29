@@ -210,13 +210,11 @@ local function parsePropertyInfo(name, info)
             return function(self, ...)
                 func(self, ...)
 
+                -- Emit notify(property changed) signal
                 local signal,args = string.match(info.NOTIFY, '^(.*)%((.*)%)$')
                 if #args > 0 then
-                    if select('#', ...) == 1 then
-                        self:__emit(signal, { args, ... })
-                    else
-                        self:__emit(signal, { args, info.READ(self) })
-                    end
+                    local val = (select('#', ...) > 0) and select(1, ...) or info.READ(self)
+                    self:__emit(signal, { args, val })
                 else
                     self:__emit(signal)
                 end

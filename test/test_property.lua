@@ -11,6 +11,7 @@ function Object:__static_init()
 	self:__addsignal('intPropertyChanged(int)', 'public')
 	self:__addsignal('doublePropertyChanged(double)', 'public')
 	self:__addsignal('objectPropertyChanged(QObject*)', 'public')
+	self:__addsignal('stringPropertyChanged(QString)', 'public')
 
 	self:__addslot('setIntProperty(int)', self.setIntProperty, 'public')
 	self:__addslot('setStringProperty(QString)', self.setStringProperty, 'public')
@@ -26,6 +27,7 @@ function Object:__static_init()
 		READ = self.stringProperty,
 		WRITE = self.setStringProperty,
 		RESET = self.resetStringProperty,
+		NOTIFY = 'stringPropertyChanged(QString)',
 	})
 	self:__addproperty('bool boolProperty', {
 		READ = self.boolProperty,
@@ -62,18 +64,23 @@ function Object:__init()
 	self.intPropertyChanged = false
 	self.doublePropertyChanged = false
 	self.objectPropertyChanged = false
+	self.stringPropertyChanged = false
 
 	self:connect(SIGNAL 'intPropertyChanged(int)', function(_,val)
 		self.intPropertyChanged = true
-		print('intPropertyChanged(int)', val)
+		print('intPropertyChanged(int)', self.intValue, val)
 	end)
 	self:connect(SIGNAL 'doublePropertyChanged(double)', function(_,val)
 		self.doublePropertyChanged = true
-		print('doublePropertyChanged(double)', val)
+		print('doublePropertyChanged(double)', self.doubleValue, val)
 	end)
 	self:connect(SIGNAL 'objectPropertyChanged(QObject*)', function(_,val)
 		self.objectPropertyChanged = true
-		print('objectPropertyChanged(QObject*)', val)
+		print('objectPropertyChanged(QObject*)', self.objectValue, val)
+	end)
+	self:connect(SIGNAL 'stringPropertyChanged(QString)', function(_,val)
+		self.stringPropertyChanged = true
+		print('stringPropertyChanged(QString)', self.stringValue:toStdString(), val:toStdString())
 	end)
 end
 
@@ -160,10 +167,17 @@ assert(obj:property('objectProperty'):value() == obj)
 
 assert(obj.objectPropertyChanged)
 --------------------------------------------------------------------------------
+assert(not obj.stringPropertyChanged)
+
 assert(obj:property('stringProperty'):value():toStdString() == 'initial string')
 obj:setProperty('stringProperty', QtCore.QString 'hello, world')
 assert(obj:property('stringProperty'):value() == QtCore.QString 'hello, world')
 assert(obj:property('stringProperty'):value():toStdString() == 'hello, world')
+
+obj:setProperty('stringProperty', QtCore.QString 'Hello, Qt')
+assert(obj:property('stringProperty'):value():toStdString() == 'Hello, Qt')
+
+assert(obj.stringPropertyChanged)
 --------------------------------------------------------------------------------
 assert(not obj.intPropertyChanged)
 

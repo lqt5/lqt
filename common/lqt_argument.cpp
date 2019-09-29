@@ -57,6 +57,7 @@ static QGenericArgument lqt_convertTupleArgument(lua_State *L, int i) {
         case LUA_TBOOLEAN: {
             static bool booleans[MAX_ARGUMENTS];
             booleans[i] = lua_toboolean(L, -1) == 1;
+            lua_pop(L, 1);
             return QGenericArgument("bool", &booleans[i]);
         } break;
 
@@ -80,11 +81,25 @@ static QGenericArgument lqt_convertTupleArgument(lua_State *L, int i) {
             return QGenericArgument("QString", &arg);
         } break;
     }
+    // Process QObject pointer type
     if(lqtL_isudata(L, -1, tuple_type)) {
         static void* tuple_ptr[MAX_ARGUMENTS];
         tuple_ptr[i] = lqtL_toudata(L, -1, tuple_type);
         lua_pop(L, 1);
         return QGenericArgument(tuple_type, &tuple_ptr[i]);
+    }
+    // Process meta types (QMetaType::Type, non QObject)
+    if(strchr(tuple_type, '*') == nullptr) {
+        lua_pushfstring(L, "%s*", tuple_type);
+        const char *ptr_type = lua_tostring(L, -1);
+        lua_pop(L, 1);
+
+        if(lqtL_isudata(L, -1, ptr_type)) {
+            void *tuple_ptr = lqtL_toudata(L, -1, ptr_type);
+            lua_pop(L, 1);
+            return QGenericArgument(tuple_type, tuple_ptr);
+        }
+        lua_pop(L, 1);
     }
 
     luaL_error(L, "Unknown tuple argument type : %s", tuple_type);
