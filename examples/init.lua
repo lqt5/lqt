@@ -281,21 +281,22 @@ local function qMain(type, args, main)
         --  after gc, all non referenced local ctor object will been deleted
         collectgarbage()
 
-        return app
+        return app,window
     end
     -- call qCleanup to remove all qt object's ref from lua env and collect garbage
-    local succ,app = xpcall(sandbox, debug.traceback)
+    local succ,app,window = xpcall(sandbox, debug.traceback)
     -- Run application mainloop
     local ret = succ and app.exec() or -1
     -- gc all object's without Application
     qCleanup()
     -- gc app
     if succ then
+        -- Assume main window gc before app
+        window = nil
+        collectgarbage()
+        -- Gc application
         app = nil
-        -- avoid luacheck error(assign nil to app is unused)
-        if not app then
-            qCleanup()
-        end
+        collectgarbage()
     else
         error(app)
     end
