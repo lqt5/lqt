@@ -91,7 +91,7 @@ sudo make install
 ```
 
 # 3. Configure Qt5 
-Modify CMakeList.txt, change path to you Qt5 install path
+Modify CMakeList.txt, change path to your Qt5 install path
 
 ## 3.1 Windows
 ```cmake
