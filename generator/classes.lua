@@ -1050,13 +1050,10 @@ private:
 		print_meta([[
 #include <QDebug>
 
-QMetaObject lqt_shell_]]..n..[[::staticMetaObject;
-
 const QMetaObject *lqt_shell_]]..n..[[::metaObject() const {
         const QMetaObject& meta = lqtL_qt_metaobject(L
             , "]]..c.xarg.fullname..[[*"
             , this
-            , lqt_shell_]]..n..[[::staticMetaObject
             , ]]..c.xarg.fullname..[[::staticMetaObject
         );
         return &meta;

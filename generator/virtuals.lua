@@ -297,7 +297,6 @@ function fill_shell_class(c)
 	end
 	shell = shell .. '  ~'..shellname..'() { lqtL_unregister(L, this, "' .. c.xarg.fullname .. '*"); }\n'
 	if c.shell and c.qobject then
-		shell = shell .. '  static QMetaObject staticMetaObject;\n'
 		shell = shell .. '  virtual const QMetaObject *metaObject() const;\n'
 		shell = shell .. '  virtual int qt_metacall(QMetaObject::Call, int, void **);\n'
 		shell = shell .. 'private:\n'

@@ -91,6 +91,7 @@ public:
 
 struct Q_CORE_EXPORT QMetaObject
 {
+    QMetaObject();
     class Connection;
     const char *className() const;
     const QMetaObject *superClass() const;

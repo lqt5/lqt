@@ -158,7 +158,6 @@ void lqtL_pushflags (lua_State *, int, const char *);
 const QMetaObject& lqtL_qt_metaobject (lua_State *L
     , const char *name
     , const QObject *object
-    , QMetaObject& meta_data
     , const QMetaObject& super_data
 );
 

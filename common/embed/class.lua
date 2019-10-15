@@ -22,6 +22,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ***************************************************************************]]
+local QtCore
 ----------------------------------------------------------------------------------------------------
 -- call __static_init(static constructor)
 ----------------------------------------------------------------------------------------------------
@@ -189,6 +190,7 @@ local function Class(name, super)
 			local env = debug.getfenv(inst)
 			env.new = errorNew
 			env.__class = classDef
+			env.__metaObject = classDef.__metaObject
 			-- set object env inherit super(self) env
 			setmetatable(env, getmetatable(classDef))
 		else
@@ -246,6 +248,8 @@ local function Class(name, super)
 			classDef.__lua = true
 		else
 			classDef.__lua = super.__classDef and super.__classDef.__lua or false
+			-- Create qt-class specify QMetaObject
+			classDef.__metaObject = QtCore.QMetaObject()
 		end
 
 		classDef.__proto = super.__proto and super.__proto or super
@@ -325,7 +329,8 @@ end
 ----------------------------------------------------------------------------------------------------
 -- Entry
 ----------------------------------------------------------------------------------------------------
-return function(QtCore, LQT)
+return function(...)
+	QtCore = ...
 	rawset(QtCore, 'isClass', isClass)
 	rawset(QtCore, 'isObject', isObject)
 	rawset(QtCore, 'isInstanceOf', isInstanceOf)

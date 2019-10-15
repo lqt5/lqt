@@ -175,56 +175,80 @@ static bool lqtL_is_meta_dirty(lua_State *L
     return false;
 }
 
+static QMetaObject& lqtL_get_metaobject (lua_State *L, int index) {
+
+    lua_getfield(L, index, "__metaObject");
+
+    QMetaObject* ret = nullptr;
+    // If meta-object was created(at class.lua - classDef.__metaObject), use created class meta object
+    //  else create new meta object
+    if (!lua_isnil(L, -1) && lqtL_isudata(L, -1, "QMetaObject*")) {
+
+        ret = static_cast<QMetaObject*>(lqtL_toudata(L, -1, "QMetaObject*"));
+        lua_pop(L, 1);
+
+    } else {
+
+        lua_pop(L, 1);
+        ret = new QMetaObject();
+        lqtL_pushudata(L, ret, "QMetaObject*");
+        lua_setfield(L, index, "__metaObject");
+    }
+
+    return *ret;
+}
+
 const QMetaObject& lqtL_qt_metaobject (lua_State *L
     , const char *name
     , const QObject *object
-    , QMetaObject& meta_data
     , const QMetaObject& super_data
 ) {
     int oldtop = lua_gettop(L);
     lqtL_pushudata(L, object, name);
-    {
-        lua_getfield(L, -1, LQT_OBJMETASTRING);
-        if (lua_isnil(L, -1)) {
-               lua_pop(L, 2);
-               return super_data;
-        }
-        lua_getfield(L, -2, LQT_OBJMETADATA);
 
-        meta_data.d.superdata = &super_data;
-        if(!lqtL_is_meta_dirty(L, lua_objlen(L, -1), lua_objlen(L, -2))) {
-            lua_pop(L, 2);
-
-            // get stored previous generated data
-            lua_getfield(L, -1, LQT_OBJMETASTRING_STORE);
-            lua_getfield(L, -2, LQT_OBJMETADATA_STORE);
-
-            // use previous generated metadata
-            //  skip length(uint32)
-            unsigned int *ptr = (unsigned int *) lua_touserdata(L, -1);
-            meta_data.d.data = ptr + 1;
-
-            // use previous generated stringdata
-            //  skip length(uint32)
-            ptr = (unsigned int *) lua_touserdata(L, -2);
-            meta_data.d.stringdata = (QByteArrayData *) (ptr + 1);
-
-            // pop stored data
-            lua_pop(L, 2);
-        } else {
-            // generatoe new metadata/stringdata
-            meta_data.d.data = lqtL_touintarray(L, -1);
-            meta_data.d.stringdata = lqlL_tostringdata(L, -2);
-            // store converted userdata/arraydata to object's env table
-            lua_setfield(L, -3, LQT_OBJMETASTRING_STORE);
-            lua_setfield(L, -2, LQT_OBJMETADATA_STORE);
-        }
-        meta_data.d.static_metacall = nullptr;
-        meta_data.d.relatedMetaObjects = nullptr;
-        meta_data.d.extradata = nullptr;
-
-        // printf("%p %p\n", meta_data.d.stringdata, meta_data.d.data);
+    lua_getfield(L, -1, LQT_OBJMETASTRING);
+    if (lua_isnil(L, -1)) {
+           lua_pop(L, 2);
+           return super_data;
     }
+    lua_getfield(L, -2, LQT_OBJMETADATA);
+
+    QMetaObject &meta_data = lqtL_get_metaobject(L, -3);
+
+    meta_data.d.superdata = &super_data;
+
+    if(!lqtL_is_meta_dirty(L, lua_objlen(L, -1), lua_objlen(L, -2))) {
+        lua_pop(L, 2);
+
+        // get stored previous generated data
+        lua_getfield(L, -1, LQT_OBJMETASTRING_STORE);
+        lua_getfield(L, -2, LQT_OBJMETADATA_STORE);
+
+        // use previous generated metadata
+        //  skip length(uint32)
+        unsigned int *ptr = (unsigned int *) lua_touserdata(L, -1);
+        meta_data.d.data = ptr + 1;
+
+        // use previous generated stringdata
+        //  skip length(uint32)
+        ptr = (unsigned int *) lua_touserdata(L, -2);
+        meta_data.d.stringdata = (QByteArrayData *) (ptr + 1);
+
+        // pop stored data
+        lua_pop(L, 2);
+    } else {
+        // generatoe new metadata/stringdata
+        meta_data.d.data = lqtL_touintarray(L, -1);
+        meta_data.d.stringdata = lqlL_tostringdata(L, -2);
+        // store converted userdata/arraydata to object's env table
+        lua_setfield(L, -3, LQT_OBJMETASTRING_STORE);
+        lua_setfield(L, -2, LQT_OBJMETADATA_STORE);
+    }
+    meta_data.d.static_metacall = nullptr;
+    meta_data.d.relatedMetaObjects = nullptr;
+    meta_data.d.extradata = nullptr;
+    // printf("%p %p\n", meta_data.d.stringdata, meta_data.d.data);
+
     lua_settop(L, oldtop);
     //qDebug() << (lua_gettop(L) - oldtop);
     return meta_data;
