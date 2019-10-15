@@ -15,6 +15,7 @@ local operatorTrans = {
 	['*'] = '__mul',
 	['/'] = '__div',
 	['=='] = '__eq',
+	['[]'] = 'IDX',
 }
 
 local operatorGlobalTrans = {
@@ -74,6 +75,8 @@ function call_line(f)
 	if op == "*" and #f.arguments == 0 then
 		ignore(f.xarg.fullname, "pointer dereference operator", f.xarg.member_of_class)
 		return nil
+	elseif op == '[]' then
+		return '(*self)[', false, ']'
 	elseif op == '_' then
 		-- unary minus
 		return '- *self', false
