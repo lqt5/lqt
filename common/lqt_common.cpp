@@ -1074,6 +1074,10 @@ void *lqtL_topointer(lua_State *L, int idx) {
     }
     else if(lua_isnil(L, idx))
         return NULL;
+    else if(lqtL_isudata(L, idx, "QByteArray*")) {
+        QByteArray* array = static_cast<QByteArray*>(lqtL_toudata(L, idx, "QByteArray*"));
+        return array->data();
+    }
     else
         return lua_touserdata(L, idx);
 }
