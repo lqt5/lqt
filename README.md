@@ -81,7 +81,7 @@ Checkout sub module repos:
 git submodule update --init --recursive --remote
 ```
 
-Compile/install LuaJIT(required `msvc x64 command line environ`):
+Compile `LuaJIT`(required `msvc x64 command line environ`):
 ```bat
 cd modules\src\LuaJIT\src
 call msvcbuild.bat
@@ -111,10 +111,10 @@ Checkout sub module repos:
 git submodule update --init --recursive --remote
 ```
 
-Compile/install LuaJIT:
+Compile `LuaJIT`:
 ```sh
 cd modules/src/LuaJIT
-sudo make install
+make -j8
 ```
 
 Edit CMakeList.txt, change this line to your Qt install folder:
