@@ -680,7 +680,13 @@ void lqtL_pushudata (lua_State *L, const void *p, const char *name) {
     }
     
     lqtL_ensurepointer(L, p); // (1)
-    if (lua_getmetatable(L, -1)) {
+    // QEvent object: always get qevent meta class type
+    if (!strcmp(name, "QEvent*")) {
+        name = lqtL_getQEventMetaType(static_cast<const QEvent*>(p));
+        luaL_newmetatable(L, name); // (2)
+        lua_setmetatable(L, -2); // (1)
+        return;
+    } else if (lua_getmetatable(L, -1)) {
         // (2)
         lua_pop(L, 1); // (1)
         lua_getfield(L, -1, name); // (2)
@@ -690,9 +696,6 @@ void lqtL_pushudata (lua_State *L, const void *p, const char *name) {
         // (1)
     }
     if (!already) {
-        if (!strcmp(name, "QEvent*"))
-            name = lqtL_getQEventMetaType(static_cast<const QEvent*>(p));
-
         luaL_newmetatable(L, name); // (2)
         lua_setmetatable(L, -2); // (1)
     }
