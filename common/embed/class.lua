@@ -30,11 +30,6 @@ local staticInit = (function()
 	local __cache = setmetatable({}, { __mode = 'k' })
 
 	local function __init(classDef)
-		if __cache[classDef] then
-			return
-		end
-		__cache[classDef] = true
-
 		local __super = rawget(classDef, '__super')
 		if __super then
 			__init(__super)
@@ -42,6 +37,11 @@ local staticInit = (function()
 
 		local __static_init = rawget(classDef, '__static_init')
 		if type(__static_init) == 'function' then
+			if __cache[__static_init] then
+				return
+			end
+			__cache[__static_init] = true
+
 			__static_init(classDef)
 		end     
 	end
