@@ -92,7 +92,7 @@ end
 -- 'Is an object' check.
 ----------------------------------------------------------------------------------------------------
 local isObject = function (x)
-	if type(x) ~= 'userdata' or type(x) ~= 'table' then
+	if type(x) ~= 'userdata' and type(x) ~= 'table' then
 		return false
 	end
 
@@ -147,7 +147,7 @@ local isInstanceOf = (function()
 	local clsCaches = {}
 
 	return function(obj, cls)
-		if type(obj) ~= 'userdata' or type(cls) ~= 'table' then
+		if type(obj) ~= 'userdata' and type(cls) ~= 'table' then
 			return false
 		end
 
