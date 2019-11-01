@@ -24,7 +24,7 @@ static const char *lqtL_getQEventMetaType(const QEvent* event) {
         case QEvent::ApplicationPaletteChange:  //The default application palette has changed.
             return "QEvent*";
         case QEvent::ApplicationStateChange:    //The state of the application has changed.
-            return "QEvent*";
+            return "QApplicationStateChangeEvent*";
         case QEvent::ApplicationWindowIconChange:   //The application's icon has changed.
             return "QEvent*";
         case QEvent::ChildAdded:    //An object gets a child (QChildEvent).

@@ -10,9 +10,7 @@ bool lqtL_isGenericArgument(lua_State *L, int i) {
         case LUA_TTABLE: {
             // GenericArgument tuple
             //  { type, value }
-            int len = lua_objlen(L, i);
-            if (len > 0 && len <= 2)
-                return true;
+            return lua_objlen(L, i) == 2;
         } break;
         case LUA_TBOOLEAN:
         case LUA_TNUMBER:

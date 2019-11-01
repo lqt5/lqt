@@ -192,7 +192,7 @@ local qCleanup = function()
         local removals = {}
         for k,v in pairs(t) do
             -- Cleanup lqt registry data
-            if k:match('^[%*]?Lqt') then
+            if type(k) == 'string' and k:match('^[%*]?Lqt') then
                 table.insert(removals, k)
             elseif type(v) == 'table' then
                 recycle(inst, v)
@@ -205,7 +205,7 @@ local qCleanup = function()
 
     for _,inst in ipairs(QtCore.instances()) do
         local env = debug.getfenv(inst)
-        recycled(inst, env)
+        recycle(inst, env)
     end
     -- Do full gc
     gc()

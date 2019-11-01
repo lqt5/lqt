@@ -479,7 +479,7 @@ function fill_wrapper_code(f)
 	if f.wrapper_code then return f end
 	local stackn, argn = 1, 1
 	local stack_args, defects = '', 0
-	local has_args = true
+	local has_args,op_suffix = true, ''
 	local wrap, line = '  int oldtop = lua_gettop(L);\n', ''
 
 	-- always bind virtual function
@@ -567,7 +567,7 @@ function fill_wrapper_code(f)
 		wrap = wrap .. '  lqtL_selfcheck(L, self, "'..f.xarg.member_of_class..'");\n'
 		--print(sget, sn)
 		if operators.is_operator(f.xarg.name) then
-			line, has_args = operators.call_line(f)
+			line, has_args, op_suffix = operators.call_line(f)
 			if not line then return nil end
 		-- elseif f.xarg.virtual then
 		-- 	line = 'self->'..f.xarg.name..'('
@@ -667,6 +667,8 @@ function fill_wrapper_code(f)
 	end
 	if has_args then
 		line = line .. ')'
+	elseif op_suffix ~= nil then
+		line = line .. op_suffix
 	end
 	-- FIXME: hack follows for constructors
 	if f.calling_line then line = f.calling_line end
@@ -1050,13 +1052,10 @@ private:
 		print_meta([[
 #include <QDebug>
 
-QMetaObject lqt_shell_]]..n..[[::staticMetaObject;
-
 const QMetaObject *lqt_shell_]]..n..[[::metaObject() const {
         const QMetaObject& meta = lqtL_qt_metaobject(L
             , "]]..c.xarg.fullname..[[*"
             , this
-            , lqt_shell_]]..n..[[::staticMetaObject
             , ]]..c.xarg.fullname..[[::staticMetaObject
         );
         return &meta;

@@ -2,7 +2,7 @@ Overview
 ========
 
 lqt is a [Lua/luajit](http://www.lua.org) binding to the [Qt5 framework](https://www.qt.io/).
-It is an automated binding generated from the modified version of [Qt headers](https://github.com/lqt5/lqt/tree/qt5/generator/schema), and covers almost
+It is an automated binding generated from the modified version of [Qt headers](generator/schema), and covers almost
 all classes and methods from supported Qt modules.
 
 For more info, check the documentation, [mailing list](http://groups.google.com/group/lqt-bindings) or contact the authors:
@@ -46,7 +46,13 @@ Features
   * signal/slot mechanism - you can define custom slots in Lua
   * `QObject` derived objects are automatically cast to correct type thanks to Qt metaobject system
   * implicit conversion - i.e. write Lua strings where QString is expected, or numbers instead of QVariant
+  * Qt `signal/slot` feature works well [test](test/test_signal.lua)
+  * Also Qt `properties` are supported [test](test/test_property.lua)
 * optional memory management - you can let the Lua GC destroy objects, or let Qt parent/child management do the work
+* embed lua qt class system
+  * `Class`  inherit from Qt C++ class [test](test/test_class.lua)
+  * `isInstanceOf` check instance of a class [test](test/test_inherit.lua)
+* lots of Qt offical examples lua version: [examples](examples)
 
 History
 -------
@@ -61,63 +67,70 @@ Building lqt
 To compile lqt, you need:
 
 * [CMake](http://www.cmake.org/cmake/resources/software.html)
-* Qt and headers, download from [Qt offical site](https://www.qt.io/download)
-* Windows: Microsoft visual studio 2017
-* MacOS: XCode
+* Qt `5.12.0` or above, download from [Qt offical site](https://www.qt.io/download)
+* Compilers
+    * On Windows: use `Microsoft Visual Studio 2017` or later version
+    * On MacOS: use `XCode 11.0` or later version
 
 You can get the latest source of lqt from https://github.com/lqt5/lqt .
-When you have the sources, create an out-of-source build directory
-(where the binaries will be built, I often use `build`).
+When you have the sources.
 
-# 1. Update submodules
-```sh
+# On Windows platform
+Checkout sub module repos:
+```bat
 git submodule update --init --recursive --remote
 ```
 
-# 2. Compile/install LuaJIT
-
-## 2.1 Windows
+Compile `LuaJIT`(required `msvc x64 command line environ`):
 ```bat
-cd modules/src/LuaJIT/src
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+cd modules\src\LuaJIT\src
 call msvcbuild.bat
-cd ../../../..
 ```
 
-## 2.2 MacOS
-```sh
-cd modules/src/LuaJIT
-sudo make install
-```
-
-# 3. Configure Qt5 
-Modify CMakeList.txt, change path to your Qt5 install path
-
-## 3.1 Windows
+Edit CMakeList.txt, change this line to your Qt install folder:
 ```cmake
     set(CMAKE_PREFIX_PATH D:/Qt/Qt5.13.0/5.13.0/msvc2017_64/lib/cmake)
 ```
 
-## 3.1 MacOS
-```cmake
-    set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
+Create an out-of-source build directory
+(where the binaries will be built, I often use `build`):
+
+```bat
+md build
 ```
 
-# 4. Build
-
-## 4.1 Windows
+Then, use CMake to generate the msvc solution and run `cmake build`:
 ```bat
 cmake -G "Visual Studio 15 2017 Win64" -H. -Bbuild
 cmake --build build --target ALL_BUILD --config RelWithDebinfo -j4
 ```
 
-## 4.2 MacOS
+# On MacOS platform
+Checkout sub module repos:
+```sh
+git submodule update --init --recursive --remote
+```
+
+Compile `LuaJIT`:
+```sh
+cd modules/src/LuaJIT
+make -j8
+```
+
+Edit CMakeList.txt, change this line to your Qt install folder:
+```cmake
+    set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
+```
+
 Then, use CMake to generate the Makefile and run `make` as usual:
 ```sh
     mkdir build; cd build
     cmake ..
     make -j4 # use parallel build with your number of cores/processors
 ```
+
+Finish
+------
 
 The generated Lua binding libraries are created in the `lib` directory,
 you can copy them to your `LUA_CPATH`.

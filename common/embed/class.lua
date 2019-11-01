@@ -22,6 +22,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ***************************************************************************]]
+local QtCore
 ----------------------------------------------------------------------------------------------------
 -- call __static_init(static constructor)
 ----------------------------------------------------------------------------------------------------
@@ -29,11 +30,6 @@ local staticInit = (function()
 	local __cache = setmetatable({}, { __mode = 'k' })
 
 	local function __init(classDef)
-		if __cache[classDef] then
-			return
-		end
-		__cache[classDef] = true
-
 		local __super = rawget(classDef, '__super')
 		if __super then
 			__init(__super)
@@ -41,6 +37,11 @@ local staticInit = (function()
 
 		local __static_init = rawget(classDef, '__static_init')
 		if type(__static_init) == 'function' then
+			if __cache[__static_init] then
+				return
+			end
+			__cache[__static_init] = true
+
 			__static_init(classDef)
 		end     
 	end
@@ -91,7 +92,7 @@ end
 -- 'Is an object' check.
 ----------------------------------------------------------------------------------------------------
 local isObject = function (x)
-	if type(x) ~= 'userdata' or type(x) ~= 'table' then
+	if type(x) ~= 'userdata' and type(x) ~= 'table' then
 		return false
 	end
 
@@ -146,7 +147,7 @@ local isInstanceOf = (function()
 	local clsCaches = {}
 
 	return function(obj, cls)
-		if type(obj) ~= 'userdata' or type(cls) ~= 'table' then
+		if type(obj) ~= 'userdata' and type(cls) ~= 'table' then
 			return false
 		end
 
@@ -189,6 +190,7 @@ local function Class(name, super)
 			local env = debug.getfenv(inst)
 			env.new = errorNew
 			env.__class = classDef
+			env.__metaObject = classDef.__metaObject
 			-- set object env inherit super(self) env
 			setmetatable(env, getmetatable(classDef))
 		else
@@ -246,6 +248,8 @@ local function Class(name, super)
 			classDef.__lua = true
 		else
 			classDef.__lua = super.__classDef and super.__classDef.__lua or false
+			-- Create qt-class specify QMetaObject
+			classDef.__metaObject = QtCore.QMetaObject()
 		end
 
 		classDef.__proto = super.__proto and super.__proto or super
@@ -325,7 +329,8 @@ end
 ----------------------------------------------------------------------------------------------------
 -- Entry
 ----------------------------------------------------------------------------------------------------
-return function(QtCore, LQT)
+return function(...)
+	QtCore = ...
 	rawset(QtCore, 'isClass', isClass)
 	rawset(QtCore, 'isObject', isObject)
 	rawset(QtCore, 'isInstanceOf', isInstanceOf)
