@@ -24,3 +24,6 @@
 	url = https://github.com/lqt5/LuaJIT
 	tag = v2.1
 
+[submodule "modules/src/luasocket"]
+	path = modules/src/luasocket
+	url = https://github.com/lqt5/luasocket
