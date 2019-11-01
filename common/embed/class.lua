@@ -147,7 +147,7 @@ local isInstanceOf = (function()
 	local clsCaches = {}
 
 	return function(obj, cls)
-		if type(obj) ~= 'userdata' and type(cls) ~= 'table' then
+		if (type(obj) ~= 'userdata' and type(obj) ~= 'table') or type(cls) ~= 'table' then
 			return false
 		end
 
