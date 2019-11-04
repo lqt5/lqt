@@ -59,6 +59,8 @@ if (WIN32)
 		../../modules/src/luasocket/src/wsocket.c
 		../../modules/src/luasocket/src/wsocket.h
 	)
+	find_library(WSOCK32_LIBRARY wsock32)
+	find_library(WS2_32_LIBRARY ws2_32)
 else()
 	set(socket_platform_src
 		../../modules/src/luasocket/src/serial.c
@@ -78,5 +80,10 @@ add_library(socket MODULE ${socket_src} ${socket_platform_src})
 add_dependencies(socket generate_luasocket_embed)
 
 target_link_libraries(socket ${LUA_LIBS_FOR_MODULE})
+
+if(WIN32)
+	target_link_libraries(socket wsock32 ws2_32)
+endif()
+
 set_target_properties(socket PROPERTIES PREFIX "")
 set_target_properties(socket PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
