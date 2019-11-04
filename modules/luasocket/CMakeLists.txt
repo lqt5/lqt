@@ -41,7 +41,6 @@ set(socket_src
 	../../modules/src/luasocket/src/pierror.h
 	../../modules/src/luasocket/src/select.c
 	../../modules/src/luasocket/src/select.h
-	../../modules/src/luasocket/src/serial.c
 	../../modules/src/luasocket/src/socket.h
 	../../modules/src/luasocket/src/tcp.c
 	../../modules/src/luasocket/src/tcp.h
@@ -62,6 +61,7 @@ if (WIN32)
 	)
 else()
 	set(socket_platform_src
+		../../modules/src/luasocket/src/serial.c
 		../../modules/src/luasocket/src/unix.c
 		../../modules/src/luasocket/src/unix.h
 		../../modules/src/luasocket/src/unixdgram.c
