@@ -9,6 +9,7 @@ test/styles/*
 generator/schema/**/*.h
 generator/schema/!TODO/*
 modules/luasocket/embed_*.h
+modules/lanes/embed_*.h
 
 examples/!Qt-5.12.0/**/*
 # examples/**/*.h

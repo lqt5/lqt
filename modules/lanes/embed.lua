@@ -2,19 +2,7 @@
 local compile = true
 
 local modules = {
-	{ 'src/ftp', 'socket.ftp' },
-	{ 'src/headers', 'socket.headers' },
-	{ 'src/http', 'socket.http' },
-	{ 'src/ltn12', 'socket.ltn12' },
-	{ 'src/mbox', 'socket.mbox' },
-	{ 'src/mime', 'socket.mime' },
-	{ 'src/smtp', 'socket.smtp' },
-	{ 'src/socket', 'socket', },
-	{ 'src/tp', 'socket.tp', },
-	{ 'src/url', 'socket.url' },
-	-- { 'etc/dict', 'socket.dict' },
-	-- { 'etc/lp', 'socket.lp' },
-	-- { 'etc/tftp', 'socket.tftp' },
+	{ 'src/lanes', 'lanes' },
 }
 
 local lqt_embed = {
@@ -30,7 +18,7 @@ end
 
 local in_path = arg[2]
 if not in_path then
-	in_path = '../src/luasocket/src'
+	in_path = '../src/lanes'
 end
 
 local function log(fmt, ...)
