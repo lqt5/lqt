@@ -170,6 +170,7 @@ function virtual_overload(v)
 	proto = proto .. ')' .. (v.xarg.constant=='1' and ' const' or '')
 	fallback = (v.return_type and 'return this->' or 'this->') .. v.xarg.fullname .. '(' .. fallback .. ');' ..
 				(v.return_type and '' or ' return;')
+	local fallback_thread = fallback
 	if v.xarg.abstract then
 		fallback = string.format([[luaL_error(L, "Abstract method %%s:%%s not implemented!"
 				, "%s"
@@ -181,6 +182,8 @@ function virtual_overload(v)
 			, v.xarg.name
 			, parse_return_type(v.return_type)
 		)
+
+		fallback_thread = string.format('return %s;', parse_return_type(v.return_type))
 	end
 	ret = proto .. ' {\n'
 	if VERBOSE_BUILD then
@@ -192,6 +195,20 @@ function virtual_overload(v)
 				'(int)(bool)hasOverride[VIRTUAL_INDEX]'..
 				');\n'
 	end
+
+	-- add thread check code
+	--	print warning when override virtual method in lua and calling it in a child thread
+	ret = ret .. string.format([[  if (!lqtL_isMainThread()) {
+    if (hasOverride[VIRTUAL_INDEX])
+      printf("Warning: call virtual %s::%s() from thread!\n");
+    %s
+  }
+]]
+			, v.xarg.member_of_class
+			, v.xarg.name
+			, fallback_thread
+)
+
 	ret = ret .. '  int oldtop = lua_gettop(L);\n'
 	ret = ret .. '  if (!hasOverride[VIRTUAL_INDEX]) { \n'
 	ret = ret .. '    ' .. fallback .. '\n  }\n'

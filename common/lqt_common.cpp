@@ -1091,3 +1091,7 @@ void lqtL_pushpointer(lua_State *L, void *ptr) {
     else
         lua_pushlightuserdata(L, ptr);
 }
+
+bool lqtL_isMainThread() {
+    return QCoreApplication::instance()->thread() == QThread::currentThread();
+}

@@ -173,5 +173,7 @@ const char * lqtL_getarglist(lua_State *L);
 
 void lqtL_selfcheck(lua_State *L, void *self, const char *name);
 
+bool lqtL_isMainThread();
+
 #endif // __LQT_COMMON_HPP
 
