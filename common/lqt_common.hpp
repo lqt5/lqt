@@ -175,5 +175,7 @@ void lqtL_selfcheck(lua_State *L, void *self, const char *name);
 
 bool lqtL_isMainThread();
 
+const char *lqtL_typename(lua_State *L, int i);
+
 #endif // __LQT_COMMON_HPP
 

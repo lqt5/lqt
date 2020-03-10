@@ -145,7 +145,7 @@ function virtual_overload(v)
 		local atest, an = typesystem[v.return_type].test('oldtop+2')
 		retget = [[if (!(]]..atest..[[)) {
         luaL_error(L, "Unexpected virtual method return type: %s; expecting %s\nin: %s",
-          luaL_typename(L,oldtop+2), "]]..v.return_type..[[", lqtL_source(L,oldtop+1));
+          lqtL_typename(L,oldtop+2), "]]..v.return_type..[[", lqtL_source(L,oldtop+1));
       }
       ]]
 		retget = retget .. argument_name(ret_as or v.return_type, 'ret') .. ' = ' .. rget .. ';\n      '

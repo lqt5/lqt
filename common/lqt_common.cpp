@@ -1095,3 +1095,32 @@ void lqtL_pushpointer(lua_State *L, void *ptr) {
 bool lqtL_isMainThread() {
     return QCoreApplication::instance()->thread() == QThread::currentThread();
 }
+
+const char *lqtL_typename(lua_State *L, int i) {
+
+    if (!lua_isuserdata(L, i)) {
+        return luaL_typename(L, i);
+    }
+    lua_getmetatable(L, i);
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 1); // (0)
+        return luaL_typename(L, i);
+    }
+    lua_getfield(L, -1, "__type"); // (2)
+    lua_remove(L, -2); // (1)
+    if (!lua_isstring(L, -1)) {
+        lua_pop(L, 1);
+        return luaL_typename(L, i);
+    } else {
+        lua_getfield(L, i, "__name");
+        if(lua_isstring(L, -1)) {
+            lua_pushfstring(L, "(%s)", lua_tostring(L, -1));
+            lua_concat(L, 2);
+        } else {
+            lua_pop(L, 1);
+        }
+        const char *ret = lua_tostring(L, -1);
+        lua_pop(L, 1);
+        return ret;
+    }
+}
