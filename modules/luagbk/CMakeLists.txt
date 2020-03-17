@@ -14,6 +14,12 @@ set(gbk_src
 	../../modules/src/luagbk/lgbk.c
 )
 
+set(gb18030_src
+	../../modules/src/luagbk/gb18030.h
+	../../modules/src/luagbk/gb18030_dbcs.h
+	../../modules/src/luagbk/lgb18030.cpp
+)
+
 set(jis_src
 	../../modules/src/luagbk/ldbcs.h
 	../../modules/src/luagbk/jis.h
@@ -38,6 +44,12 @@ add_library(gbk MODULE ${gbk_src})
 target_link_libraries(gbk ${LUA_LIBS_FOR_MODULE})
 set_target_properties(gbk PROPERTIES PREFIX "")
 set_target_properties(gbk PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+add_library(gb18030 MODULE ${gb18030_src})
+
+target_link_libraries(gb18030 ${LUA_LIBS_FOR_MODULE})
+set_target_properties(gb18030 PROPERTIES PREFIX "")
+set_target_properties(gb18030 PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_library(jis MODULE ${jis_src})
 
