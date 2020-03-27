@@ -141,7 +141,7 @@ function(build_qt_lib_binding BINDING_HEADER)
 	set_source_files_properties(${BINDING_SRC} PROPERTIES  GENERATED TRUE)
 
 	if (UNIX)
-		set (PP_CONFIG ${QT_SCHEMA_DIR}/lqt5.lqt)
+		set (PP_CONFIG ${QT_SCHEMA_DIR}/lqt5_macos.lqt)
 		# set (PP_CONFIG ${CMAKE_SOURCE_DIR}/cpptoxml/parser/rpp/pp-qt-configuration)
 	else()
 		set (PP_CONFIG ${QT_SCHEMA_DIR}/lqt5.lqt)

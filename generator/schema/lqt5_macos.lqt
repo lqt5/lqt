@@ -1,0 +1,2 @@
+#define Q_OS_MACOS
+#include "lqt5.lqt"
