@@ -192,6 +192,9 @@ static QMetaObject& lqtL_get_metaobject (lua_State *L, int index) {
         lua_pop(L, 1);
         ret = new QMetaObject();
         lqtL_pushudata(L, ret, "QMetaObject*");
+        // Enable autodeletion
+        lua_getfield(L, -1, "delete");
+        lua_setfield(L, -2, "__gc");
         lua_setfield(L, index, "__metaObject");
     }
 
