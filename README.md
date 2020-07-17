@@ -68,6 +68,7 @@ To compile lqt, you need:
 
 * [CMake](http://www.cmake.org/cmake/resources/software.html)
 * Qt `5.12.0` or above, download from [Qt offical site](https://www.qt.io/download)
+    * (**WARN: Currently only Qt `5.12.0` and `5.13.0` supported!!!**)
 * Compilers
     * On Windows: use `Microsoft Visual Studio 2017` or later version
     * On MacOS: use `XCode 11.0` or later version
