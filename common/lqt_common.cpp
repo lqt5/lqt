@@ -1093,7 +1093,10 @@ void lqtL_pushpointer(lua_State *L, void *ptr) {
 }
 
 bool lqtL_isMainThread() {
-    return QCoreApplication::instance()->thread() == QThread::currentThread();
+    QCoreApplication *app = QCoreApplication::instance();
+    if (app == NULL)
+        return true;
+    return app->thread() == QThread::currentThread();
 }
 
 const char *lqtL_typename(lua_State *L, int i) {
