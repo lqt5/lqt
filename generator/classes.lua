@@ -1053,29 +1053,29 @@ private:
 #include <QDebug>
 
 const QMetaObject *lqt_shell_]]..n..[[::metaObject() const {
-  if (!lqtL_isMainThread()) {
-    printf("Warning: call ]]..c.xarg.fullname..[[::metaObject() from thread!\n");
-    return &]]..c.xarg.fullname..[[::staticMetaObject;
-  }
+        if (!lqtL_isMainThread()) {
+          printf("Warning: call ]]..c.xarg.fullname..[[::metaObject() from thread!\n");
+          return &]]..c.xarg.fullname..[[::staticMetaObject;
+        }
 
-  const QMetaObject& meta = lqtL_qt_metaobject(L
-    , "]]..c.xarg.fullname..[[*"
-    , this
-    , ]]..c.xarg.fullname..[[::staticMetaObject
-  );
-  return &meta;
+        const QMetaObject& meta = lqtL_qt_metaobject(L
+            , "]]..c.xarg.fullname..[[*"
+            , this
+            , ]]..c.xarg.fullname..[[::staticMetaObject
+        );
+        return &meta;
 }
 
 int lqt_shell_]]..n..[[::qt_metacall(QMetaObject::Call call, int index, void **args) {
-  //qDebug() << "fake calling!";
-  index = ]]..c.xarg.fullname..[[::qt_metacall(call, index, args);
-  if (!lqtL_isMainThread()) {
-    printf("Warning: call ]]..c.xarg.fullname..[[::qt_metacall() from thread!\n");
-    return index;
-  }
-  if (index < 0)
-    return index;
-  return lqtL_qt_metacall(L, this, lqtSlotAcceptor_]]..module_name..[[, call, "]]..c.xarg.fullname..[[*", index, args);
+        //qDebug() << "fake calling!";
+        index = ]]..c.xarg.fullname..[[::qt_metacall(call, index, args);
+        if (!lqtL_isMainThread()) {
+          printf("Warning: call ]]..c.xarg.fullname..[[::qt_metacall() from thread!\n");
+          return index;
+        }
+        if (index < 0)
+          return index;
+        return lqtL_qt_metacall(L, this, lqtSlotAcceptor_]]..module_name..[[[L].get(), call, "]]..c.xarg.fullname..[[*", index, args);
 }
 ]])
 	end
@@ -1270,7 +1270,7 @@ end
 		print_meta("\tlqtL_qvariant_custom_qtgui(L);")
 	end
 	print_meta('\tlqtL_register_super(L);')
-	print_meta('\tlqtSlotAcceptor_'..module_name..' = new LqtSlotAcceptor(L);')
+	print_meta('\tlqtSlotAcceptor_'..module_name..'[L] = std::unique_ptr<LqtSlotAcceptor>(new LqtSlotAcceptor(L));')
 	print_meta('\tlua_settop(L, top);')
 	print_meta('\treturn 1;\n}')
 	if fmeta then fmeta:close() end
