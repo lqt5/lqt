@@ -145,11 +145,11 @@ void Parser::tokenRequiredError(int token)
   QString err;
 
   err += "expected token ";
-  err += "``";
+  err += "'";
   err += token_name(token);
-  err += "'' found ``";
+  err += "' found '";
   err += token_name(token_stream.lookAhead());
-  err += "''";
+  err += "'";
 
   reportError(err);
 }
@@ -159,9 +159,9 @@ void Parser::syntaxError()
   QString err;
 
   err += "unexpected token ";
-  err += "``";
+  err += "'";
   err += token_name(token_stream.lookAhead());
-  err += "''";
+  err += "'";
 
   reportError(err);
 }
@@ -178,7 +178,7 @@ void Parser::reportError(const QString& msg)
             &line, &column, &fileName);
 
         Control::ErrorMessage errmsg;
-        errmsg.setLine(line + 1);
+        errmsg.setLine(line);
         errmsg.setColumn(column);
         errmsg.setFileName(fileName);
         errmsg.setMessage(QLatin1String("** PARSER ERROR ") + msg);
@@ -923,7 +923,7 @@ bool Parser::parseCvQualify(const ListNode<std::size_t> *&node)
 
   int tk;
   while (0 != (tk = token_stream.lookAhead())
-         && (tk == Token_const || tk == Token_volatile))
+         && (tk == Token_const || tk == Token_volatile || tk == Token_noexcept))
     {
       node = snoc(node, token_stream.cursor(), _M_pool);
       token_stream.nextToken();
@@ -1069,7 +1069,8 @@ bool Parser::parseTemplateArgument(TemplateArgumentAST *&node)
   TypeIdAST *typeId = 0;
   ExpressionAST *expr = 0;
 
-  if (!parseTypeId(typeId) || (token_stream.lookAhead() != ','
+  if (!parseTypeId(typeId) || (token_stream.lookAhead() != Token_ellipsis
+                               && token_stream.lookAhead() != ','
                                && token_stream.lookAhead() != '>'))
     {
       token_stream.rewind((int) start);
@@ -1081,6 +1082,13 @@ bool Parser::parseTemplateArgument(TemplateArgumentAST *&node)
   TemplateArgumentAST *ast = CreateNode<TemplateArgumentAST>(_M_pool);
   ast->type_id = typeId;
   ast->expression = expr;
+
+  if (token_stream.lookAhead() != Token_ellipsis) {
+    ast->variadic = false;
+  } else {
+    ast->variadic = true;
+    token_stream.nextToken();
+  }
 
   UPDATE_POS(ast, start, token_stream.cursor());
   node = ast;
@@ -1474,6 +1482,7 @@ bool Parser::parseTypeParameter(TypeParameterAST *&node)
 
   TypeParameterAST *ast = CreateNode<TypeParameterAST>(_M_pool);
   ast->type = start;
+  ast->variadic = false;
 
   switch(token_stream.lookAhead())
     {
@@ -1481,6 +1490,11 @@ bool Parser::parseTypeParameter(TypeParameterAST *&node)
     case Token_typename:
       {
         token_stream.nextToken(); // skip class
+
+        if (token_stream.lookAhead() == Token_ellipsis) {
+          ast->variadic = true;
+          token_stream.nextToken(); // skip ellipsis
+        }
 
         // parse optional name
         if(parseName(ast->name, true))

@@ -1,6 +1,6 @@
 *.sublime-workspace
 
-build/*
+**/build/*
 xcode/*
 common/lqt_embed.h
 common/embed/*.h

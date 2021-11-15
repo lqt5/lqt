@@ -728,6 +728,7 @@ struct TemplateArgumentAST: public AST
 
   TypeIdAST *type_id;
   ExpressionAST *expression;
+  bool variadic;
 };
 
 struct TemplateDeclarationAST: public DeclarationAST
@@ -793,6 +794,7 @@ struct TypeParameterAST: public AST
   TypeIdAST *type_id;
   const ListNode<TemplateParameterAST*> *template_parameters;
   NameAST *template_name;
+  bool variadic;
 };
 
 struct TypedefAST: public DeclarationAST
