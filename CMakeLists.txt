@@ -29,7 +29,7 @@
 #	[ ] shell class template constructor support
 #	[ ] lqtL_toboolref value ret
 
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(lqt5)
 
@@ -44,10 +44,10 @@ set(LUA_INCLUDE_DIR ${CMAKE_BINARY_DIR}/../modules/src/LuaJIT/src)
 set(CMAKE_PROGRAM_PATH ${LUA_INCLUDE_DIR})
 
 if (APPLE)
-	set(CMAKE_PREFIX_PATH ~/Qt/5.13.0/clang_64/lib/cmake/)
+	set(CMAKE_PREFIX_PATH ~/Qt/5.15.2/clang_64/lib/cmake/)
 	set(LUA_LIBRARIES ${LUA_INCLUDE_DIR}/libluajit.so)
 elseif (WIN32)
-	set(CMAKE_PREFIX_PATH D:/Qt/Qt5.13.0/5.13.0/msvc2017_64/lib/cmake)
+	set(CMAKE_PREFIX_PATH D:/Qt/Qt5.15.2/5.15.2/msvc2017_64/lib/cmake)
 	set(LUA_LIBRARIES ${LUA_INCLUDE_DIR}/lua51.lib)
 endif()
 
@@ -58,8 +58,8 @@ find_package(Qt5 REQUIRED
 	Network
 	Sql
 	Positioning
-	Script
-	ScriptTools
+	# Script
+	# ScriptTools
 	Qml
 	WebChannel
 	Gui
@@ -126,7 +126,7 @@ add_subdirectory(cpptoxml)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
 if(APPLE)
 	# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Ofast -std=c++11 -Wno-deprecated-declarations")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11 -Wno-deprecated-declarations")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11 -mmacosx-version-min=10.13 -stdlib=libc++ -Wno-deprecated-declarations")
 endif(APPLE)
 
 function(build_qt_lib_binding BINDING_HEADER)
@@ -259,13 +259,13 @@ else()
 	set(QT_LIBRARIES Positioning Core)
 	build_qt_lib_binding(QtPositioning QtCore)
 
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES Script Core)
-	build_qt_lib_binding(QtScript QtCore)
+	# set(REUSE_FILES 1)
+	# set(QT_LIBRARIES Script Core)
+	# build_qt_lib_binding(QtScript QtCore)
 
-	set(REUSE_FILES 1)
-	set(QT_LIBRARIES ScriptTools Widgets Gui Script Core)
-	build_qt_lib_binding(QtScriptTools QtWidgets QtGui QtScript QtCore)
+	# set(REUSE_FILES 1)
+	# set(QT_LIBRARIES ScriptTools Widgets Gui Script Core)
+	# build_qt_lib_binding(QtScriptTools QtWidgets QtGui QtScript QtCore)
 
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Qml Network Core)
@@ -329,12 +329,12 @@ else()
 	endif(WIN32)
 endif()
 
-add_subdirectory(modules/lrdb)
-add_subdirectory(modules/lpeglabel)
-add_subdirectory(modules/lfs)
-add_subdirectory(modules/lpath)
-add_subdirectory(modules/lua-miniz)
-add_subdirectory(modules/luautf8)
-add_subdirectory(modules/luagbk)
-add_subdirectory(modules/luasocket)
-add_subdirectory(modules/lanes)
+# add_subdirectory(modules/lrdb)
+# add_subdirectory(modules/lpeglabel)
+# add_subdirectory(modules/lfs)
+# add_subdirectory(modules/lpath)
+# add_subdirectory(modules/lua-miniz)
+# add_subdirectory(modules/luautf8)
+# add_subdirectory(modules/luagbk)
+# add_subdirectory(modules/luasocket)
+# add_subdirectory(modules/lanes)
