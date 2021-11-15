@@ -58,8 +58,6 @@ find_package(Qt5 REQUIRED
 	Network
 	Sql
 	Positioning
-	# Script
-	# ScriptTools
 	Qml
 	WebChannel
 	Gui
@@ -123,9 +121,7 @@ endif(APPLE)
 add_subdirectory(cpptoxml)
 
 # # Add compiler flags for building executables (-fPIE)
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
 if(APPLE)
-	# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Ofast -std=c++11 -Wno-deprecated-declarations")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -std=c++11 -mmacosx-version-min=10.13 -stdlib=libc++ -Wno-deprecated-declarations")
 endif(APPLE)
 
@@ -258,14 +254,6 @@ else()
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Positioning Core)
 	build_qt_lib_binding(QtPositioning QtCore)
-
-	# set(REUSE_FILES 1)
-	# set(QT_LIBRARIES Script Core)
-	# build_qt_lib_binding(QtScript QtCore)
-
-	# set(REUSE_FILES 1)
-	# set(QT_LIBRARIES ScriptTools Widgets Gui Script Core)
-	# build_qt_lib_binding(QtScriptTools QtWidgets QtGui QtScript QtCore)
 
 	set(REUSE_FILES 1)
 	set(QT_LIBRARIES Qml Network Core)
