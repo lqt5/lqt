@@ -70,9 +70,6 @@ class QRegExp;
 // #if QT_CONFIG(regularexpression)
 class QRegularExpression;
 // #endif
-#ifndef QT_NO_USERDATA
-class QObjectUserData;
-#endif
 struct QDynamicMetaObjectData;
 
 typedef QList<QObject*> QObjectList;
@@ -222,12 +219,6 @@ public:
     QList<QByteArray> dynamicPropertyNames() const;
 #endif // QT_NO_PROPERTIES
 
-#ifndef QT_NO_USERDATA
-    static uint registerUserData();
-    void setUserData(uint id, QObjectUserData* data);
-    QObjectUserData* userData(uint id) const;
-#endif // QT_NO_USERDATA
-
 Q_SIGNALS:
     void destroyed(QObject * = nullptr);
     void objectNameChanged(const QString &objectName, QPrivateSignal);
@@ -275,13 +266,6 @@ protected:
 private:
     Q_DISABLE_COPY(QObject)
 };
-
-// #ifndef QT_NO_USERDATA
-class Q_CORE_EXPORT QObjectUserData {
-public:
-    virtual ~QObjectUserData();
-};
-// #endif
 
 // #if QT_DEPRECATED_SINCE(5, 0)
 // template<typename T>

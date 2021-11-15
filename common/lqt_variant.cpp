@@ -304,6 +304,7 @@ int lqtL_qvariant_value_custom(lua_State *L, int index, bool convert_to) {
 
         case QVariant::UserType:
         case QVariant::LastType:
+        case QVariant::LastGuiType:
         	break;
 	}
 	return 0;
