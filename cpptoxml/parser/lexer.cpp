@@ -580,6 +580,10 @@ void Lexer::scan_semicolon()
 {
   ++cursor;
   token_stream[(int) index++].kind = ';';
+  if (parse_template) {
+    parse_template = false;
+    parse_template_class = false;
+  }
 }
 
 void Lexer::scan_less()
@@ -593,27 +597,32 @@ void Lexer::scan_less()
 
   ++cursor;
   if (*cursor == '=')
-    {
-      ++cursor;
-      token_stream[(int) index++].kind = Token_leq;
-    }
+  {
+    ++cursor;
+    token_stream[(int)index++].kind = Token_leq;
+  }
   else if (*cursor == '<')
+  {
+    ++cursor;
+    if (*cursor == '=')
     {
       ++cursor;
-      if (*cursor == '=')
-	{
-	  ++cursor;
-	  token_stream[(int) index++].kind = Token_assign;
-	}
-      else
-	{
-	  token_stream[(int) index++].kind = Token_shift;
-	}
+      token_stream[(int)index++].kind = Token_assign;
     }
-  else
+    else
     {
-      token_stream[(int) index++].kind = '<';
+      if (parse_template_class) {
+        token_stream[(int)index++].kind = '<';
+        token_stream[(int)index++].kind = '<';
+      } else {
+        token_stream[(int)index++].kind = Token_shift;
+      }
     }
+  }
+  else
+  {
+    token_stream[(int)index++].kind = '<';
+  }
 }
 
 void Lexer::scan_equal()
@@ -646,27 +655,32 @@ void Lexer::scan_greater()
 
   ++cursor;
   if (*cursor == '=')
-    {
-      ++cursor;
-      token_stream[(int) index++].kind = Token_geq;
-    }
+  {
+    ++cursor;
+    token_stream[(int)index++].kind = Token_geq;
+  }
   else if (*cursor == '>')
+  {
+    ++cursor;
+    if (*cursor == '=')
     {
       ++cursor;
-      if (*cursor == '=')
-	{
-	  ++cursor;
-	  token_stream[(int) index++].kind = Token_assign;
-	}
-      else
-	{
-	  token_stream[(int) index++].kind = Token_shift;
-	}
+      token_stream[(int)index++].kind = Token_assign;
     }
-  else
+    else
     {
-      token_stream[(int) index++].kind = '>';
+      if (parse_template_class) {
+        token_stream[(int)index++].kind = '>';
+        token_stream[(int)index++].kind = '>';
+      } else {
+        token_stream[(int)index++].kind = Token_shift;
+      }
     }
+  }
+  else
+  {
+    token_stream[(int)index++].kind = '>';
+  }
 }
 
 void Lexer::scan_question()
@@ -710,6 +724,10 @@ void Lexer::scan_left_brace()
 {
   ++cursor;
   token_stream[(int) index++].kind = '{';
+  if (parse_template) {
+    parse_template = false;
+    parse_template_class = false;
+  }
 }
 
 void Lexer::scan_or()
@@ -1038,6 +1056,9 @@ void Lexer::scanKeyword5()
 	  *(cursor + 4) == 's')
 	{
 	  token_stream[(int) index++].kind = Token_class;
+    if (parse_template) {
+      parse_template_class = true;
+    }
 	  return;
 	}
       if (*(cursor + 1) == 'o' &&
@@ -1328,6 +1349,9 @@ void Lexer::scanKeyword6()
 	  *(cursor + 5) == 't')
 	{
 	  token_stream[(int) index++].kind = Token_struct;
+    if (parse_template) {
+      parse_template_class = true;
+    }
 	  return;
 	}
       if (*(cursor + 1) == 'w' &&
@@ -1630,6 +1654,7 @@ void Lexer::scanKeyword8()
 	  *(cursor + 7) == 'e')
 	{
 	  token_stream[(int) index++].kind = Token_template;
+    parse_template = true;
 	  return;
 	}
       if (*(cursor + 1) == 'y' &&

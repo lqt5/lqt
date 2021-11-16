@@ -197,7 +197,8 @@ public:
     token_stream(_M_location.token_stream),
     location_table(_M_location.location_table),
     line_table(_M_location.line_table),
-    control(__control) {}
+    control(__control), index(0),
+    parse_template(false), parse_template_class(false) {}
 
   void tokenize(const char *contents, std::size_t size);
 
@@ -270,6 +271,8 @@ private:
   const unsigned char *begin_buffer;
   const unsigned char *end_buffer;
   std::size_t index;
+  bool parse_template;
+  bool parse_template_class;
 
   static scan_fun_ptr s_scan_table[];
   static scan_fun_ptr s_scan_keyword_table[];
