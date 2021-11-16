@@ -1522,6 +1522,20 @@ void Lexer::scanKeyword8()
 	}
       break;
 
+    case 'd':
+      if (*(cursor + 1) == 'e' &&
+	  *(cursor + 2) == 'c' &&
+	  *(cursor + 3) == 'l' &&
+	  *(cursor + 4) == 't' &&
+	  *(cursor + 5) == 'y' &&
+	  *(cursor + 6) == 'p' &&
+	  *(cursor + 7) == 'e')
+	{
+	  token_stream[(int) index++].kind = Token_decltype;
+	  return;
+	}
+      break;
+
     case 'e':
       if (*(cursor + 1) == 'x' &&
 	  *(cursor + 2) == 'p' &&

@@ -963,6 +963,19 @@ bool Parser::parseCvQualify(const ListNode<std::size_t> *&node)
       token_stream.nextToken();
     }
 
+  // skip "-> decltype(...)"
+  if (tk == Token_arrow && token_stream.lookAhead(1) == Token_decltype) {
+    token_stream.nextToken();
+    token_stream.nextToken();
+
+    if (skip('(', ')')) {
+      token_stream.nextToken();
+    } else {
+      token_stream.rewind(start);
+      return false;
+    }
+  }
+
   return start != token_stream.cursor();
 }
 
@@ -1533,25 +1546,25 @@ bool Parser::parseTypeParameter(TypeParameterAST *&node)
         }
 
         // parse optional name
-        if(parseName(ast->name, true))
-          {
-            if (token_stream.lookAhead() == '=')
-              {
-                token_stream.nextToken();
+        //  allow anonymous template argument
+        parseName(ast->name, true);
 
-                if(!parseTypeId(ast->type_id))
-                  {
-                    //syntaxError();
-                    token_stream.rewind((int) start);
-                    return false;
-                  }
-              }
-            else if (token_stream.lookAhead() != ','
-                     && token_stream.lookAhead() != '>')
+        if (token_stream.lookAhead() == '=')
+          {
+            token_stream.nextToken();
+
+            if(!parseTypeId(ast->type_id))
               {
+                //syntaxError();
                 token_stream.rewind((int) start);
                 return false;
               }
+          }
+        else if (token_stream.lookAhead() != ','
+                  && token_stream.lookAhead() != '>')
+          {
+            token_stream.rewind((int) start);
+            return false;
           }
       }
       break;

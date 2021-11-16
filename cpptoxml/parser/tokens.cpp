@@ -54,6 +54,7 @@ static char const * const _S_token_names[] = {
   "const",
   "const_cast",
   "continue",
+  "decltype",
   "decr",
   "default",
   "delete",
