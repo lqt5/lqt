@@ -606,9 +606,11 @@ _InputIterator pp::handle_define (_InputIterator __first, _InputIterator __last)
     {
     if (*__first == '/') {
         __first = skip_comment_or_divop(__first, __last);
-        if (skip_comment_or_divop.lines == 0)
-            definition += '/';
-        else
+        if (skip_comment_or_divop.lines == 0) {
+            if (skip_comment_or_divop.state != skip_comment_or_divop.END) {
+              definition += '/';
+            }
+        } else
             env.current_line += skip_comment_or_divop.lines;
     }
 

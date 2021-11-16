@@ -69,19 +69,20 @@ struct pp_skip_comment_or_divop
 {
   int lines;
 
+  enum {
+    MAYBE_BEGIN,
+    BEGIN,
+    MAYBE_END,
+    END,
+    IN_COMMENT,
+    IN_CXX_COMMENT
+  } state;
+
   template <typename _InputIterator>
   _InputIterator operator () (_InputIterator __first, _InputIterator __last)
   {
-    enum {
-      MAYBE_BEGIN,
-      BEGIN,
-      MAYBE_END,
-      END,
-      IN_COMMENT,
-      IN_CXX_COMMENT
-    } state (MAYBE_BEGIN);
-
     lines = 0;
+    state = MAYBE_BEGIN;
 
     for (; __first != __last; lines += (*__first != '\n' ? 0 : 1), ++__first)
       {
