@@ -1781,6 +1781,12 @@ bool Parser::parseParameterDeclaration(ParameterDeclarationAST *&node)
       return false;
     }
 
+  bool variadic = false;
+  if (token_stream.lookAhead() == Token_ellipsis) {
+    token_stream.nextToken();
+    variadic = true;
+  }
+
   int index = (int) token_stream.cursor();
 
   DeclaratorAST *decl = 0;
@@ -1806,6 +1812,7 @@ bool Parser::parseParameterDeclaration(ParameterDeclarationAST *&node)
   ast->type_specifier = spec;
   ast->declarator = decl;
   ast->expression = expr;
+  ast->variadic = variadic;
 
   UPDATE_POS(ast, start, token_stream.cursor());
   node = ast;

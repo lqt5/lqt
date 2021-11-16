@@ -621,6 +621,7 @@ struct ParameterDeclarationAST: public AST
   TypeSpecifierAST *type_specifier;
   DeclaratorAST *declarator;
   ExpressionAST *expression;
+  bool variadic;
 };
 
 struct ParameterDeclarationClauseAST: public AST
