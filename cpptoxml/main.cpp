@@ -1,6 +1,6 @@
 /*
  * Copyright 2009 Mauro Iazzi <mauro.iazzi@gmail.com>
- * Copyright 2009 Peter Kümmel <syntheticpp@gmx.net>
+ * Copyright 2009 Peter Kummel <syntheticpp@gmx.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -562,6 +562,7 @@ int main (int argc, char **argv) {
 		QTextStream(stdout) << contents;
 	} else {
 		Control control;
+		control.setSkipFunctionBody(true);
 		Parser p(&control);
 		pool __pool;
 		

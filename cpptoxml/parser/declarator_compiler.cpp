@@ -99,6 +99,7 @@ void DeclaratorCompiler::visitPtrOperator(PtrOperatorAST *node)
 
   switch (op)
     {
+      case Token_and: // '&&' rvalue reference
       case '&':
         _M_reference = true;
         break;

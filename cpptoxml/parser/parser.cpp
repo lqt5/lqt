@@ -1055,6 +1055,7 @@ bool Parser::parsePtrOperator(PtrOperatorAST *&node)
   int tk = token_stream.lookAhead();
 
   if (tk != '&' && tk != '*'
+      && tk != Token_and /* rvalue reference '&&' */
       && tk != Token_scope && tk != Token_identifier)
     {
       return false;
@@ -1068,6 +1069,7 @@ bool Parser::parsePtrOperator(PtrOperatorAST *&node)
     {
     case '&':
     case '*':
+    case Token_and:
       ast->op = token_stream.cursor();
       token_stream.nextToken();
       break;
@@ -3359,11 +3361,10 @@ bool Parser::parseDeclarationInternal(DeclarationAST *&node)
 
 bool Parser::skipFunctionBody(StatementAST *&)
 {
-#if defined(__GNUC__)
-#warning "Parser::skipFunctionBody() -- implement me"
-#endif
-  Q_ASSERT(0); // ### not implemented
-  return 0;
+  if (skip('{', '}')) {
+    token_stream.nextToken();
+  }
+  return true;
 }
 
 bool Parser::parseFunctionBody(StatementAST *&node)
