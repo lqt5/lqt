@@ -265,6 +265,9 @@ private:
   void scan_tilde();
   void scan_EOF();
 
+  void handle_template_scope(int kind);
+  bool in_template_scope();
+
 private:
   Control *control;
   const unsigned char *cursor;

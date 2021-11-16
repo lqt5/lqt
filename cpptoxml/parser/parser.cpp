@@ -693,7 +693,9 @@ bool Parser::parseUsingTypeAlias(DeclarationAST *&node)
       return false;
     }
 
-  ADVANCE(';', ";");
+  if (token_stream.lookAhead() == ';') {
+    token_stream.nextToken();
+  }
 
   UsingTypeAliasAST *ast = CreateNode<UsingTypeAliasAST>(_M_pool);
   ast->name = name;
@@ -780,7 +782,22 @@ bool Parser::parseTypedef(DeclarationAST *&node)
   TypeSpecifierAST *spec = 0;
   if (!parseTypeSpecifierOrClassSpec(spec))
     {
-      reportError(("Need a type specifier to declare"));
+      // ignore typedef decltype(...) Identifier
+      if (token_stream.lookAhead() == Token_decltype) {
+        token_stream.nextToken();
+
+        if (skip('(', ')')) {
+          token_stream.nextToken();
+        }
+
+        if (token_stream.lookAhead() == Token_identifier) {
+          token_stream.nextToken();
+          return true;
+        }
+
+      } else {
+        reportError(("Need a type specifier to declare"));
+      }
       return false;
     }
 
@@ -1003,10 +1020,21 @@ bool Parser::parseSimpleTypeSpecifier(TypeSpecifierAST *&node,
         case Token_float:
         case Token_double:
         case Token_void:
+        case Token_decltype: {
           integrals = snoc(integrals, token_stream.cursor(), _M_pool);
           isIntegral = true;
-          token_stream.nextToken();
-          break;
+
+          // skip "decltype(...)"
+          if (token_stream.lookAhead() == Token_decltype) {
+            token_stream.nextToken();
+
+            if (skip('(', ')')) {
+              token_stream.nextToken();
+            }
+          } else {
+            token_stream.nextToken();
+          }
+        } break;
 
         default:
           done = true;
@@ -1195,6 +1223,10 @@ bool Parser::parseDeclarator(DeclaratorAST *&node)
     }
   else
     {
+      if (token_stream.lookAhead() == Token_ellipsis) {
+        token_stream.nextToken();
+      }
+
       if (token_stream.lookAhead() == ':')
         {
           // unnamed bitfield
@@ -1784,6 +1816,9 @@ bool Parser::parseParameterDeclaration(ParameterDeclarationAST *&node)
   bool variadic = false;
   if (token_stream.lookAhead() == Token_ellipsis) {
     token_stream.nextToken();
+    variadic = true;
+  }
+  else if (token_stream.lookAhead(1) == Token_ellipsis) {
     variadic = true;
   }
 
@@ -3817,6 +3852,11 @@ bool Parser::parseUnaryExpression(ExpressionAST *&node)
         ast->sizeof_token = sizeof_token;
 
         std::size_t index = token_stream.cursor();
+        // skip "..." (sizeof ...(Args))
+        if (token_stream.lookAhead() == Token_ellipsis) {
+          token_stream.nextToken();
+        }
+
         if (token_stream.lookAhead() == '(')
           {
             token_stream.nextToken();

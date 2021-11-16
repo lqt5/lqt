@@ -580,10 +580,7 @@ void Lexer::scan_semicolon()
 {
   ++cursor;
   token_stream[(int) index++].kind = ';';
-  if (parse_template) {
-    parse_template = false;
-    parse_template_class = false;
-  }
+  handle_template_scope(';');
 }
 
 void Lexer::scan_less()
@@ -611,12 +608,7 @@ void Lexer::scan_less()
     }
     else
     {
-      if (parse_template_class) {
-        token_stream[(int)index++].kind = '<';
-        token_stream[(int)index++].kind = '<';
-      } else {
-        token_stream[(int)index++].kind = Token_shift;
-      }
+      token_stream[(int)index++].kind = Token_shift;
     }
   }
   else
@@ -669,7 +661,7 @@ void Lexer::scan_greater()
     }
     else
     {
-      if (parse_template_class) {
+      if (in_template_scope()) {
         token_stream[(int)index++].kind = '>';
         token_stream[(int)index++].kind = '>';
       } else {
@@ -724,10 +716,7 @@ void Lexer::scan_left_brace()
 {
   ++cursor;
   token_stream[(int) index++].kind = '{';
-  if (parse_template) {
-    parse_template = false;
-    parse_template_class = false;
-  }
+  handle_template_scope('{');
 }
 
 void Lexer::scan_or()
@@ -758,6 +747,7 @@ void Lexer::scan_right_brace()
 {
   ++cursor;
   token_stream[(int) index++].kind = '}';
+  handle_template_scope('}');
 }
 
 void Lexer::scan_tilde()
@@ -989,6 +979,7 @@ void Lexer::scanKeyword4()
 	  *(cursor + 3) == 'm')
 	{
 	  token_stream[(int) index++].kind = Token_enum;
+    handle_template_scope(Token_enum);
 	  return;
 	}
       break;
@@ -1056,9 +1047,7 @@ void Lexer::scanKeyword5()
 	  *(cursor + 4) == 's')
 	{
 	  token_stream[(int) index++].kind = Token_class;
-    if (parse_template) {
-      parse_template_class = true;
-    }
+    handle_template_scope(Token_class);
 	  return;
 	}
       if (*(cursor + 1) == 'o' &&
@@ -1154,6 +1143,7 @@ void Lexer::scanKeyword5()
 	  *(cursor + 4) == 'g')
 	{
 	  token_stream[(int) index++].kind = Token_using;
+    handle_template_scope(Token_using);
 	  return;
 	}
       break;
@@ -1349,9 +1339,7 @@ void Lexer::scanKeyword6()
 	  *(cursor + 5) == 't')
 	{
 	  token_stream[(int) index++].kind = Token_struct;
-    if (parse_template) {
-      parse_template_class = true;
-    }
+    handle_template_scope(Token_struct);
 	  return;
 	}
       if (*(cursor + 1) == 'w' &&
@@ -1654,7 +1642,7 @@ void Lexer::scanKeyword8()
 	  *(cursor + 7) == 'e')
 	{
 	  token_stream[(int) index++].kind = Token_template;
-    parse_template = true;
+    handle_template_scope(Token_template);
 	  return;
 	}
       if (*(cursor + 1) == 'y' &&
@@ -1916,6 +1904,41 @@ void Lexer::scanKeyword16()
     }
 
   token_stream[(int) index++].kind = Token_identifier;
+}
+
+bool Lexer::in_template_scope() {
+  return parse_template_class;
+}
+
+void Lexer::handle_template_scope(int kind) {
+  switch (kind)
+  {
+    case Token_template: {
+      parse_template = true;
+    } break;
+    case ';': {
+      if (parse_template) {
+        parse_template = false;
+        parse_template_class = false;
+      }
+    } break;
+    case '{': {
+    } break;
+    case '}': {
+      if (parse_template) {
+        parse_template = false;
+        parse_template_class = false;
+      }
+    } break;
+    case Token_class:
+    case Token_struct:
+    case Token_enum:
+    case Token_using: {
+      if (parse_template) {
+        parse_template_class = true;
+      }
+    } break;
+  }
 }
 
 // kate: space-indent on; indent-width 2; replace-tabs on;
