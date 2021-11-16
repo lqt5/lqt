@@ -502,6 +502,7 @@ struct InitializerClauseAST: public AST
   DECLARE_AST_NODE(InitializerClause)
 
   ExpressionAST *expression;
+  bool is_default;
 };
 
 struct LabeledStatementAST: public StatementAST

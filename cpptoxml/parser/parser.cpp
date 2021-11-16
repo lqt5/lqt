@@ -2419,6 +2419,7 @@ bool Parser::parseInitializerClause(InitializerClauseAST *&node)
   std::size_t start = token_stream.cursor();
 
   InitializerClauseAST *ast = CreateNode<InitializerClauseAST>(_M_pool);
+  ast->is_default = false;
 
   if (token_stream.lookAhead() == '{')
     {
@@ -2432,7 +2433,12 @@ bool Parser::parseInitializerClause(InitializerClauseAST *&node)
     }
   else
     {
-      if (!parseAssignmentExpression(ast->expression))
+      // skip "= default;"
+      if (token_stream.lookAhead() == Token_default) {
+        ast->is_default = true;
+        token_stream.nextToken();
+      }
+      else if (!parseAssignmentExpression(ast->expression))
         {
           //reportError(("Expression expected"));
         }

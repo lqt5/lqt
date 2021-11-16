@@ -262,7 +262,13 @@ void Binder::declare_symbol(SimpleDeclarationAST *node, InitDeclaratorAST *init_
       fun->setAccessPolicy(_M_current_access);
       fun->setFunctionType(_M_current_function_type);
       fun->setName(name_cc.name());
-      fun->setAbstract(init_declarator->initializer != 0);
+
+      // true if class's constructor is default
+      bool is_default = init_declarator->initializer
+        && init_declarator->initializer->initializer_clause
+        && init_declarator->initializer->initializer_clause->is_default;
+
+      fun->setAbstract(init_declarator->initializer != 0 && !is_default);
       fun->setConstant(declarator->fun_cv != 0);
       fun->setTemplateParameters(_M_current_template_parameters);
       applyStorageSpecifiers(node->storage_specifiers, model_static_cast<MemberModelItem>(fun));
