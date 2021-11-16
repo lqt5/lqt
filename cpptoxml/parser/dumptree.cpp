@@ -101,6 +101,7 @@ static char const * const names[] = {
   "UnqualifiedName",
   "Using",
   "UsingDirective",
+  "UsingTypeAlias",
   "WhileStatement",
   "WinDeclSpec"
 };

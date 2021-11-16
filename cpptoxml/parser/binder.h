@@ -65,6 +65,7 @@ protected:
   virtual void visitTypedef(TypedefAST *);
   virtual void visitUsing(UsingAST *);
   virtual void visitUsingDirective(UsingDirectiveAST *);
+  virtual void visitUsingTypeAlias(UsingTypeAliasAST *);
   virtual void visitQProperty(QPropertyAST *);
   virtual void visitForwardDeclarationSpecifier(ForwardDeclarationSpecifierAST *);
   virtual void visitQEnums(QEnumsAST *);

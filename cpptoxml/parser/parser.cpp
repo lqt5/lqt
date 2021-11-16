@@ -627,6 +627,9 @@ bool Parser::parseUsing(DeclarationAST *&node)
 
   if (token_stream.lookAhead() == Token_namespace)
     return parseUsingDirective(node);
+  else if(token_stream.lookAhead() == Token_identifier && token_stream.lookAhead(1) == '=') {
+    return parseUsingTypeAlias(node);
+  }
 
   UsingAST *ast = CreateNode<UsingAST>(_M_pool);
 
@@ -670,6 +673,37 @@ bool Parser::parseUsingDirective(DeclarationAST *&node)
   return true;
 }
 
+bool Parser::parseUsingTypeAlias(DeclarationAST *&node)
+{
+  std::size_t start = token_stream.cursor();
+
+  NameAST *name = 0;
+  if (!parseName(name))
+    {
+      reportError(("Need an identifier to using"));
+      return false;
+    }
+
+  ADVANCE('=', "=");
+
+  TypeSpecifierAST *spec = 0;
+  if (!parseTypeSpecifierOrClassSpec(spec))
+    {
+      reportError(("Need a type specifier to declare"));
+      return false;
+    }
+
+  ADVANCE(';', ";");
+
+  UsingTypeAliasAST *ast = CreateNode<UsingTypeAliasAST>(_M_pool);
+  ast->name = name;
+  ast->type_specifier = spec;
+
+  UPDATE_POS(ast, start, token_stream.cursor());
+  node = ast;
+
+  return true;
+}
 
 bool Parser::parseOperatorFunctionId(OperatorFunctionIdAST *&node)
 {

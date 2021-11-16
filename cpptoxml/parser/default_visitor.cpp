@@ -445,6 +445,12 @@ void DefaultVisitor::visitUsingDirective(UsingDirectiveAST *node)
   visit(node->name);
 }
 
+void DefaultVisitor::visitUsingTypeAlias(UsingTypeAliasAST *node)
+{
+  visit(node->name);
+  visit(node->type_specifier);
+}
+
 void DefaultVisitor::visitWhileStatement(WhileStatementAST *node)
 {
   visit(node->condition);

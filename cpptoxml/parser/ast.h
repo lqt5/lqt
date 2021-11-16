@@ -111,6 +111,7 @@ struct UnaryExpressionAST;
 struct UnqualifiedNameAST;
 struct UsingAST;
 struct UsingDirectiveAST;
+struct UsingTypeAliasAST;
 struct WhileStatementAST;
 struct WinDeclSpecAST;
 struct QPropertyAST;
@@ -193,6 +194,7 @@ struct AST
       Kind_UnqualifiedName,
       Kind_Using,
       Kind_UsingDirective,
+      Kind_UsingTypeAlias,
       Kind_WhileStatement,
       Kind_WinDeclSpec,
       Kind_QPropertyAST,
@@ -836,6 +838,14 @@ struct UsingDirectiveAST: public DeclarationAST
   DECLARE_AST_NODE(UsingDirective)
 
   NameAST *name;
+};
+
+struct UsingTypeAliasAST: public DeclarationAST
+{
+  DECLARE_AST_NODE(UsingTypeAlias)
+
+  NameAST *name;
+  TypeSpecifierAST *type_specifier;
 };
 
 struct WhileStatementAST: public StatementAST

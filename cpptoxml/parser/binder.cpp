@@ -768,6 +768,50 @@ void Binder::visitUsingDirective(UsingDirectiveAST *node)
   DefaultVisitor::visitUsingDirective(node);
 }
 
+void Binder::visitUsingTypeAlias(UsingTypeAliasAST *node)
+{
+  NameAST *name = node->name;
+  if (name == 0)
+    return;
+
+  // the name
+  name_cc.run(name);
+  QString alias_name = name_cc.name();
+
+  if (alias_name.isEmpty ())
+    {
+      std::cerr << "** WARNING anonymous typedef not supported! ``";
+      Token const &tk = _M_token_stream->token ((int) node->start_token);
+      Token const &end_tk = _M_token_stream->token ((int) node->end_token);
+
+      std::cerr << std::string (&tk.text[tk.position], end_tk.position - tk.position) << "''"
+                << std::endl << std::endl;
+
+      return;
+    }
+
+  // build the type
+  TypeCompiler type_cc (this);
+  type_cc.run(node->type_specifier);
+
+  TypeInfo typeInfo;
+  typeInfo.setQualifiedName (type_cc.qualifiedName ());
+  typeInfo.setConstant (type_cc.isConstant ());
+  typeInfo.setVolatile (type_cc.isVolatile ());
+
+  ScopeModelItem scope = currentScope();
+  CodeModelFinder finder(model(), this);
+  ScopeModelItem typedefScope = finder.resolveScope(name, scope);
+
+  TypeAliasModelItem typeAlias = model ()->create<TypeAliasModelItem> ();
+  updateItemPosition (typeAlias->toItem (), node);
+  typeAlias->setName (alias_name);
+  typeAlias->setType (qualifyType (typeInfo, currentScope ()->qualifiedName ()));
+  typeAlias->setScope (typedefScope->qualifiedName());
+  _M_qualified_types[typeAlias->qualifiedName().join(".")] = QString();
+  currentScope ()->addTypeAlias (typeAlias);
+}
+
 void Binder::visitQEnums(QEnumsAST *node)
 {
   const Token &start = _M_token_stream->token((int) node->start_token);

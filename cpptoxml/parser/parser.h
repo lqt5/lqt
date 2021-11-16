@@ -159,6 +159,7 @@ public:
 			    bool parseTemplateId = true);
   bool parseUsing(DeclarationAST *&node);
   bool parseUsingDirective(DeclarationAST *&node);
+  bool parseUsingTypeAlias(DeclarationAST *&node);
   bool parseWhileStatement(StatementAST *&node);
   bool parseWinDeclSpec(WinDeclSpecAST *&node);
 

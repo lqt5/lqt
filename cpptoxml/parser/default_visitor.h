@@ -105,6 +105,7 @@ protected:
   virtual void visitUnqualifiedName(UnqualifiedNameAST *);
   virtual void visitUsing(UsingAST *);
   virtual void visitUsingDirective(UsingDirectiveAST *);
+  virtual void visitUsingTypeAlias(UsingTypeAliasAST *);
   virtual void visitWhileStatement(WhileStatementAST *);
   virtual void visitWinDeclSpec(WinDeclSpecAST *);
 
