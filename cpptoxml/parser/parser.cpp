@@ -693,13 +693,29 @@ bool Parser::parseUsingTypeAlias(DeclarationAST *&node)
       return false;
     }
 
-  if (token_stream.lookAhead() == ';') {
-    token_stream.nextToken();
+  bool reference = false;
+  bool indirection = false;
+
+  switch (token_stream.lookAhead()) {
+    case Token_and:
+    case '&': {
+      reference = true;
+      token_stream.nextToken();
+    } break;
+    case '*': {
+      indirection = true;
+      token_stream.nextToken();
+    } break;
+    case ';': {
+      token_stream.nextToken();
+    } break;
   }
 
   UsingTypeAliasAST *ast = CreateNode<UsingTypeAliasAST>(_M_pool);
   ast->name = name;
   ast->type_specifier = spec;
+  ast->reference = reference;
+  ast->indirection = indirection;
 
   UPDATE_POS(ast, start, token_stream.cursor());
   node = ast;

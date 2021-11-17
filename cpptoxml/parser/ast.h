@@ -848,6 +848,8 @@ struct UsingTypeAliasAST: public DeclarationAST
 
   NameAST *name;
   TypeSpecifierAST *type_specifier;
+  bool reference;
+  bool indirection;
 };
 
 struct WhileStatementAST: public StatementAST

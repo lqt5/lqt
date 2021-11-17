@@ -804,6 +804,8 @@ void Binder::visitUsingTypeAlias(UsingTypeAliasAST *node)
   typeInfo.setQualifiedName (type_cc.qualifiedName ());
   typeInfo.setConstant (type_cc.isConstant ());
   typeInfo.setVolatile (type_cc.isVolatile ());
+  typeInfo.setReference (node->reference);
+  typeInfo.setIndirections (node->indirection);
 
   ScopeModelItem scope = currentScope();
   CodeModelFinder finder(model(), this);
