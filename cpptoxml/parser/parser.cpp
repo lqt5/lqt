@@ -2387,10 +2387,16 @@ bool Parser::parseMemInitializer(MemInitializerAST *&node)
       return false;
     }
 
-  ADVANCE('(', "(");
+  int tk = token_stream.lookAhead();
+  if (tk != '(' && tk != '{') {
+      tokenRequiredError('(');
+      return false;
+  }
+
+  ADVANCE(tk, "(");
   ExpressionAST *expr = 0;
   parseCommaExpression(expr);
-  ADVANCE(')', ")");
+  ADVANCE((tk == '(' ? ')' : '}'), ")");
 
   MemInitializerAST *ast = CreateNode<MemInitializerAST>(_M_pool);
   ast->initializer_id = initId;
