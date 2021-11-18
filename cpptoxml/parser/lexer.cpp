@@ -1909,7 +1909,7 @@ class TemplateScope {
   size_t _from;
   size_t _braces;
 
-  void _fixup(int idx);
+  void _fixup(int idx, int total);
   int _post_process(int from, int to);
 public:
   TemplateScope(Lexer& lexer): _lexer(lexer), _braces(0), _from(0) {}
@@ -1917,28 +1917,19 @@ public:
   int handle(int kind, int index);
 };
 
-void TemplateScope::_fixup(int idx) {
+void TemplateScope::_fixup(int idx, int total) {
 
   TokenStream& token_stream = _lexer.token_stream;
   Token& token = token_stream[idx];
 
   // printf(" >> fix\t%03d\t%s\n", idx, token_name(token.kind));
 
-  int tail = 0;
-  for (int n = 1; n < token_stream.size(); n++) {
-    if (token_stream.kind(n) == Token_EOF) {
-      tail = n + 1;
-      break;
-    }
+  if (token_stream.size() < total + 1) {
+    token_stream.resize(token_stream.size() * 2);
   }
 
-  if (token_stream.size() < tail + 1) {
-    token_stream.resize(tail + 1);
-  }
-  tail += 1;
-
-  for (int n = tail; n >= idx; n--) {
-    token_stream[n + 1] = token_stream[n];
+  for (int n = total; n > idx; n--) {
+    token_stream[n] = token_stream[n - 1];
   }
 
   Token& curr = token_stream[idx];
@@ -1957,43 +1948,56 @@ int TemplateScope::_post_process(int from, int to) {
   TokenStream& token_stream = _lexer.token_stream;
 
   // printf("before {\n");
-  // for (size_t i = from;; i++) {
+  // for (size_t i = from; i <= to; i++) {
   //   int kind = _lexer.token_stream.kind(i);
-  //   printf("%03d\t%s\n", i, token_name(kind));
-  //   if (kind == Token_EOF) {
-  //     break;
-  //   }
+  //   printf("\t%03d\t%s\n", i, token_name(kind));
   // }
   // printf("}\n");
 
+  int total = to + 1;
   int n = 0;
 
   for (int i = to; i >= from; i--) {
     // printf("%03d\t%s\n", i, token_name(token_stream.kind(i)));
 
-    int kind = token_stream.kind(i);
+    const Token& token = token_stream[i];
+    int kind = token.kind;
     if (kind == Token_shift) {
+      // skip left-shift '<<'
+      if (token.text[token.position] == '<') {
+        continue;
+      }
+
       int next = token_stream.kind(i + 1);
       switch (next) {
         case Token_class:
         case Token_enum:
         case Token_struct:
         case Token_scope:
+        case Token_identifier:
+        case ':':
+        case ';':
         case '{': {
-          _fixup(i);
+          _fixup(i, total);
+          total += 1;
           n += 1;
+        } break;
+        case '(': {
+          int prev = token_stream.kind(i - 1);
+          if (prev != Token_operator) {
+            _fixup(i, total);
+            total += 1;
+            n += 1;
+          }
         } break;
       }
     }
   }
 
   // printf("after {\n");
-  // for (size_t i = from;; i++) {
+  // for (size_t i = from; i <= to + n; i++) {
   //   int kind = _lexer.token_stream.kind(i);
-  //   printf("%03d\t%s\n", i, token_name(kind));
-  //   if (kind == Token_EOF) {
-  //     break;
-  //   }
+  //   printf("\t%03d\t%s\n", i, token_name(kind));
   // }
   // printf("}\n");
 
@@ -2013,9 +2017,13 @@ int TemplateScope::handle(int kind, int index) {
       _braces ++;
       break;
     case '}':
-      if (--_braces == 0) {
+      _braces --;
+      break;
+    case ';': {
+      if (_braces == 0) {
         return _post_process(_from, index);
-      } break;
+      }
+    } break;
   }
   return 0;
 }
