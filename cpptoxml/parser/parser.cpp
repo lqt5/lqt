@@ -1490,14 +1490,23 @@ bool Parser::parseEnumSpecifier(TypeSpecifierAST *&node)
   NameAST *name = 0;
   parseName(name);
 
-  // skip enum class ident_name {: type};
   if (token_stream.lookAhead() == ':') {
-    if (token_stream.lookAhead(1) != Token_identifier) {
-      token_stream.rewind((int) start);
-      return false;
+    switch (token_stream.lookAhead(1)) {
+      // skip enum : `int`
+      case Token_char:
+      case Token_short:
+      case Token_int:
+      case Token_long:
+      // skip enum class ident_name {: type};
+      case Token_identifier: {
+        token_stream.nextToken();
+        token_stream.nextToken();
+      } break;
+      default: {
+        token_stream.rewind((int) start);
+        return false;
+      }
     }
-    token_stream.nextToken();
-    token_stream.nextToken();
   }
     
   if (token_stream.lookAhead() != '{')
