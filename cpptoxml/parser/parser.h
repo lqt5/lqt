@@ -48,6 +48,7 @@ private:
   void reportError(const QString& msg);
   void syntaxError();
   void tokenRequiredError(int expected);
+  void requiredError(const char *expected);
 
 public:
   bool skipFunctionBody(StatementAST *&node);

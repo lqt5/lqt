@@ -154,6 +154,20 @@ void Parser::tokenRequiredError(int token)
   reportError(err);
 }
 
+void Parser::requiredError(const char *expected)
+{
+  QString err;
+
+  err += "expected ";
+  err += "'";
+  err += expected;
+  err += "' found '";
+  err += token_name(token_stream.lookAhead());
+  err += "'";
+
+  reportError(err);
+}
+
 void Parser::syntaxError()
 {
   QString err;
@@ -183,6 +197,16 @@ void Parser::reportError(const QString& msg)
         errmsg.setFileName(fileName);
         errmsg.setMessage(QLatin1String("** PARSER ERROR ") + msg);
         control->reportError(errmsg);
+
+        // printf("error: {\n");
+        // for (size_t n = 0;; n++) {
+        //   int kind = token_stream.kind(n);
+        //   printf("\t%03d\t%s\n", n, token_name(kind));
+        //   if (n > 0 && kind == Token_EOF) {
+        //     break;
+        //   }
+        // }
+        // printf("}");
     }
 }
 
@@ -1263,7 +1287,7 @@ bool Parser::parseDeclarator(DeclaratorAST *&node)
 
           if (!parseConstantExpression(ast->bit_expression))
             {
-              reportError(("Constant expression expected"));
+              requiredError(("Constant expression"));
             }
           goto update_pos;
         }
@@ -1392,7 +1416,7 @@ bool Parser::parseAbstractDeclarator(DeclaratorAST *&node)
       if (!parseConstantExpression(ast->bit_expression))
         {
           ast->bit_expression = 0;
-          reportError(("Constant expression expected"));
+          requiredError(("Constant expression"));
         }
       goto update_pos;
     }
@@ -2251,7 +2275,7 @@ bool Parser::parseEnumerator(EnumeratorAST *&node)
 
       if (!parseConstantExpression(ast->expression))
         {
-          reportError(("Constant expression expected"));
+          requiredError(("Constant expression"));
         }
     }
 
