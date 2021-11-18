@@ -212,15 +212,28 @@ public:
 
             pp_fast_string fast_name (name_buffer, name_size);
 
+            pp_macro *macro = NULL;
+
+            // function like macro
+            _InputIterator arg_it = skip_whitespaces (__first, __last);
+
             if (std::string const *actual = resolve_formal (&fast_name))
               {
-                std::copy (actual->begin (), actual->end (), __result);
-                continue;
+                if (*arg_it == '(') {
+                  macro = env.resolve (actual->c_str(), actual->length());
+                }
+                if (macro == NULL) {
+                  std::copy (actual->begin (), actual->end (), __result);
+                  continue;
+                }
               }
 
             static bool hide_next = false; // ### remove me
 
-            pp_macro *macro = env.resolve (name_buffer, name_size);
+            if (macro == NULL) {
+              macro = env.resolve (name_buffer, name_size);
+            }
+
             if (! macro || macro->f.hidden || hide_next)
               {
                 hide_next = ! strcmp (name_buffer, "defined");
@@ -295,9 +308,6 @@ public:
 
                 macro = m;
               }
-
-            // function like macro
-            _InputIterator arg_it = skip_whitespaces (__first, __last);
 
             if (arg_it == __last || *arg_it != '(')
               {
