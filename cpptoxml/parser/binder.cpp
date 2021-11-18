@@ -776,48 +776,58 @@ void Binder::visitUsingDirective(UsingDirectiveAST *node)
 
 void Binder::visitUsingTypeAlias(UsingTypeAliasAST *node)
 {
-  NameAST *name = node->name;
-  if (name == 0)
+  const ListNode<InitDeclaratorAST*> *it = node->init_declarators;
+  if (it == 0)
     return;
 
-  // the name
-  name_cc.run(name);
-  QString alias_name = name_cc.name();
+  it = it->toFront();
+  const ListNode<InitDeclaratorAST*> *end = it;
 
-  if (alias_name.isEmpty ())
+
+  do
     {
-      std::cerr << "** WARNING anonymous typedef not supported! ``";
-      Token const &tk = _M_token_stream->token ((int) node->start_token);
-      Token const &end_tk = _M_token_stream->token ((int) node->end_token);
+      InitDeclaratorAST *init_declarator = it->element;
+      it = it->next;
 
-      std::cerr << std::string (&tk.text[tk.position], end_tk.position - tk.position) << "''"
-                << std::endl << std::endl;
 
-      return;
+      Q_ASSERT(init_declarator->declarator != 0);
+
+
+      // the name
+      name_cc.run(node->name);
+      QString alias_name = name_cc.name();
+
+      // build the type
+      TypeInfo typeInfo = CompilerUtils::typeDescription (node->type_specifier,
+                                                          init_declarator->declarator,
+                                                          this);
+      DeclaratorAST *decl = init_declarator->declarator;
+      while (decl && decl->sub_declarator)
+        decl = decl->sub_declarator;
+
+      if (decl != init_declarator->declarator
+            && init_declarator->declarator->parameter_declaration_clause != 0)
+        {
+          typeInfo.setFunctionPointer (true);
+          decl_cc.run (init_declarator->declarator);
+          foreach (DeclaratorCompiler::Parameter p, decl_cc.parameters())
+            typeInfo.addArgument(p.type);
+        }
+
+      ScopeModelItem scope = currentScope();
+      DeclaratorAST *declarator = init_declarator->declarator;
+      CodeModelFinder finder(model(), this);
+      ScopeModelItem typedefScope = finder.resolveScope(declarator->id, scope);
+
+      TypeAliasModelItem typeAlias = model ()->create<TypeAliasModelItem> ();
+      updateItemPosition (typeAlias->toItem (), node);
+      typeAlias->setName (alias_name);
+      typeAlias->setType (qualifyType (typeInfo, currentScope ()->qualifiedName ()));
+      typeAlias->setScope (typedefScope->qualifiedName());
+      _M_qualified_types[typeAlias->qualifiedName().join(".")] = QString();
+      currentScope ()->addTypeAlias (typeAlias);
     }
-
-  // build the type
-  TypeCompiler type_cc (this);
-  type_cc.run(node->type_specifier);
-
-  TypeInfo typeInfo;
-  typeInfo.setQualifiedName (type_cc.qualifiedName ());
-  typeInfo.setConstant (type_cc.isConstant ());
-  typeInfo.setVolatile (type_cc.isVolatile ());
-  typeInfo.setReference (node->reference);
-  typeInfo.setIndirections (node->indirection);
-
-  ScopeModelItem scope = currentScope();
-  CodeModelFinder finder(model(), this);
-  ScopeModelItem typedefScope = finder.resolveScope(name, scope);
-
-  TypeAliasModelItem typeAlias = model ()->create<TypeAliasModelItem> ();
-  updateItemPosition (typeAlias->toItem (), node);
-  typeAlias->setName (alias_name);
-  typeAlias->setType (qualifyType (typeInfo, currentScope ()->qualifiedName ()));
-  typeAlias->setScope (typedefScope->qualifiedName());
-  _M_qualified_types[typeAlias->qualifiedName().join(".")] = QString();
-  currentScope ()->addTypeAlias (typeAlias);
+  while (it != end);
 }
 
 void Binder::visitQEnums(QEnumsAST *node)

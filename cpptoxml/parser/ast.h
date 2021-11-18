@@ -848,8 +848,7 @@ struct UsingTypeAliasAST: public DeclarationAST
 
   NameAST *name;
   TypeSpecifierAST *type_specifier;
-  bool reference;
-  bool indirection;
+  const ListNode<InitDeclaratorAST*> *init_declarators;
 };
 
 struct WhileStatementAST: public StatementAST

@@ -717,29 +717,19 @@ bool Parser::parseUsingTypeAlias(DeclarationAST *&node)
       return false;
     }
 
-  bool reference = false;
-  bool indirection = false;
+  const ListNode<InitDeclaratorAST*> *declarators = 0;
 
-  switch (token_stream.lookAhead()) {
-    case Token_and:
-    case '&': {
-      reference = true;
-      token_stream.nextToken();
-    } break;
-    case '*': {
-      indirection = true;
-      token_stream.nextToken();
-    } break;
-    case ';': {
-      token_stream.nextToken();
-    } break;
-  }
+
+  if (!parseInitDeclaratorList(declarators, true))
+    {
+      //reportError(("Need an identifier to declare"));
+      //return false;
+    }
 
   UsingTypeAliasAST *ast = CreateNode<UsingTypeAliasAST>(_M_pool);
   ast->name = name;
   ast->type_specifier = spec;
-  ast->reference = reference;
-  ast->indirection = indirection;
+  ast->init_declarators = declarators;
 
   UPDATE_POS(ast, start, token_stream.cursor());
   node = ast;
@@ -1235,7 +1225,7 @@ bool Parser::parseTypeSpecifier(TypeSpecifierAST *&node)
   return true;
 }
 
-bool Parser::parseDeclarator(DeclaratorAST *&node)
+bool Parser::parseDeclarator(DeclaratorAST *&node, bool anonymous)
 {
   std::size_t start = token_stream.cursor();
 
@@ -1254,7 +1244,7 @@ bool Parser::parseDeclarator(DeclaratorAST *&node)
     {
       token_stream.nextToken();
 
-      if (!parseDeclarator(decl))
+      if (!parseDeclarator(decl, anonymous))
         return false;
 
       ast->sub_declarator = decl;
@@ -1275,7 +1265,7 @@ bool Parser::parseDeclarator(DeclaratorAST *&node)
         {
           ast->id = declId;
         }
-      else
+      else if (!anonymous)
         {
           token_stream.rewind((int) start);
           return false;
@@ -1747,10 +1737,10 @@ bool Parser::parseTypeId(TypeIdAST *&node)
   return true;
 }
 
-bool Parser::parseInitDeclaratorList(const ListNode<InitDeclaratorAST*> *&node)
+bool Parser::parseInitDeclaratorList(const ListNode<InitDeclaratorAST*> *&node, bool anonymous)
 {
   InitDeclaratorAST *decl = 0;
-  if (!parseInitDeclarator(decl))
+  if (!parseInitDeclarator(decl, anonymous))
     return false;
 
   node = snoc(node, decl, _M_pool);
@@ -1759,7 +1749,7 @@ bool Parser::parseInitDeclaratorList(const ListNode<InitDeclaratorAST*> *&node)
     {
       token_stream.nextToken();
 
-      if (!parseInitDeclarator(decl))
+      if (!parseInitDeclarator(decl, anonymous))
         {
           syntaxError();
           break;
@@ -2285,12 +2275,12 @@ bool Parser::parseEnumerator(EnumeratorAST *&node)
   return true;
 }
 
-bool Parser::parseInitDeclarator(InitDeclaratorAST *&node)
+bool Parser::parseInitDeclarator(InitDeclaratorAST *&node, bool anonymous)
 {
   std::size_t start = token_stream.cursor();
 
   DeclaratorAST *decl = 0;
-  if (!parseDeclarator(decl))
+  if (!parseDeclarator(decl, anonymous))
     {
       return false;
     }

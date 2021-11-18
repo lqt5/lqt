@@ -77,7 +77,7 @@ public:
   bool parseDeclaration(DeclarationAST *&node);
   bool parseDeclarationInternal(DeclarationAST *&node);
   bool parseDeclarationStatement(StatementAST *&node);
-  bool parseDeclarator(DeclaratorAST *&node);
+  bool parseDeclarator(DeclaratorAST *&node, bool anonymous = false);
   bool parseDeleteExpression(ExpressionAST *&node);
   bool parseDoStatement(StatementAST *&node);
   bool parseElaboratedTypeSpecifier(TypeSpecifierAST *&node);
@@ -98,8 +98,8 @@ public:
   bool parseIfStatement(StatementAST *&node);
   bool parseInclusiveOrExpression(ExpressionAST *&node,
 				  bool templArgs = false);
-  bool parseInitDeclarator(InitDeclaratorAST *&node);
-  bool parseInitDeclaratorList(const ListNode<InitDeclaratorAST*> *&node);
+  bool parseInitDeclarator(InitDeclaratorAST *&node, bool anonymous = false);
+  bool parseInitDeclaratorList(const ListNode<InitDeclaratorAST*> *&node, bool anonymous = false);
   bool parseInitializer(InitializerAST *&node);
   bool parseInitializerClause(InitializerClauseAST *&node);
   bool parseLabeledStatement(StatementAST *&node);
