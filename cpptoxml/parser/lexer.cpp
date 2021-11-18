@@ -614,6 +614,7 @@ void Lexer::scan_less()
   else
   {
     token_stream[(int)index++].kind = '<';
+    handle_template_scope('<');
   }
 }
 
@@ -661,17 +662,14 @@ void Lexer::scan_greater()
     }
     else
     {
-      if (in_template_scope()) {
-        token_stream[(int)index++].kind = '>';
-        token_stream[(int)index++].kind = '>';
-      } else {
-        token_stream[(int)index++].kind = Token_shift;
-      }
+      token_stream[(int)index++].kind = Token_shift;
+      handle_template_scope(Token_shift);
     }
   }
   else
   {
     token_stream[(int)index++].kind = '>';
+    handle_template_scope('>');
   }
 }
 
@@ -1906,39 +1904,136 @@ void Lexer::scanKeyword16()
   token_stream[(int) index++].kind = Token_identifier;
 }
 
-bool Lexer::in_template_scope() {
-  return parse_template_class;
+class TemplateScope {
+  Lexer& _lexer;
+  size_t _from;
+  size_t _braces;
+
+  void _fixup(int idx);
+  int _post_process(int from, int to);
+public:
+  TemplateScope(Lexer& lexer): _lexer(lexer), _braces(0), _from(0) {}
+
+  int handle(int kind, int index);
+};
+
+void TemplateScope::_fixup(int idx) {
+
+  TokenStream& token_stream = _lexer.token_stream;
+  Token& token = token_stream[idx];
+
+  // printf(" >> fix\t%03d\t%s\n", idx, token_name(token.kind));
+
+  int tail = 0;
+  for (int n = 1; n < token_stream.size(); n++) {
+    if (token_stream.kind(n) == Token_EOF) {
+      tail = n + 1;
+      break;
+    }
+  }
+
+  if (token_stream.size() < tail + 1) {
+    token_stream.resize(tail + 1);
+  }
+  tail += 1;
+
+  for (int n = tail; n >= idx; n--) {
+    token_stream[n + 1] = token_stream[n];
+  }
+
+  Token& curr = token_stream[idx];
+  curr.kind = '>';
+  curr.size = 1;
+
+  Token& next = token_stream[idx + 1];
+  next.kind = '>';
+  next.position = curr.position + 1;
+  next.size = 1;
+}
+
+int TemplateScope::_post_process(int from, int to) {
+  // printf("from:%d, to:%d\n", from, to);
+
+  TokenStream& token_stream = _lexer.token_stream;
+
+  // printf("before {\n");
+  // for (size_t i = from;; i++) {
+  //   int kind = _lexer.token_stream.kind(i);
+  //   printf("%03d\t%s\n", i, token_name(kind));
+  //   if (kind == Token_EOF) {
+  //     break;
+  //   }
+  // }
+  // printf("}\n");
+
+  int n = 0;
+
+  for (int i = to; i >= from; i--) {
+    // printf("%03d\t%s\n", i, token_name(token_stream.kind(i)));
+
+    int kind = token_stream.kind(i);
+    if (kind == Token_shift) {
+      int next = token_stream.kind(i + 1);
+      switch (next) {
+        case Token_class:
+        case Token_enum:
+        case Token_struct:
+        case Token_scope:
+        case '{': {
+          _fixup(i);
+          n += 1;
+        } break;
+      }
+    }
+  }
+
+  // printf("after {\n");
+  // for (size_t i = from;; i++) {
+  //   int kind = _lexer.token_stream.kind(i);
+  //   printf("%03d\t%s\n", i, token_name(kind));
+  //   if (kind == Token_EOF) {
+  //     break;
+  //   }
+  // }
+  // printf("}\n");
+
+  return n;
+}
+
+int TemplateScope::handle(int kind, int index) {
+  // printf("Handle template scope: %s\n", token_name(kind));
+  switch (kind) {
+    case Token_template: {
+      if (_from == 0) {
+        _from = index;
+        _braces = 0;
+      }
+    } break;
+    case '{':
+      _braces ++;
+      break;
+    case '}':
+      if (--_braces == 0) {
+        return _post_process(_from, index);
+      } break;
+  }
+  return 0;
+}
+
+Lexer::Lexer(LocationManager &__location, Control *__control): _M_location(__location),
+    token_stream(_M_location.token_stream),
+    location_table(_M_location.location_table),
+    line_table(_M_location.line_table),
+    control(__control), index(0) {
+  template_scope = new TemplateScope(*this);
+}
+
+Lexer::~Lexer() {
+  delete template_scope;
 }
 
 void Lexer::handle_template_scope(int kind) {
-  switch (kind)
-  {
-    case Token_template: {
-      parse_template = true;
-    } break;
-    case ';': {
-      if (parse_template) {
-        parse_template = false;
-        parse_template_class = false;
-      }
-    } break;
-    case '{': {
-    } break;
-    case '}': {
-      if (parse_template) {
-        parse_template = false;
-        parse_template_class = false;
-      }
-    } break;
-    case Token_class:
-    case Token_struct:
-    case Token_enum:
-    case Token_using: {
-      if (parse_template) {
-        parse_template_class = true;
-      }
-    } break;
-  }
+  index += template_scope->handle(kind, index - 1);
 }
 
 // kate: space-indent on; indent-width 2; replace-tabs on;

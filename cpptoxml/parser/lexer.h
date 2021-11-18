@@ -189,16 +189,13 @@ public:
   LocationTable &line_table;
 };
 
+class TemplateScope;
 class Lexer
 {
 public:
-  Lexer(LocationManager &__location, Control *__control):
-    _M_location(__location),
-    token_stream(_M_location.token_stream),
-    location_table(_M_location.location_table),
-    line_table(_M_location.line_table),
-    control(__control), index(0),
-    parse_template(false), parse_template_class(false) {}
+  Lexer(LocationManager &__location, Control *__control);
+
+  ~Lexer();
 
   void tokenize(const char *contents, std::size_t size);
 
@@ -206,6 +203,7 @@ public:
   TokenStream &token_stream;
   LocationTable &location_table;
   LocationTable &line_table;
+  TemplateScope *template_scope;
 
 private:
   void reportError(const QString& msg);
@@ -266,7 +264,6 @@ private:
   void scan_EOF();
 
   void handle_template_scope(int kind);
-  bool in_template_scope();
 
 private:
   Control *control;
