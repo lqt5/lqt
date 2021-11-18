@@ -1014,7 +1014,7 @@ bool Parser::parseCvQualify(const ListNode<std::size_t> *&node)
 
   int tk;
   while (0 != (tk = token_stream.lookAhead())
-         && (tk == Token_const || tk == Token_volatile || tk == Token_noexcept))
+         && (tk == Token_const || tk == Token_constexpr || tk == Token_volatile || tk == Token_noexcept))
     {
       node = snoc(node, token_stream.cursor(), _M_pool);
       token_stream.nextToken();

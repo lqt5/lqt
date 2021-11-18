@@ -52,6 +52,7 @@ static char const * const _S_token_names[] = {
   "compl",
   "concat",
   "const",
+  "constexpr",
   "const_cast",
   "continue",
   "decltype",
