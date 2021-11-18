@@ -153,9 +153,11 @@ TypeInfo TypeInfo::resolveType (TypeInfo const &__type, CodeModelItem __scope)
     if (TypeAliasModelItem __alias = model_dynamic_cast<TypeAliasModelItem> (__item))
         if (__alias->type().qualifiedName() != otherType.qualifiedName()) {
             const TypeInfo &aliasType = __alias->type();
-            // prevent infinite recursion introduced in Qt 4.8.0
             if (__type == aliasType)
                 return __type;
+            else if (aliasType.qualifiedName().size() > 1) {
+              return resolveType(aliasType, __scope);
+            }
             TypeInfo combined = combine(aliasType, otherType);
             return resolveType(combined, __scope);
         }
