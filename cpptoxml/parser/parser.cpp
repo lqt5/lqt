@@ -1867,7 +1867,7 @@ bool Parser::parseParameterDeclaration(ParameterDeclarationAST *&node)
   if (token_stream.lookAhead() == '=')
     {
       token_stream.nextToken();
-      if (!parseLogicalOrExpression(expr,true))
+      if (!parseConditionalExpression(expr, true))
         {
           //reportError(("Expression expected"));
         }
@@ -4420,11 +4420,11 @@ bool Parser::parseLogicalOrExpression(ExpressionAST *&node, bool templArgs)
   return true;
 }
 
-bool Parser::parseConditionalExpression(ExpressionAST *&node)
+bool Parser::parseConditionalExpression(ExpressionAST *&node, bool templArgs)
 {
   std::size_t start = token_stream.cursor();
 
-  if (!parseLogicalOrExpression(node))
+  if (!parseLogicalOrExpression(node, templArgs))
     return false;
 
   if (token_stream.lookAhead() == '?')
@@ -4432,13 +4432,13 @@ bool Parser::parseConditionalExpression(ExpressionAST *&node)
       token_stream.nextToken();
 
       ExpressionAST *leftExpr = 0;
-      if (!parseExpression(leftExpr))
+      if (!parseExpression(leftExpr, templArgs))
         return false;
 
       CHECK(':');
 
       ExpressionAST *rightExpr = 0;
-      if (!parseAssignmentExpression(rightExpr))
+      if (!parseAssignmentExpression(rightExpr, templArgs))
         return false;
 
       ConditionalExpressionAST *ast
@@ -4455,13 +4455,13 @@ bool Parser::parseConditionalExpression(ExpressionAST *&node)
   return true;
 }
 
-bool Parser::parseAssignmentExpression(ExpressionAST *&node)
+bool Parser::parseAssignmentExpression(ExpressionAST *&node, bool templArgs)
 {
   std::size_t start = token_stream.cursor();
 
-  if (token_stream.lookAhead() == Token_throw && !parseThrowExpression(node))
+  if (token_stream.lookAhead() == Token_throw && !parseThrowExpression(node, templArgs))
     return false;
-  else if (!parseConditionalExpression(node))
+  else if (!parseConditionalExpression(node, templArgs))
     return false;
 
   while (token_stream.lookAhead() == Token_assign
@@ -4471,7 +4471,7 @@ bool Parser::parseAssignmentExpression(ExpressionAST *&node)
       token_stream.nextToken();
 
       ExpressionAST *rightExpr = 0;
-      if (!parseConditionalExpression(rightExpr))
+      if (!parseConditionalExpression(rightExpr, templArgs))
         return false;
 
       BinaryExpressionAST *ast = CreateNode<BinaryExpressionAST>(_M_pool);
@@ -4491,16 +4491,16 @@ bool Parser::parseConstantExpression(ExpressionAST *&node)
   return parseConditionalExpression(node);
 }
 
-bool Parser::parseExpression(ExpressionAST *&node)
+bool Parser::parseExpression(ExpressionAST *&node, bool templArgs)
 {
-  return parseCommaExpression(node);
+  return parseCommaExpression(node, templArgs);
 }
 
-bool Parser::parseCommaExpression(ExpressionAST *&node)
+bool Parser::parseCommaExpression(ExpressionAST *&node, bool templArgs)
 {
   std::size_t start = token_stream.cursor();
 
-  if (!parseAssignmentExpression(node))
+  if (!parseAssignmentExpression(node, templArgs))
     return false;
 
   while (token_stream.lookAhead() == ',')
@@ -4509,7 +4509,7 @@ bool Parser::parseCommaExpression(ExpressionAST *&node)
       token_stream.nextToken();
 
       ExpressionAST *rightExpr = 0;
-      if (!parseAssignmentExpression(rightExpr))
+      if (!parseAssignmentExpression(rightExpr, templArgs))
         return false;
 
       BinaryExpressionAST *ast = CreateNode<BinaryExpressionAST>(_M_pool);
@@ -4524,7 +4524,7 @@ bool Parser::parseCommaExpression(ExpressionAST *&node)
   return true;
 }
 
-bool Parser::parseThrowExpression(ExpressionAST *&node)
+bool Parser::parseThrowExpression(ExpressionAST *&node, bool templArgs)
 {
   std::size_t start = token_stream.cursor();
 
@@ -4533,7 +4533,7 @@ bool Parser::parseThrowExpression(ExpressionAST *&node)
   ThrowExpressionAST *ast = CreateNode<ThrowExpressionAST>(_M_pool);
   ast->throw_token = token_stream.cursor() - 1;
 
-  parseAssignmentExpression(ast->expression);
+  parseAssignmentExpression(ast->expression, templArgs);
 
   UPDATE_POS(ast, start, token_stream.cursor());
   node = ast;

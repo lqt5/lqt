@@ -60,17 +60,17 @@ public:
   bool parseAdditiveExpression(ExpressionAST *&node);
   bool parseAndExpression(ExpressionAST *&node, bool templArgs = false);
   bool parseAsmDefinition(DeclarationAST *&node);
-  bool parseAssignmentExpression(ExpressionAST *&node);
+  bool parseAssignmentExpression(ExpressionAST *&node, bool templArgs = false);
   bool parseBaseClause(BaseClauseAST *&node);
   bool parseBaseSpecifier(BaseSpecifierAST *&node);
   bool parseBlockDeclaration(DeclarationAST *&node);
   bool parseCastExpression(ExpressionAST *&node);
   bool parseClassSpecifier(TypeSpecifierAST *&node);
   bool parseForwardDeclarationSpecifier(TypeSpecifierAST *&node);
-  bool parseCommaExpression(ExpressionAST *&node);
+  bool parseCommaExpression(ExpressionAST *&node, bool templArgs = false);
   bool parseCompoundStatement(StatementAST *&node);
   bool parseCondition(ConditionAST *&node, bool initRequired = true);
-  bool parseConditionalExpression(ExpressionAST *&node);
+  bool parseConditionalExpression(ExpressionAST *&node, bool templArgs = false);
   bool parseConstantExpression(ExpressionAST *&node);
   bool parseCtorInitializer(CtorInitializerAST *&node);
   bool parseCvQualify(const ListNode<std::size_t> *&node);
@@ -88,7 +88,7 @@ public:
   bool parseExceptionSpecification(ExceptionSpecificationAST *&node);
   bool parseExclusiveOrExpression(ExpressionAST *&node,
 				  bool templArgs = false);
-  bool parseExpression(ExpressionAST *&node);
+  bool parseExpression(ExpressionAST *&node, bool templArgs = false);
   bool parseExpressionOrDeclarationStatement(StatementAST *&node);
   bool parseExpressionStatement(StatementAST *&node);
   bool parseForInitStatement(StatementAST *&node);
@@ -146,7 +146,7 @@ public:
   bool parseTemplateDeclaration(DeclarationAST *&node);
   bool parseTemplateParameter(TemplateParameterAST *&node);
   bool parseTemplateParameterList(const ListNode<TemplateParameterAST*> *&node);
-  bool parseThrowExpression(ExpressionAST *&node);
+  bool parseThrowExpression(ExpressionAST *&node, bool templArgs = false);
   bool parseTranslationUnit(TranslationUnitAST *&node);
   bool parseTryBlockStatement(StatementAST *&node);
   bool parseTypeId(TypeIdAST *&node);
