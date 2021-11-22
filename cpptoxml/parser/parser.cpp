@@ -1885,6 +1885,12 @@ bool Parser::parseParameterDeclaration(ParameterDeclarationAST *&node)
         {
           //reportError(("Expression expected"));
         }
+
+      // skip = `{}`
+      if (token_stream.lookAhead() == '{' && token_stream.lookAhead(1) == '}') {
+        token_stream.nextToken();
+        token_stream.nextToken();
+      }
     }
 
   ParameterDeclarationAST *ast = CreateNode<ParameterDeclarationAST>(_M_pool);
