@@ -143,6 +143,7 @@ QString XMLVisitor::visit(const TypeInfo& t, QStringList scope) {
 	if (tt.isConstant()) ret += ATTR_TRUE("type_constant");
 	if (tt.isVolatile()) ret += ATTR_TRUE("type_volatile");
 	if (tt.isReference()) ret += ATTR_TRUE("type_reference");
+	if (tt.isRValueReference()) ret += ATTR_TRUE("type_rvalue_reference");
 	if (tt.indirections()>0) ret += ATTR_NUM("indirections", tt.indirections());
 
 	QStringList arr = tt.arrayElements();

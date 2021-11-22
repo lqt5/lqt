@@ -133,6 +133,9 @@ public:
   bool isReference() const { return f.m_reference; }
   void setReference(bool is) { f.m_reference = is; }
 
+  bool isRValueReference() const { return f.m_rvalue_reference; }
+  void setRValueReference(bool is) { f.m_rvalue_reference = is; }
+
   int indirections() const { return f.m_indirections; }
   void setIndirections(int indirections) { f.m_indirections = indirections; }
 
@@ -166,6 +169,7 @@ private:
       uint m_constant: 1;
       uint m_volatile: 1;
       uint m_reference: 1;
+      uint m_rvalue_reference: 1;
       uint m_functionPointer: 1;
       uint m_indirections: 6;
       uint m_padding: 22;

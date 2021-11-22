@@ -45,6 +45,8 @@ void DeclaratorCompiler::run(DeclaratorAST *node)
   _M_array.clear();
   _M_function = false;
   _M_reference = false;
+  _M_rvalue_reference = false;
+
   _M_variadics = false;
   _M_indirection = 0;
 
@@ -100,6 +102,8 @@ void DeclaratorCompiler::visitPtrOperator(PtrOperatorAST *node)
   switch (op)
     {
       case Token_and: // '&&' rvalue reference
+        _M_rvalue_reference = true;
+        break;
       case '&':
         _M_reference = true;
         break;
