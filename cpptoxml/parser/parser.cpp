@@ -3264,7 +3264,7 @@ bool Parser::parseDeclarationInternal(DeclarationAST *&node)
   const ListNode<std::size_t> *storageSpec = 0;
   bool hasStorageSpec = parseStorageClassSpecifier(storageSpec);
 
-  if (hasStorageSpec && !hasFunSpec)
+  if (!hasFunSpec)
     hasFunSpec = parseFunctionSpecifier(funSpec);
 
   // that is for the case 'friend __declspec(dllexport) ....'
