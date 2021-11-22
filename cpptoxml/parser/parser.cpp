@@ -743,6 +743,11 @@ bool Parser::parseOperatorFunctionId(OperatorFunctionIdAST *&node)
 
   CHECK(Token_operator);
 
+  // skip operator typename
+  if (token_stream.lookAhead() == Token_typename) {
+    token_stream.nextToken();
+  }
+
   OperatorFunctionIdAST *ast = CreateNode<OperatorFunctionIdAST>(_M_pool);
 
   if (!parseOperator(ast->op))
