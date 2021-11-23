@@ -62,15 +62,17 @@ function print_slots(s)
 	print_slot_h'  lua_State *L;'
 	print_slot_h'  public:'
 	print_slot_h('  LqtSlotAcceptor(lua_State *l, QObject *p=NULL) : QObject(p), L(l) { setObjectName("'..module_name..'"); lqtL_register(L, this, NULL); }')
-	print_slot_h'  virtual ~LqtSlotAcceptor() { lqtL_unregister(L, this, NULL); }'
+	print_slot_h'  virtual ~LqtSlotAcceptor() { /*lqtL_unregister(L, this, NULL);*/ }'
 	print_slot_h'  public slots:'
 	for p, b in pairs(s) do
 		print_slot_h('  '..p..';')
 		print_slot_c(b)
 	end
 	print_slot_h'};\n'
-	print_slot_h('\nextern LqtSlotAcceptor *lqtSlotAcceptor_'..module_name..';')
-	print_slot_c('\nLqtSlotAcceptor *lqtSlotAcceptor_'..module_name..';')
+	print_slot_h('\n#include <map>')
+	print_slot_h('\n#include <memory>')
+	print_slot_h('\nextern std::map<lua_State*,std::unique_ptr<LqtSlotAcceptor>> lqtSlotAcceptor_'..module_name..';')
+	print_slot_c('\nstd::map<lua_State*,std::unique_ptr<LqtSlotAcceptor>> lqtSlotAcceptor_'..module_name..';')
 end
 
 
